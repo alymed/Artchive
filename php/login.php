@@ -68,4 +68,3 @@ $conn->close();
     <p>Ainda não tem conta? <a href="registo.php">Registre-se aqui</a></p>
 
 </body>
-</html>
