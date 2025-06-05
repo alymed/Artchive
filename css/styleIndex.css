@@ -1,0 +1,323 @@
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 10px;
+  background-color: #fff;
+  overflow-x: hidden;
+  overflow-y: hidden;
+
+}
+
+.custom-navbar {
+  background-color: #fff; /* or your preferred color */
+  padding: 10px 20px;
+  width: 100%;
+}
+
+.navbar-container {
+  margin: 0 auto;
+}
+
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.navbar-left,
+.navbar-right {
+  display: flex;
+  align-items: center;
+}
+
+.logo-img {
+  width: 150px;
+  margin-right: 10px;
+}
+
+.navbar-brand {
+  margin: 0 10px;
+  padding: 15px;
+  text-decoration: none;
+  font-weight: bold;
+  color: black;
+}
+
+button.navbar-brand#log{
+  border-radius: 20px;
+  background-color: #0a2c5a;
+  color: white;
+}
+
+button.navbar-brand#sign{
+  border-radius: 20px;
+  background-color: #e0e0e0;
+}
+
+button.navbar-brand#sign:hover{
+  background-color: #aeadad;
+}
+button.navbar-brand#log:hover{
+  background-color: #071e3e;
+}
+
+
+
+/* carossel */
+
+.carousel-inner {
+  position: relative;
+  overflow: hidden;
+}
+
+.carousel-item {
+  opacity: 0;
+  transform: translateY(100%); /* Start off the screen from the bottom */
+  transition: opacity 0.6s ease, transform 0.6s ease;
+}
+
+.carousel-item-next,
+.carousel-item-prev,
+.carousel-item.active {
+  opacity: 1;
+  transform: translateY(0); /* Slide into view */
+}
+
+.carousel-indicators {
+  position: absolute;
+  bottom: 10px;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+.carousel-indicators button {
+  background-color: #fff;
+  border: none;
+  border-radius: 50%;
+  width: 10px;
+  height: 10px;
+  margin: 0 5px;
+  opacity: 0.5;
+  transition: opacity 0.3s ease;
+}
+
+.carousel-indicators .active {
+  opacity: 1;
+}
+
+/* The popup form - hidden by default */
+.form-popup {
+  display: none;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  border: 3px solid white;
+  z-index: 999;
+  background-color: white;
+  padding: 20px;
+  box-shadow: 0px 0px 15px rgba(0,0,0,0.7);
+  border-radius: 30px;
+}
+
+/* Add styles to the form container */
+.form-container {
+  width: 450px;
+  padding: 10px;
+  background-color: white;
+}
+
+/* Full-width input fields */
+.form-container input[type=text], .form-container input[type=password] {
+  width: 60%;
+  padding: 12px;
+  margin: 5px 0 3px 0;
+  border: 1px solid gray;
+  background: #fff;
+  border-radius: 16px;
+}
+
+/* When the inputs get focus, do something */
+.form-container input[type=text]:focus, .form-container input[type=password]:focus {
+  background-color: #ddd;
+  outline: none;
+}
+
+/* Set a style for the submit/login button */
+.form-container .btn {
+  background-color: #0a2c5a;
+  color: white;
+  padding: 16px 20px;
+  border: none;
+  cursor: pointer;
+  width: 60%;
+  margin-bottom:10px;
+  border-radius: 25px;
+}
+
+/* Add some hover effects to buttons */
+.form-container .btn:hover, .open-button:hover {
+  background-color: #071e3e;
+  color: white;
+}
+
+.close-icon {
+  position: absolute;
+  top: 10px;
+  right: 15px;
+  font-size: 24px;
+  font-weight: bold;
+  color: #aaa;
+  cursor: pointer;
+}
+
+.close-icon:hover {
+  color: black;
+}
+
+.form-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0,0,0,0.5); /* semi-transparent black */
+  z-index: 998; /* behind the popup */
+  display: none; /* hidden by default */
+}
+
+.form-popup .logo-img {
+  width: 70px; /* ou o valor que quiser */
+  height: auto;
+  display: block;
+  margin: 0 auto 20px auto;
+}
+
+.form-container h3 {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.form-container label {
+  display: block;
+  margin-top: 10px;
+  margin-bottom: 5px;
+}
+
+.form-container .info {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
+
+.form-container label,
+.form-container .action {
+  align-self: flex-start;
+  margin-left: 20%;
+}
+
+.form-container .action {
+  padding: 0;
+  text-decoration: none;
+  font-weight: normal;
+  color: #0a2c5a;
+}
+
+.form-container .action#signup {
+  margin-bottom: 20px;
+}
+
+.form-container .action:hover {
+  text-decoration: underline;
+}
+
+.hero {
+  text-align: center;
+  padding-top: 140px;
+}
+
+.hero h1 {
+  font-size: 42px;
+  margin-bottom: 0;
+}
+
+.hero h2 {
+  font-size: 40px;
+  color: #0a2c5a;
+  margin: 10px 0 20px 0;
+}
+
+.carousel-inner {
+  padding-bottom: 20px;
+}
+
+.custom-dots {
+  margin-top: -10px;
+}
+
+.custom-dots button {
+  background-color: #ccc;
+  border-radius: 50%;
+  width: 10px;
+  height: 10px;
+  border: none;
+  margin: 0 5px;
+  opacity: 1;
+  transition: background-color 0.3s ease;
+}
+
+.custom-dots .active {
+  background-color: #5e9c8f;
+}
+
+.img_container {
+  display: grid;
+  position: absolute;
+  width: 80vw;
+  left: 50%;
+  transform: translateX(-50%);
+  grid-template-columns: repeat(auto-fill, 250px);
+  grid-auto-rows: 10px;
+  justify-content: center;
+  margin: 0;
+  padding: 0;
+}
+
+.card {
+  padding: 0px;
+  margin: 15px 10px;
+  border-radius: 16px;
+  border: none;
+}
+
+.card img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover; /* Ensures the image fills the container without distortion */
+  border-radius: 16px;
+  border: none;
+
+}
+
+.card_medium {
+  grid-row-end: span 33;
+  border-radius: 16px;
+
+}
+
+@keyframes fadeInUp {
+  0% {
+    opacity: 0;
+    transform: translateY(50px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.fade-in-up {
+  animation: fadeInUp 1.3s ease forwards;
+}

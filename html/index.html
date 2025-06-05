@@ -1,0 +1,271 @@
+<!-- <?php
+session_start();
+
+
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+
+$servername = "localhost";
+$username = "root";
+$password = "";
+$database = "artchive_db";
+
+// Criar conexão com MySQL
+$conn = new mysqli($servername, $username, $password, $database);
+
+if ($conn->connect_error) {
+    die("Erro de conexão: " . $conn->connect_error);
+} else {
+    echo "Conexão com a base de dados estabelecida com sucesso!";
+}
+
+if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['login'])) {
+    $email = trim($_POST['email']);
+    $passe = $_POST['passe'];
+
+    // Consulta SQL para verificar o usuário
+    $sql = "SELECT id, email, passe FROM users WHERE email = ?";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("s", $email); // Protege contra SQL Injection
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    if ($result->num_rows == 1) {
+        $row = $result->fetch_assoc();
+        
+        // Verificar se a senha corresponde ao hash da senha armazenado no banco de dados
+        if (password_verify($passe, $row['passe'])) {
+            $_SESSION['user_id'] = $row['id'];
+            $_SESSION['user_email'] = $row['email'];
+            header("Location: app.php");
+            exit();
+        } else {
+            $erro = "Senha incorreta!";
+        }
+    } else {
+        $erro = "Usuário não encontrado!";
+    }
+}
+
+
+if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['signup'])) {
+    $email = $_POST['email'];
+    $password = password_hash($_POST['passe'], PASSWORD_DEFAULT);
+
+    $sql = "INSERT INTO users (email, passe) VALUES ('$email', '$password')";
+    if ($conn->query($sql) === TRUE) {
+        echo "<script>alert('Utilizador criado com sucesso!');</script>";
+    } else {
+        echo "<script>alert('Erro ao criar utilizador: " . $conn->error . "');</script>";
+    }        
+}
+
+$conn->close();
+?> -->
+
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Artchive</title>
+    <link rel="stylesheet" href="../css/styleIndex.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+
+    <link rel="icon" type="image/png" href="logo.png">
+    <script src="../js/script.js"></script>
+
+</head>
+
+<body>
+    <div class="form-overlay" id="formOverlay"></div>
+    <nav class="custom-navbar">
+        <div class="navbar-container">
+            <div class="navbar">
+                <div class="navbar-left">
+                    <a href="index.html">
+                        <img src="../images/artchive 2.png" alt="Logo" class="logo-img">
+                    </a>
+                    <a href="exploreConvidado.html" class="navbar-brand" id="explore">Explore</a>
+                </div>
+                <div class="navbar-right">
+                    <button class="navbar-brand" id="log" onclick="openLoginForm()">Log in</button>
+
+                    <button class="navbar-brand" id="sign" onclick="openSignupForm()">Sign up</button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+
+    <main class="hero">
+
+        <div id="carouselExampleAutoplaying" class="carousel slide" data-bs-ride="carousel" data-bs-interval="3000">
+            <div class="carousel-inner">
+                <h1>Get your next</h1>
+
+                <div class="carousel-item active">
+                    <h2>camera angle</h2>
+                </div>
+                <div class="carousel-item">
+                    <h2>photoshot inspiration</h2>
+                </div>
+                <div class="carousel-item">
+                    <h2>track</h2>
+                </div>
+            </div>
+
+            <div class="carousel-indicators custom-dots">
+                <button type="button" data-bs-target="#carouselExampleAutoplaying" data-bs-slide-to="0" class="active"
+                    aria-current="true" aria-label="Slide 1"></button>
+                <button type="button" data-bs-target="#carouselExampleAutoplaying" data-bs-slide-to="1"
+                    aria-label="Slide 2"></button>
+                <button type="button" data-bs-target="#carouselExampleAutoplaying" data-bs-slide-to="2"
+                    aria-label="Slide 3"></button>
+            </div>
+        </div>
+
+        <div class="img_container">
+            <div class="card card_medium slide-0"><img src="../images/movie1.jpg"></div>
+            <div class="card card_medium slide-0"><img src="../images/movie2.jpg"></div>
+            <div class="card card_medium slide-0"><img src="../images/movie4.jpg"></div>
+            <div class="card card_medium slide-0"><img src="../images/movie3.jpg"></div>
+
+            <div class="card card_medium slide-2"><img src="../images/music1.jpg"></div>
+            <div class="card card_medium slide-2"><img src="../images/music2.jpg"></div>
+            <div class="card card_medium slide-2"><img src="../images/music3.jpg"></div>
+            <div class="card card_medium slide-2"><img src="../images/music4.jpg"></div>
+
+            <div class="card card_medium slide-1"><img src="../images/pic1.jpg"></div>
+            <div class="card card_medium slide-1"><img src="../images/pic2.jpg"></div>
+            <div class="card card_medium slide-1"><img src="../images/pic3.jpg"></div>
+            <div class="card card_medium slide-1"><img src="../images/pic4.jpg"></div>
+        </div>
+    </main>
+
+
+    <!-- Bootstrap JS and Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
+
+
+    <!-- The form -->
+    <div class="form-popup" id="loginForm">
+        <form method="post" class="form-container" action="">
+            <span class="close-icon" onclick="closeLoginForm()">&times;</span>
+            <img src="../images/logo.png" alt="Logo" class="logo-img">
+
+            <h3>Login to see more</h3>
+            <div class="info">
+                <label for="email"><b>Email</b></label>
+                <input type="text" placeholder="Email" name="email" required>
+                <label for="passe"><b>Password</b></label>
+                <input type="password" placeholder="Password" name="passe" required>
+                <a href="#" class="action" id="password">Forgot your password?</a>
+
+                <button type="submit" class="btn" name="login">Log in</button>
+                <a class="action" id="signup" onclick="openSignupForm()">Not on Artchive yet? Sign up</a>
+            </div>
+
+        </form>
+    </div>
+
+    <div class="form-popup" id="signupForm">
+        <form method="post" class="form-container" action="">
+            <span class="close-icon" onclick="closeSignupForm()">&times;</span>
+            <img src="../images/logo.png" alt="Logo" class="logo-img">
+
+            <h3>Welcome to Artchive</h3>
+            <div class="info">
+                <label for="email"><b>Email</b></label>
+                <input type="text" placeholder="Email" name="email" required>
+
+                <label for="passe"><b>Password</b></label>
+                <input type="password" placeholder="Password" name="passe" required>
+
+                <button type="submit" class="btn" name="signup">Continue</button>
+                <a class="action" id="signup" onclick="openLoginForm()">Already a member? Log in</a>
+
+            </div>
+
+        </form>
+    </div>
+
+</body>
+
+
+
+
+</html>
+
+
+<script>
+    function updateImageGrid(slideIndex) {
+        const cards = document.querySelectorAll(".card.card_medium");
+
+        cards.forEach(card => {
+            // Remove qualquer classe antiga de animação
+            card.classList.remove("fade-in-up");
+            card.style.display = "none";
+
+            if (card.classList.contains("slide-" + slideIndex)) {
+                card.style.display = "block";
+
+                // Força reflow para reiniciar a animação
+
+            }
+        });
+    }
+
+    document.addEventListener("DOMContentLoaded", function () {
+        const carousel = document.getElementById("carouselExampleIndicators");
+
+        // Chamada inicial para mostrar os cards do primeiro slide
+        updateImageGrid(0);
+
+        // Adiciona o listener para quando o slide muda
+        carousel.addEventListener("slid.bs.carousel", function (event) {
+            const activeIndex = event.to; // novo índice do slide
+            updateImageGrid(activeIndex);
+        });
+    });
+
+
+
+
+    document.addEventListener("DOMContentLoaded", function () {
+        const imgCards = document.querySelectorAll(".card");
+
+        function updateImageGrid(slideIndex) {
+            imgCards.forEach(card => {
+                card.classList.remove("fade-in-up");
+                card.style.display = "none";
+
+
+                if (card.classList.contains("slide-" + slideIndex)) {
+                    card.style.display = "block";
+                    void card.offsetWidth;
+                    card.classList.add("fade-in-up");
+                } else {
+                    card.style.display = "none";
+                }
+            });
+        }
+
+        // Inicializa com o slide 0
+        updateImageGrid(0);
+
+        const carousel = document.getElementById('carouselExampleAutoplaying');
+        carousel.addEventListener('slid.bs.carousel', function (event) {
+            // const activeItem = carousel.querySelector(".carousel-item.active");
+            // const allItems = carousel.querySelectorAll(".carousel-item");
+            // const activeIndex = Array.from(allItems).indexOf(activeItem);
+            const activeIndex = event.to; // novo índice do slide
+
+            updateImageGrid(activeIndex);
+        });
+    });
+</script>
