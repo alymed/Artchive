@@ -6,74 +6,29 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Artchive</title>
   <link rel="stylesheet" href="../css/style.css">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
   <link rel="icon" type="image/png" href="../images/logo.png">
   <script src="../js/script.js"></script>
 </head>
 
 <body>
-  <div class="form-overlay" id="uploadOverlay"></div>
+  <div class="form-overlay" id="formOverlay"></div>
 
-
-
-
-  
-  <div class="form-popup" id="loginForm">
-        <form method="post" class="form-container" action="">
-            <span class="close-icon" onclick="closeLoginForm()">&times;</span>
-            <img src="../images/logo.png" alt="Logo" class="logo-img">
-
-            <h3>Login to see more</h3>
-            <div class="info">
-                <label for="email"><b>Email</b></label>
-                <input type="text" placeholder="Email" name="email" required>
-                <label for="passe"><b>Password</b></label>
-                <input type="password" placeholder="Password" name="passe" required>
-                <a href="#" class="action" id="password">Forgot your password?</a>
-
-                <button type="submit" class="btn" name="login">Log in</button>
-                <a class="action" id="signup" onclick="openSignupForm()">Not on Artchive yet? Sign up</a>
-            </div>
-
-        </form>
-    </div>
-
-
-  <div class="form-popup" id="uploadForm" style="display:none;">
-    <form method="post" class="form-container" action="upload.php">
-      <span class="close-icon" onclick="closeUploadForm()">&times;</span>
-      <h3>Upload New Content</h3>
-      <input type="file" id="upload-file" name="file" accept="image/*" required>
-
-      <input type="text" id="upload-title" name="title" placeholder="Enter a title" required>
-      <textarea id="upload-description" name="description" placeholder="Write a short description..."
-        rows="4"></textarea>
-
-      <button type="submit" class="btn">Upload</button>
-    </form>
-  </div>
-
-
-
-
-  
   <div class="search-container">
-    <a href="home.app" class="nav-logo">
+    <a href="exploreConvidado.html" class="nav-logo">
       <img src="../images/logo.png" alt="Logo" class="logo-img">
     </a>
     <input type="text" class="search-box" placeholder="Search...">
-    <a href="perfil.html" class="user-icon">
+    <a class="user-icon" onclick="openLoginForm()">
       <i class="bi bi-person-circle"></i>
     </a>
   </div>
 
   <input type="radio" name="tab" id="home" checked>
-  <input type="radio" name="tab" id="create">
-  <input type="radio" name="tab" id="notification">
   <input type="radio" name="tab" id="film">
   <input type="radio" name="tab" id="photos">
   <input type="radio" name="tab" id="music">
-  <input type="radio" name="tab" id="settings">
 
 
   <div class="tabs">
@@ -81,15 +36,6 @@
       <i class="bi bi-house-door default-icon"></i>
       <i class="bi bi-house-door-fill active-icon"></i>
     </label>
-    <label for="create" class="tab" onclick="openUploadForm()">
-      <i class="bi bi-plus-square default-icon"></i>
-      <i class="bi bi-plus-square-fill active-icon"></i>
-    </label>
-    <label for="notification" class="tab">
-      <i class="bi bi-bell default-icon"></i>
-      <i class="bi bi-bell-fill active-icon"></i>
-    </label>
-
     <label for="film" class="tab">
       <i class="bi bi-camera-reels default-icon"></i>
       <i class="bi bi-camera-reels-fill active-icon"></i>
@@ -101,10 +47,6 @@
     <label for="music" class="tab">
       <i class="bi bi-file-music default-icon"></i>
       <i class="bi bi-file-music-fill active-icon"></i>
-    </label>
-    <label for="settings" class="tab">
-      <i class="bi bi-gear default-icon"></i>
-      <i class="bi bi-gear-fill active-icon"></i>
     </label>
   </div>
 
@@ -242,9 +184,6 @@
     </div>
   </div>
 
-
-
-
   <div id="postModal" class="modal">
     <div class="modal-content">
       <span class="close-icon" onclick="closePost()">&times;</span>
@@ -255,7 +194,6 @@
           <div class="post-menu">
             <i class="bi bi-three-dots-vertical menu-icon" onclick="togglePostMenu()"></i>
             <div class="dropdown-menu" id="postMenu">
-              <button onclick="alert('Analytics clicked')">Analytics</button>
               <button onclick="alert('Share clicked')">Share</button>
             </div>
           </div>
@@ -281,16 +219,109 @@
             <div class="comment"><strong>@alice</strong> Wow!</div>
             <div class="comment"><strong>@bob</strong> Amazing!</div>
           </div>
-          <div class="comment-input">
-            <input type="text" id="newComment" placeholder="Add a comment..." />
-            <button onclick="addComment()">Post</button>
-          </div>
         </div>
       </div>
     </div>
+  </div>
+
+  <!-- Bootstrap JS and Popper -->
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
+
+
+  <!-- The form -->
+  <div class="form-popup" id="loginForm">
+    <form method="post" class="form-container" action="">
+      <span class="close-icon" onclick="closeLoginForm()">&times;</span>
+      <img src="../images/logo.png" alt="Logo" class="logo-img">
+
+      <h3>Login to see more</h3>
+      <div class="info">
+        <label for="email"><b>Email</b></label>
+        <input type="text" placeholder="Email" name="email" required>
+        <label for="passe"><b>Password</b></label>
+        <input type="password" placeholder="Password" name="passe" required>
+        <a href="#" class="action" id="password">Forgot your password?</a>
+
+        <button type="submit" class="default-btn" name="login">Log in</button>
+        <a class="action" id="signup" onclick="openSignupForm()">Not on Artchive yet? Sign up</a>
+      </div>
+    </form>
+  </div>
+
+  <div class="form-popup" id="signupForm">
+    <form method="post" class="form-container" action="">
+      <span class="close-icon" onclick="closeSignupForm()">&times;</span>
+      <img src="../images/logo.png" alt="Logo" class="logo-img">
+
+      <h3>Welcome to Artchive</h3>
+      <div class="info">
+        <label for="email"><b>Email</b></label>
+        <input type="text" placeholder="Email" name="email" required>
+
+        <label for="passe"><b>Password</b></label>
+        <input type="password" placeholder="Password" name="passe" required>
+
+        <button type="submit" class="default-btn" name="signup" onclick="openSignupForm2()">Continue</button>
+        <a class="action" id="signup" onclick="openLoginForm()">Already a member? Log in</a>
+
+      </div>
+
+    </form>
+  </div>
+
+  <div class="form-popup" id="signupForm2">
+    <form method="post" class="form-container" action="">
+      <span class="close-icon" onclick="closeSignupForm()">&times;</span>
+      <img src="../images/logo.png" alt="Logo" class="logo-img">
+
+      <h3>Sign Up</h3>
+      <div class="info">
+        <label for="name"><b>Full Name</b></label>
+        <input type="text" placeholder="Full Name" name="name" required>
+
+        <label for="birthdate"><b>Date of Birth</b></label>
+        <input type="date" name="birthdate" required>
+
+        <button type="submit" class="default-btn" name="signup" onclick="openSignupForm3()">Continue</button>
+      </div>
+    </form>
+  </div>
+
+  <div class="form-popup" id="signupForm3">
+    <form method="post" class="form-container" action="">
+      <span class="close-icon" onclick="closeSignupForm()">&times;</span>
+      <img src="../images/logo.png" alt="Logo" class="logo-img">
+
+      <h3>Sign Up</h3>
+      <div class="info">
+
+        <label for="profilePicUpload" class="profile-pic-label" title="Upload Profile Picture">
+          <img id="profilePicPreview" src="../images/profilePicHandler.jpg" alt="User Icon" class="profile-pic-circle">
+          <input type="file" id="profilePicUpload" name="profilePic" accept="image/*" style="display:none"
+            onchange="previewProfilePic(event)" />
+        </label>
+        <label for="username"><b>Username</b></label>
+        <input type="text" placeholder="Username" name="username" required>
+
+
+        <button type="submit" class="default-btn" name="signup">Continue</button>
+      </div>
+    </form>
+  </div>
 </body>
 <script>
 
+function previewProfilePic(event) {
+    const input = event.target;
+    if (input.files && input.files[0]) {
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        document.getElementById('profilePicPreview').src = e.target.result;
+      }
+      reader.readAsDataURL(input.files[0]);
+    }
+  }
   document.addEventListener('DOMContentLoaded', function () {
     const cards = document.querySelectorAll('.img_container .card img');
 
@@ -301,29 +332,12 @@
     });
   });
 
-  //make liked button red
-  document.querySelector('.like-button').addEventListener('click', function () {
-    this.classList.toggle('liked');
-  });
-
-
   //close card if clicked out the margins
   document.addEventListener("click", function (e) {
     if (!e.target.closest(".post-menu")) {
       document.getElementById("postMenu").style.display = "none";
     }
   });
-
-  document.getElementById("uploadOverlay").addEventListener('click', closeUploadForm);
-
-
-
-
-
-
-
-
-
 
 
 

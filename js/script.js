@@ -16,22 +16,55 @@ function openLoginForm() {
     document.getElementById("formOverlay").style.display = "block";
   }
 
+  function openSignupForm2() {
+    document.getElementById("signupForm").style.display = "none";
+    document.getElementById("signupForm2").style.display = "block";
+    document.getElementById("formOverlay").style.display = "block";
+  }
+  
+  function openSignupForm3() {
+    document.getElementById("signupForm2").style.display = "none";
+    document.getElementById("signupForm3").style.display = "block";
+    document.getElementById("formOverlay").style.display = "block";
+  }
+
   function closeSignupForm() {
     document.getElementById("signupForm").style.display = "none";
+    document.getElementById("signupForm2").style.display = "none";
+    document.getElementById("signupForm3").style.display = "none";
     document.getElementById("formOverlay").style.display = "none";
   }
 
 function openUploadForm() {
   document.getElementById("uploadForm").style.display = "block";
-  document.getElementById("uploadOverlay").style.display = "block";
+  document.getElementById("formOverlay").style.display = "block";
 }
 
 function closeUploadForm() {
   document.getElementById("uploadForm").style.display = "none";
-  document.getElementById("uploadOverlay").style.display = "none";
+  document.getElementById("formOverlay").style.display = "none";
+  document.getElementById("home").checked = true;
 }
 
+function openEditProfileForm() {
+    document.getElementById("editProfileForm").style.display = "block";
+    document.getElementById("formOverlay").style.display = "block";
+  }
 
+  function closeEditProfileForm() {
+    document.getElementById("editProfileForm").style.display = "none";
+    document.getElementById("formOverlay").style.display = "none";
+  }
+
+  function previewProfilePic(input) {
+    if (input.files && input.files[0]) {
+      const reader = new FileReader();
+      reader.onload = function (e) {
+        document.getElementById('profilePreview').src = e.target.result;
+      }
+      reader.readAsDataURL(input.files[0]);
+    }
+  }
 
 function openPost(imageSrc) {
   const modal = document.getElementById('postModal');

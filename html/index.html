@@ -74,8 +74,7 @@ $conn->close();
     <link rel="stylesheet" href="../css/styleIndex.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
-
-    <link rel="icon" type="image/png" href="logo.png">
+    <link rel="icon" type="image/png" href="../images/logo.png">
     <script src="../js/script.js"></script>
 
 </head>
@@ -100,9 +99,7 @@ $conn->close();
         </div>
     </nav>
 
-
     <main class="hero">
-
         <div id="carouselExampleAutoplaying" class="carousel slide" data-bs-ride="carousel" data-bs-interval="3000">
             <div class="carousel-inner">
                 <h1>Get your next</h1>
@@ -128,29 +125,30 @@ $conn->close();
             </div>
         </div>
 
-        <div class="img_container">
-            <div class="card card_medium slide-0"><img src="../images/movie1.jpg"></div>
-            <div class="card card_medium slide-0"><img src="../images/movie2.jpg"></div>
-            <div class="card card_medium slide-0"><img src="../images/movie4.jpg"></div>
-            <div class="card card_medium slide-0"><img src="../images/movie3.jpg"></div>
+        <div class="parent-container">
 
-            <div class="card card_medium slide-2"><img src="../images/music1.jpg"></div>
-            <div class="card card_medium slide-2"><img src="../images/music2.jpg"></div>
-            <div class="card card_medium slide-2"><img src="../images/music3.jpg"></div>
-            <div class="card card_medium slide-2"><img src="../images/music4.jpg"></div>
+            <div class="img_container">
+                <div class="card card_medium slide-0"><img src="../images/movie1.jpg"></div>
+                <div class="card card_medium slide-0"><img src="../images/movie2.jpg"></div>
+                <div class="card card_medium slide-0"><img src="../images/movie4.jpg"></div>
+                <div class="card card_medium slide-0"><img src="../images/movie3.jpg"></div>
 
-            <div class="card card_medium slide-1"><img src="../images/pic1.jpg"></div>
-            <div class="card card_medium slide-1"><img src="../images/pic2.jpg"></div>
-            <div class="card card_medium slide-1"><img src="../images/pic3.jpg"></div>
-            <div class="card card_medium slide-1"><img src="../images/pic4.jpg"></div>
+                <div class="card card_medium slide-2"><img src="../images/music1.jpg"></div>
+                <div class="card card_medium slide-2"><img src="../images/music2.jpg"></div>
+                <div class="card card_medium slide-2"><img src="../images/music3.jpg"></div>
+                <div class="card card_medium slide-2"><img src="../images/music4.jpg"></div>
+
+                <div class="card card_medium slide-1"><img src="../images/pic1.jpg"></div>
+                <div class="card card_medium slide-1"><img src="../images/pic2.jpg"></div>
+                <div class="card card_medium slide-1"><img src="../images/pic3.jpg"></div>
+                <div class="card card_medium slide-1"><img src="../images/pic4.jpg"></div>
+            </div>
         </div>
     </main>
-
 
     <!-- Bootstrap JS and Popper -->
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
-
 
     <!-- The form -->
     <div class="form-popup" id="loginForm">
@@ -166,7 +164,7 @@ $conn->close();
                 <input type="password" placeholder="Password" name="passe" required>
                 <a href="#" class="action" id="password">Forgot your password?</a>
 
-                <button type="submit" class="btn" name="login">Log in</button>
+                <button type="submit" class="default-btn" name="login">Log in</button>
                 <a class="action" id="signup" onclick="openSignupForm()">Not on Artchive yet? Sign up</a>
             </div>
 
@@ -186,9 +184,28 @@ $conn->close();
                 <label for="passe"><b>Password</b></label>
                 <input type="password" placeholder="Password" name="passe" required>
 
-                <button type="submit" class="btn" name="signup">Continue</button>
+                <button type="submit" class="default-btn" name="signup" onclick="openSignupForm2()">Continue</button>
                 <a class="action" id="signup" onclick="openLoginForm()">Already a member? Log in</a>
 
+            </div>
+
+        </form>
+    </div>
+
+    <div class="form-popup" id="signupForm2">
+        <form method="post" class="form-container" action="">
+            <span class="close-icon" onclick="closeSignupForm()">&times;</span>
+            <img src="../images/logo.png" alt="Logo" class="logo-img">
+
+            <h3>Welcome to Artchive</h3>
+            <div class="info">
+                <label for="name"><b>Name</b></label>
+                <input type="text" placeholder="Name" name="name" required>
+
+                <label for="birthdate"><b>Date of Birth</b></label>
+                <input type="date" name="birthdate" required>
+
+                <button type="submit" class="default-btn" name="signup">Continue</button>
             </div>
 
         </form>
@@ -234,8 +251,6 @@ $conn->close();
     });
 
 
-
-
     document.addEventListener("DOMContentLoaded", function () {
         const imgCards = document.querySelectorAll(".card");
 
@@ -268,3 +283,4 @@ $conn->close();
             updateImageGrid(activeIndex);
         });
     });
+</script>

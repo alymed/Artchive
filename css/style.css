@@ -1,16 +1,21 @@
-* {
-  box-sizing: border-box;
-}
-
+/*
 body {
   font-family: Arial, sans-serif;
   margin: 0;
   padding: 20px;
   background-color: #fff;
-  /* display: flex; */
+  display: flex;
   height: 100vh;
-}
+} */
 
+body {
+  background-color: #fff;
+  display: flex;
+  justify-content: center;
+  padding: 2rem;
+  font-family: Arial, sans-serif;
+  margin: 0;
+}
 
 /*MAIN PAGE*/
 .custom-navbar {
@@ -43,157 +48,23 @@ body {
   color: black;
 }
 
-button.navbar-brand#log{
+button.navbar-brand#log {
   border-radius: 20px;
   background-color: #0a2c5a;
   color: white;
 }
 
-button.navbar-brand#sign{
+button.navbar-brand#sign {
   border-radius: 20px;
   background-color: #e0e0e0;
 }
 
-button.navbar-brand#sign:hover{
+button.navbar-brand#sign:hover {
   background-color: #aeadad;
 }
-button.navbar-brand#log:hover{
+button.navbar-brand#log:hover {
   background-color: #071e3e;
 }
-
-/* carrossel */
-
-.carousel-inner {
-  position: relative;
-  overflow: hidden;
-}
-
-.carousel-item {
-  opacity: 0;
-  transform: translateY(100%);
-  transition: opacity 0.6s ease, transform 0.6s ease;
-}
-
-.carousel-item-next,
-.carousel-item-prev,
-.carousel-item.active {
-  opacity: 1;
-  transform: translateY(0);
-}
-
-.carousel-indicators {
-  position: absolute;
-  bottom: 10px;
-  width: 100%;
-  display: flex;
-  justify-content: center;
-}
-
-.carousel-indicators button {
-  background-color: #fff;
-  border: none;
-  border-radius: 50%;
-  width: 10px;
-  height: 10px;
-  margin: 0 5px;
-  opacity: 0.5;
-  transition: opacity 0.3s ease;
-}
-
-.carousel-indicators .active {
-  opacity: 1;
-}
-
-.hero {
-  text-align: center;
-  padding-top: 140px;
-}
-
-.hero h1 {
-  font-size: 42px;
-  margin-bottom: 0;
-}
-
-.hero h2 {
-  font-size: 40px;
-  color: #0a2c5a;
-  margin: 10px 0 20px 0;
-}
-
-.carousel-inner {
-  padding-bottom: 20px;
-}
-
-.custom-dots {
-  margin-top: -10px;
-}
-
-.custom-dots button {
-  background-color: #ccc;
-  border-radius: 50%;
-  width: 10px;
-  height: 10px;
-  border: none;
-  margin: 0 5px;
-  opacity: 1;
-  transition: background-color 0.3s ease;
-}
-
-.custom-dots .active {
-  background-color: #5e9c8f;
-}
-
-.img_container {
-  display: grid;
-  position: absolute;
-  width: 80vw;
-  left: 50%;
-  transform: translateX(-50%);
-  grid-template-columns: repeat(auto-fill, 250px);
-  grid-auto-rows: 10px;
-  justify-content: center;
-  margin: 0;
-  padding: 0;
-}
-
-.card {
-  padding: 0px;
-  margin: 15px 10px;
-  border-radius: 16px;
-  border: none;
-}
-
-.card img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover; /* Ensures the image fills the container without distortion */
-  border-radius: 16px;
-  border: none;
-
-}
-
-.card_medium {
-  grid-row-end: span 33;
-  border-radius: 16px;
-
-}
-
-@keyframes fadeInUp {
-  0% {
-    opacity: 0;
-    transform: translateY(50px);
-  }
-  100% {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.fade-in-up {
-  animation: fadeInUp 1.3s ease forwards;
-}
-
-/*//////////////////////////////////////////////////////////////////*/
 
 /* /////////////////////////////SIDE BAR TAB///////////////////////////// */
 .tabs {
@@ -205,9 +76,9 @@ button.navbar-brand#log:hover{
 }
 
 .tab {
-  padding: 15px;
+  padding: 5px;
   cursor: pointer;
-  border-left: 4px solid transparent;
+  border-left: 0px solid transparent;
   transition: all 0.3s ease;
   display: flex;
   align-items: center;
@@ -273,7 +144,6 @@ input#music:checked ~ .tabs label[for="music"] .active-icon {
   display: inline;
 }
 
-
 /* ///////////////////////////////////////////////////////////////////////////// */
 .tab-content {
   flex-grow: 1;
@@ -296,15 +166,14 @@ input#photos:checked ~ .tabs label[for="photos"] {
 }
 
 input#home:checked ~ .tab-content #content1,
-input#create:checked ~ .tab-content #content2,
-input#notification:checked ~ .tab-content #content2,
+input#create:checked ~ .tab-content #content1,
+input#notification:checked ~ .tab-content #notification,
 input#settings:checked ~ .tab-content #content2,
 input#film:checked ~ .tab-content #filmContent,
 input#music:checked ~ .tab-content #musicContent,
 input#photos:checked ~ .tab-content #photoContent {
   display: block;
 }
-
 
 /* ////////////////////////////////////SEARCH BAR + PROFILE AND LOGO//////////////////////////// */
 .search-container {
@@ -324,6 +193,11 @@ input#photos:checked ~ .tab-content #photoContent {
   box-sizing: border-box;
 }
 
+.search-container img {
+  padding-left: 30px;
+  height: 40px;
+  width: auto;
+}
 .nav-logo {
   display: flex;
   align-items: center;
@@ -395,7 +269,9 @@ label.top_tab {
 /* Estilo de aba ativa */
 input#all:checked ~ .top_tabs label[for="all"],
 input#tag2:checked ~ .top_tabs label[for="tag2"],
-input#tag3:checked ~ .top_tabs label[for="tag3"] {
+input#tag3:checked ~ .top_tabs label[for="tag3"],
+input#tag4:checked ~ .top_tabs label[for="tag4"],
+input#tag5:checked ~ .top_tabs label[for="tag5"] {
   border-bottom: 4px solid #0a2c5a;
   color: #000;
   font-weight: bold;
@@ -404,26 +280,29 @@ input#tag3:checked ~ .top_tabs label[for="tag3"] {
 /* Mostrar/ocultar conteúdo de acordo com a aba horizontal ativa */
 .all-content,
 .tag2-content,
-.tag3-content {
+.tag3-content,
+.tag4-content,
+.tag5-content {
   display: none;
 }
 
 input#all:checked ~ .all-content,
 input#tag2:checked ~ .tag2-content,
-input#tag3:checked ~ .tag3-content {
+input#tag3:checked ~ .tag3-content,
+input#tag4:checked ~ .tag4-content,
+input#tag5:checked ~ .tag5-content {
   display: block;
 }
 
 /* //////////////////DISPLAY OF IMAGES///////////////////// */
 .img_container {
   display: grid;
-  position: absolute;
+  /* position: absolute; */
   width: 80vw;
-  left: 50%;
-  transform: translateX(-50%);
   grid-template-columns: repeat(auto-fill, 250px);
   grid-auto-rows: 10px;
   justify-content: center;
+
   margin: 0;
   padding: 0;
 }
@@ -476,21 +355,28 @@ input#tag3:checked ~ .tag3-content {
 
 .profile-header {
   display: flex;
-  align-items: center;
-  gap: 20px;
-  padding: 20px 40px;
+  align-items: center; /* Alinha verticalmente no centro */
+  gap: 20px; /* Espaço entre a imagem e as infos */
+  flex-wrap: nowrap; /* Se o espaço for pequeno, quebra para baixo */
+  padding: 20px 10%;
   border-bottom: 1px solid #ccc;
-  flex-wrap: nowrap; /* para impedir que a foto vá para baixo */
 }
 
 .profile-pic img {
-  width: 150px;
-  height: 150px;
-  display: block;
-  border-radius: 50%;
+  width: 100px;
+  height: 100px;
   object-fit: cover;
-  border: 3px solid #0a2c5a;
-  flex-shrink: 0; /* impede que a foto encolha */
+  border-radius: 50%;
+  border: 2px solid #ccc;
+}
+
+.profile-header .profile-pic {
+  width: 100px;
+  height: 100px;
+  margin: 0px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .profile-info {
@@ -501,22 +387,41 @@ input#tag3:checked ~ .tag3-content {
   justify-content: center;
 }
 
-
 .profile-info h1 {
   margin: 0;
   font-size: 28px;
 }
 
-.bio {
+/* Set a style for the submit/login button */
+.profile-info .default-btn {
+  background-color: #0a2c5a;
+  color: white;
+  padding: 16px 20px;
+  border: none;
+  cursor: pointer;
+  width: 20%;
+  margin-bottom: 10px;
+  border-radius: 25px;
+}
+
+/* Add some hover effects to buttons */
+.profile-info .default-btn:hover,
+.open-button:hover {
+  background-color: #071e3e;
+  color: white;
+}
+
+.profile-info p{
   font-style: italic;
-  margin-top: 5px;
+  margin: 5px;
   color: #555;
+  
 }
 
 .social-stats {
   display: flex;
   gap: 30px;
-  margin: 15px 0;
+  margin: 5px 0;
   font-size: 14px;
   align-items: center;
   flex-wrap: wrap;
@@ -527,30 +432,11 @@ input#tag3:checked ~ .tag3-content {
   min-width: 60px;
 }
 
-.btn {
-  margin-left: auto; /* empurra botão para a direita */
-  padding: 8px 20px;
-  background-color: #0a2c5a;
-  color: white;
-  border: none;
-  border-radius: 25px;
-  cursor: pointer;
-  font-size: 14px;
-  transition: background-color 0.3s ease;
-}
-
-.btn:hover {
-  background-color: #09407d;
-}
-
-
 .section-title {
   margin: 30px 0 10px 120px;
   font-size: 20px;
   font-weight: 600;
 }
-
-
 
 /*teste post*/
 
@@ -584,20 +470,6 @@ input#tag3:checked ~ .tag3-content {
   cursor: pointer;
 }
 
-* {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-  font-family: sans-serif;
-}
-
-body {
-  background-color: #fafafa;
-  display: flex;
-  justify-content: center;
-  padding: 2rem;
-}
-
 .feed-container {
   width: 100%;
   max-width: 600px;
@@ -609,7 +481,7 @@ body {
   border-radius: 10px;
   margin-bottom: 2rem;
   overflow: hidden;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 }
 
 .post-header {
@@ -628,7 +500,6 @@ body {
 .username {
   font-weight: bold;
 }
-
 
 .post-footer {
   padding: 10px 15px;
@@ -654,11 +525,9 @@ body {
   color: #666;
 }
 
-
 .caption {
   margin-top: 5px;
 }
-
 
 .modal .post-image {
   max-width: 40%;
@@ -697,7 +566,7 @@ body {
   top: 24px;
   background: #fff;
   border: 1px solid #ddd;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
   z-index: 10;
   border-radius: 5px;
   overflow: hidden;
@@ -754,175 +623,7 @@ body {
   cursor: pointer;
 }
 
-
-
-/* FORMS */
-.form-popup {
-  position: fixed;
-  top: 50%; left: 50%;
-  transform: translate(-50%, -50%);
-  background-color: #fff;
-  border-radius: 16px;
-  padding: 30px;
-  z-index: 10000; /* maior que overlay */
-  width: 90%;
-  max-width: 400px;
-  box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-}
-
-.form-container input[type="file"]{
-  width: 100%;
-  padding: 10px;
-  margin: 10px 0 15px 0;
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  box-sizing: border-box;
-}
-
-.form-container input[type=text], .form-container input[type=password] {
-  width: 60%;
-  padding: 12px;
-  margin: 5px 0 3px 0;
-  border: 1px solid gray;
-  background: #fff;
-  border-radius: 16px;
-}
-
-/* When the inputs get focus, do something */
-.form-container input[type=text]:focus, .form-container input[type=password]:focus {
-  background-color: #ddd;
-  outline: none;
-}
-
-.form-overlay {
-  position: fixed;
-  top: 0; left: 0;
-  width: 100%; height: 100%;
-  background-color: rgba(0,0,0,0.5);
-  z-index: 9999;
-}
-
-
-.form-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0,0,0,0.5); /* semi-transparent black */
-  z-index: 998; /* behind the popup */
-  display: none; /* hidden by default */
-}
-
-.close-icon {
-  font-size: 50px;
-  font-weight: bold;
-  cursor: pointer;
-  float: right;
-  color: #0a2c5a;
-  position: absolute;
-  top: 10px;
-  right: 15px;
-}
-.close-icon:hover {
-  color: black;
-}
-
-.form-container h3 {
-  text-align: center;
-  margin-bottom: 20px;
-}
-
-.form-container #upload-file {
-  /*display: block;       /* para ficar em linha própria */
-  height: 200px;           /* deixa maior — ajuste conforme quiser */
-  max-width: 100%;      /* para não ultrapassar o container */
-  margin-bottom: 15px;  /* espaçamento abaixo */
-  text-align: left;     /* texto alinhado à esquerda */
-  border-radius: 16px;
-  padding: 8px;
-  border: 1px solid gray;
-  background: #fff;
-  cursor: pointer;
-}
-
-.form-container {
-  width: 450px;
-  padding: 10px;
-  background-color: white;
-}
-
-.form-container .btn {
-  background-color: #0a2c5a;
-  color: white;
-  padding: 16px 20px;
-  border: none;
-  cursor: pointer;
-  width: 60%;
-  margin-bottom:10px;
-  border-radius: 25px;
-}
-
-/* Add some hover effects to buttons */
-.form-container .btn:hover, .open-button:hover {
-  background-color: #071e3e;
-  color: white;
-}
-
-.form-popup .logo-img {
-  width: 70px; /* ou o valor que quiser */
-  height: auto;
-  display: block;
-  margin: 0 auto 20px auto;
-}
-
-.form-container label {
-  display: block;
-  margin-top: 10px;
-  margin-bottom: 5px;
-}
-
-.form-container .info {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  width: 100%;
-}
-
-.form-container label,
-.form-container .action {
-  align-self: flex-start;
-  margin-left: 20%;
-}
-
-.form-container .action {
-  padding: 0;
-  text-decoration: none;
-  font-weight: normal;
-  color: #0a2c5a;
-}
-
-.form-container .action#signup {
-  margin-bottom: 20px;
-}
-
-.form-container .action:hover {
-  text-decoration: underline;
-}
-
-
-/* 
-body {
-  font-family: Arial, sans-serif;
-  margin: 0;
-  padding: 10px;
-  background-color: #fff;
-  overflow-x: hidden;
-  overflow-y: hidden;
-
-}
-
-/* The popup form - hidden by default */
+/* ///////////////////////////FORM POPUP//////////////////////////// */
 .form-popup {
   display: none;
   position: fixed;
@@ -933,7 +634,7 @@ body {
   z-index: 999;
   background-color: white;
   padding: 20px;
-  box-shadow: 0px 0px 15px rgba(0,0,0,0.7);
+  box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.7);
   border-radius: 30px;
 }
 
@@ -944,8 +645,21 @@ body {
   background-color: white;
 }
 
-/* Full-width input fields */
-.form-container input[type=text], .form-container input[type=password] {
+/* When the inputs get focus, do something */
+.form-container input[type="text"]:focus,
+.form-container input[type="file"]:focus,
+.form-container input[type="date"]:focus,
+.form-container input[type="password"]:focus,
+.form-container textarea[type="text"]:focus {
+  background-color: #ddd;
+  outline: none;
+}
+
+.form-container input[type="text"],
+.form-container input[type="file"],
+.form-container input[type="date"],
+.form-container input[type="password"],
+.form-container textarea[type="text"] {
   width: 60%;
   padding: 12px;
   margin: 5px 0 3px 0;
@@ -954,26 +668,21 @@ body {
   border-radius: 16px;
 }
 
-/* When the inputs get focus, do something */
-.form-container input[type=text]:focus, .form-container input[type=password]:focus {
-  background-color: #ddd;
-  outline: none;
-}
-
 /* Set a style for the submit/login button */
-.form-container .btn {
+.default-btn {
   background-color: #0a2c5a;
   color: white;
   padding: 16px 20px;
   border: none;
   cursor: pointer;
   width: 60%;
-  margin-bottom:10px;
+  margin-bottom: 10px;
   border-radius: 25px;
 }
 
 /* Add some hover effects to buttons */
-.form-container .btn:hover, .open-button:hover {
+.default-btn:hover,
+.open-button:hover {
   background-color: #071e3e;
   color: white;
 }
@@ -982,7 +691,7 @@ body {
   position: absolute;
   top: 10px;
   right: 15px;
-  font-size: 24px;
+  font-size: 30px;
   font-weight: bold;
   color: #aaa;
   cursor: pointer;
@@ -998,7 +707,7 @@ body {
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(0,0,0,0.5); /* semi-transparent black */
+  background-color: rgba(0, 0, 0, 0.5); /* semi-transparent black */
   z-index: 998; /* behind the popup */
   display: none; /* hidden by default */
 }
@@ -1047,4 +756,51 @@ body {
 
 .form-container .action:hover {
   text-decoration: underline;
-} 
+}
+
+.profile-pic-label {
+  display: block;
+  width: 100px;
+  height: 100px;
+  cursor: pointer;
+  margin: 0 auto 15px auto; /* centraliza e dá margem inferior */
+  align-items: center;
+  justify-content: center;
+}
+
+.profile-pic-circle {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  object-fit: cover;
+  display: block;
+  margin: 0 auto;
+}
+
+
+/* //////////////////////NOTIFICATIONS////////////////////////////////// */
+.notification-list {
+  list-style: none;
+  padding: 0;
+  margin-top: 1rem;
+}
+
+.notification-item {
+  padding: 15px;
+  border-bottom: 1px solid #ddd;
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.notification-item .bi {
+  font-size: 20px;
+  color: #0a2c5a;
+}
+
+.notification-item .time {
+  margin-left: auto;
+  font-size: 12px;
+  color: gray;
+}
