@@ -1,81 +1,16 @@
-<!-- <?php
-session_start();
-
-
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-error_reporting(E_ALL);
-
-$servername = "localhost";
-$username = "root";
-$password = "";
-$database = "artchive_db";
-
-// Criar conexão com MySQL
-$conn = new mysqli($servername, $username, $password, $database);
-
-if ($conn->connect_error) {
-    die("Erro de conexão: " . $conn->connect_error);
-} else {
-    echo "Conexão com a base de dados estabelecida com sucesso!";
-}
-
-if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['login'])) {
-    $email = trim($_POST['email']);
-    $passe = $_POST['passe'];
-
-    // Consulta SQL para verificar o usuário
-    $sql = "SELECT id, email, passe FROM users WHERE email = ?";
-    $stmt = $conn->prepare($sql);
-    $stmt->bind_param("s", $email); // Protege contra SQL Injection
-    $stmt->execute();
-    $result = $stmt->get_result();
-
-    if ($result->num_rows == 1) {
-        $row = $result->fetch_assoc();
-        
-        // Verificar se a senha corresponde ao hash da senha armazenado no banco de dados
-        if (password_verify($passe, $row['passe'])) {
-            $_SESSION['user_id'] = $row['id'];
-            $_SESSION['user_email'] = $row['email'];
-            header("Location: app.php");
-            exit();
-        } else {
-            $erro = "Senha incorreta!";
-        }
-    } else {
-        $erro = "Usuário não encontrado!";
-    }
-}
-
-
-if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['signup'])) {
-    $email = $_POST['email'];
-    $password = password_hash($_POST['passe'], PASSWORD_DEFAULT);
-
-    $sql = "INSERT INTO users (email, passe) VALUES ('$email', '$password')";
-    if ($conn->query($sql) === TRUE) {
-        echo "<script>alert('Utilizador criado com sucesso!');</script>";
-    } else {
-        echo "<script>alert('Erro ao criar utilizador: " . $conn->error . "');</script>";
-    }        
-}
-
-$conn->close();
-?> -->
-
 <!DOCTYPE html>
+
 <html>
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Artchive</title>
-    <link rel="stylesheet" href="../css/styleIndex.css">
+    <link rel="stylesheet" href="css/styleIndex.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
-    <link rel="icon" type="image/png" href="../images/logo.png">
-    <script src="../js/script.js"></script>
+    <link rel="icon" type="image/png" href="images/logo.png">
+    <script src="js/script.js"></script>
 
 </head>
 
@@ -86,7 +21,7 @@ $conn->close();
             <div class="navbar">
                 <div class="navbar-left">
                     <a href="index.html">
-                        <img src="../images/artchive 2.png" alt="Logo" class="logo-img">
+                        <img src="images/artchive 2.png" alt="Logo" class="logo-img">
                     </a>
                     <a href="exploreConvidado.html" class="navbar-brand" id="explore">Explore</a>
                 </div>
@@ -128,20 +63,20 @@ $conn->close();
         <div class="parent-container">
 
             <div class="img_container">
-                <div class="card card_medium slide-0"><img src="../images/movie1.jpg"></div>
-                <div class="card card_medium slide-0"><img src="../images/movie2.jpg"></div>
-                <div class="card card_medium slide-0"><img src="../images/movie4.jpg"></div>
-                <div class="card card_medium slide-0"><img src="../images/movie3.jpg"></div>
+                <div class="card card_medium slide-0"><img src="images/movie1.jpg"></div>
+                <div class="card card_medium slide-0"><img src="images/movie2.jpg"></div>
+                <div class="card card_medium slide-0"><img src="images/movie4.jpg"></div>
+                <div class="card card_medium slide-0"><img src="images/movie3.jpg"></div>
 
-                <div class="card card_medium slide-2"><img src="../images/music1.jpg"></div>
-                <div class="card card_medium slide-2"><img src="../images/music2.jpg"></div>
-                <div class="card card_medium slide-2"><img src="../images/music3.jpg"></div>
-                <div class="card card_medium slide-2"><img src="../images/music4.jpg"></div>
+                <div class="card card_medium slide-2"><img src="images/music1.jpg"></div>
+                <div class="card card_medium slide-2"><img src="images/music2.jpg"></div>
+                <div class="card card_medium slide-2"><img src="images/music3.jpg"></div>
+                <div class="card card_medium slide-2"><img src="images/music4.jpg"></div>
 
-                <div class="card card_medium slide-1"><img src="../images/pic1.jpg"></div>
-                <div class="card card_medium slide-1"><img src="../images/pic2.jpg"></div>
-                <div class="card card_medium slide-1"><img src="../images/pic3.jpg"></div>
-                <div class="card card_medium slide-1"><img src="../images/pic4.jpg"></div>
+                <div class="card card_medium slide-1"><img src="images/pic1.jpg"></div>
+                <div class="card card_medium slide-1"><img src="images/pic2.jpg"></div>
+                <div class="card card_medium slide-1"><img src="images/pic3.jpg"></div>
+                <div class="card card_medium slide-1"><img src="images/pic4.jpg"></div>
             </div>
         </div>
     </main>
@@ -152,19 +87,19 @@ $conn->close();
 
     <!-- The form -->
     <div class="form-popup" id="loginForm">
-        <form method="post" class="form-container" action="">
+        <form method="POST" class="form-container" action="login.php">
             <span class="close-icon" onclick="closeLoginForm()">&times;</span>
-            <img src="../images/logo.png" alt="Logo" class="logo-img">
+            <img src="images/logo.png" alt="Logo" class="logo-img">
 
             <h3>Login to see more</h3>
             <div class="info">
                 <label for="email"><b>Email</b></label>
-                <input type="text" placeholder="Email" name="email" required>
+                <input type="text" placeholder="Email" name="email" id="login_email" required>
                 <label for="passe"><b>Password</b></label>
-                <input type="password" placeholder="Password" name="passe" required>
+                <input type="password" placeholder="Password" name="password" id="login_password" required>
                 <a href="#" class="action" id="password">Forgot your password?</a>
 
-                <button type="submit" class="default-btn" name="login">Log in</button>
+                <button type="submit" class="default-btn" name="login" id="login_button" >Log in</button>
                 <a class="action" id="signup" onclick="openSignupForm()">Not on Artchive yet? Sign up</a>
             </div>
 
@@ -172,19 +107,23 @@ $conn->close();
     </div>
 
     <div class="form-popup" id="signupForm">
-        <form method="post" class="form-container" action="">
+        <form method="post" class="form-container" action="signup_emailvalidation.php">
             <span class="close-icon" onclick="closeSignupForm()">&times;</span>
-            <img src="../images/logo.png" alt="Logo" class="logo-img">
+            <img src="images/logo.png" alt="Logo" class="logo-img">
 
             <h3>Welcome to Artchive</h3>
             <div class="info">
+
+                <label for="name"><b>Name</b></label>
+                <input type="text" placeholder="Name" name="name" id="register_name" required>
+
                 <label for="email"><b>Email</b></label>
-                <input type="text" placeholder="Email" name="email" required>
+                <input type="text" placeholder="Email" name="email" id="register_email1" required>
 
-                <label for="passe"><b>Password</b></label>
-                <input type="password" placeholder="Password" name="passe" required>
+                <label for="birthdate"><b>Date of Birth</b></label>
+                <input type="date" name="birthdate" id="register_birthdate" required>
 
-                <button type="submit" class="default-btn" name="signup" onclick="openSignupForm2()">Continue</button>
+                <button type="submit" class="default-btn" name="signup" /*onclick="openSignupForm2()"*/ id="register_button1" >Continue</button>
                 <a class="action" id="signup" onclick="openLoginForm()">Already a member? Log in</a>
 
             </div>
@@ -193,23 +132,38 @@ $conn->close();
     </div>
 
     <div class="form-popup" id="signupForm2">
-        <form method="post" class="form-container" action="">
+        <form method="post" class="form-container" action="signup.php">
             <span class="close-icon" onclick="closeSignupForm()">&times;</span>
-            <img src="../images/logo.png" alt="Logo" class="logo-img">
+            <img src="images/logo.png" alt="Logo" class="logo-img">
 
             <h3>Welcome to Artchive</h3>
             <div class="info">
-                <label for="name"><b>Name</b></label>
-                <input type="text" placeholder="Name" name="name" required>
 
-                <label for="birthdate"><b>Date of Birth</b></label>
-                <input type="date" name="birthdate" required>
+       
+                <label hidden for="name"><b>Name</b></label>
+                <input hidden type="text" placeholder="Name" name="name" id="register_name2" required>
 
-                <button type="submit" class="default-btn" name="signup">Continue</button>
+                <label hidden for="email"><b>Email</b></label>
+                <input hidden type="text" placeholder="Email" name="email" id="register_email2" required>
+
+                <label hidden for="birthdate"><b>Date of Birth</b></label>
+                <input hidden type="date" name="birthdate" id="register_birthdate2" required>>
+
+                <label for="username"><b>Username</b></label>
+                <input type="text" placeholder="Username" name="username" id="register_username" required>
+
+                <label for="password"><b>Password</b></label>
+                <input type="password" placeholder="Password" name="password" id="register_password" required>
+
+
+                <button type="submit" class="default-btn" name="signup" id="register_button2">Register</button>
+
             </div>
 
         </form>
     </div>
+
+     
 
 </body>
 
@@ -220,6 +174,51 @@ $conn->close();
 
 
 <script>
+    
+
+    //TODO: If you want to change the way errors are shown change here
+    window.addEventListener("DOMContentLoaded", () => {
+
+        const params = new URLSearchParams(window.location.search);
+
+        if (params.has("signupStep")) {
+            const step = params.get("signupStep");
+
+            if (step === "1") {
+                openSignupForm();
+            } else if (step === "2") {
+                openSignupForm2();
+
+                const name = params.get("name");
+                const email = params.get("email");
+                const birthdate = params.get("birthdate");
+
+                if (email) {
+                    document.getElementById("register_name2").value = name;
+                    document.getElementById("register_email2").value = email;
+                    document.getElementById("register_birthdate2").value = birthdate;
+                }
+            }
+        }
+
+        if (params.has("signupError")) {
+            alert("Signup Error: " + params.get("signupError"));
+            openSignupForm();
+        }
+
+        if (params.has("loginError")) {
+            alert("Login Error: " + params.get("loginError"));
+            openLoginForm();
+            
+        }
+
+        // Clean up the URL
+        window.history.replaceState({}, document.title, window.location.pathname);
+    });
+
+
+
+
     function updateImageGrid(slideIndex) {
         const cards = document.querySelectorAll(".card.card_medium");
 

@@ -1,47 +1,105 @@
 <?php
-    $servername = "localhost";
-    $username = "root"; 
-    $password = ""; 
-    $database = "loja"; 
+
+    ini_set('display_errors', 1);
+    ini_set('display_startup_errors', 1);
+    error_reporting(E_ALL);
+
+    require_once( "lib/lib.php" );
+    require_once( "lib/db.php" );
+
     
-    // Criar conexão com MySQL
-    $conn = new mysqli($servername, $username, $password, $database);
+    $flags[] = FILTER_NULL_ON_FAILURE;
+    $method = filter_input( INPUT_SERVER, 'REQUEST_METHOD', FILTER_UNSAFE_RAW, $flags);
     
-    // Verificar conexão
-    if ($conn->connect_error) {
-        die("Erro de conexão: " . $conn->connect_error);
+    if ( $method=='POST') {
+        $_INPUT_METHOD = INPUT_POST;
+    } elseif ( $method=='GET' ) {
+        $_INPUT_METHOD = INPUT_GET;
     }
-
-
-    if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['signUp'])) {
-        $nome = $_POST['nome'];
-        $email = $_POST['email'];
-        $password = password_hash($_POST['senha'], PASSWORD_DEFAULT);
+    else {
+        echo "Invalid HTTP method (" . $method . ")";
+        exit();
+    }
     
-        $sql = "INSERT INTO users (nome, email, senha) VALUES ('$nome', '$email', '$password')";
-        if ($conn->query($sql) === TRUE) {
-            echo "<script>alert('Utilizador criado com sucesso!');</script>";
+    $flags[] = FILTER_NULL_ON_FAILURE;
+
+    $email = filter_input( $_INPUT_METHOD, 'email', FILTER_UNSAFE_RAW, $flags);
+    $password = filter_input( $_INPUT_METHOD, 'password', FILTER_UNSAFE_RAW, $flags);
+    $name = filter_input( $_INPUT_METHOD, 'name', FILTER_UNSAFE_RAW, $flags);
+    $username = filter_input( $_INPUT_METHOD, 'username', FILTER_UNSAFE_RAW, $flags);
+    $birthdate = filter_input( $_INPUT_METHOD, 'birthdate', FILTER_UNSAFE_RAW, $flags);
+
+    if(filter_var( $email, FILTER_VALIDATE_EMAIL ) && $password != null && $password != "" &&
+        $name != null && $name != "" && $username != null && $username != "" && $birthdate != null && $birthdate != ""
+       
+    ){
+
+        $a = 3;
+        
+        /*
+        $serverName = filter_input( INPUT_SERVER, 'SERVER_NAME', FILTER_UNSAFE_RAW, $flags);
+
+        $serverPort = 80;
+
+        $appname = webAppName();
+
+        $baseUrl = "http://" . $serverName . ":" . $serverPort;
+
+        $baseNextUrl = $baseUrl . $appname;
+        */
+        
+
+        $userExists = existUserField("username", $username);
+
+        if ( !$userExists ) {
+
+            $idUser = register($name, $username, $password, $email, $birthdate );
+     
+            if ($idUser > 0) {
+               
+                session_start();
+                $_SESSION['username'] = $username;
+                $_SESSION['id'] = $idUser;
+
+                if (isset($_SESSION['locationAfterAuth'])) {
+                    $baseNextUrl = $baseUrl;
+                    $nextUrl = $_SESSION['locationAfterAuth']; // redirect to the page user was trying to go, but was not authenticated
+                } else {
+                    $nextUrl = "app.html";
+                }
+
+              
+            } else {
+                
+                header("Location: index.html?signupError=RegisterError");
+            }
+
         } else {
-            echo "<script>alert('Erro ao criar utilizador: " . $conn->error . "');</script>";
-        }        
+  
+            header("Location: index.html?signupError=UsernameInUse");
+            
+        }
+
+    
+    } else {
+        
+        header("Location: index.html?signupError=InvalidInputs");
     }
-    ?>
+
+    header( "Location: " . $baseNextUrl . $nextUrl );
+
+?>
+
 
 <!DOCTYPE html>
-<html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
 <body>
-    <h1>REGISTO</h1>
-
-    <form method="post">
-        <label for="nome">Nome</label>
-        <input type="text" name="nome" required><br/>
-        <label for="email">Email</label>
-        <input type="email" name="email" required><br/>
-        <label for="passe" >Palavra-passe</label>
-        <input type="password" name="passe" required><br/>
-
-        <button type="submit"name="signUp">Registar</button><br/>
-    </form>
+    <h1> <?php echo $a ?></h1>
 </body>
 </html>
-<?php $conn->close() ?>
+

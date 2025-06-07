@@ -5,22 +5,22 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Artchive</title>
-  <link rel="stylesheet" href="../css/style.css">
+  <link rel="stylesheet" href="css/style.css">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
-  <link rel="icon" type="image/png" href="../images/logo.png">
-  <script src="../js/script.js"></script>
+  <link rel="icon" type="image/png" href="images/logo.png">
+  <script src="js/script.js"></script>
 </head>
 
 <body>
   <div class="form-overlay" id="formOverlay"></div>
 
   <div class="search-container">
-    <a href="app.html" class="nav-logo">
-      <img src="../images/logo.png" alt="Logo" class="logo-img">
+    <a href="app.jsp" class="nav-logo">
+      <img src="images/logo.png" alt="Logo" class="logo-img">
     </a>
     <input type="text" class="search-box" placeholder="Search...">
-    <a href="perfil.html" class="user-icon">
+    <a href="perfil.jsp" class="user-icon">
       <i class="bi bi-person-circle"></i>
     </a>
   </div>
@@ -57,7 +57,7 @@
     <div id="content1" class="content">
       <div class="profile-header">
         <div class="profile-pic">
-          <img src="../images/profilePic.PNG" alt="Profile Picture" />
+          <img src="images/profilePic.PNG" alt="Profile Picture" />
         </div>
         <div class="profile-info">
           <h1 id="userName">Gonçalo Charneca</h1>
@@ -77,12 +77,12 @@
       <!-- Gallery -->
       <div class="img_container">
         <h2 class="section-title">Gallery</h2>
-        <div class="card card_small"><img src="../images/img1.jpg" alt="Post 1"></div>
-        <div class="card card_small"><img src="../images/img2.jpg" alt="Post 2"></div>
-        <div class="card card_small"><img src="../images/img3.jpg" alt="Post 3"></div>
-        <div class="card card_small"><img src="../images/img4.jpg" alt="Post 4"></div>
-        <div class="card card_small"><img src="../images/img5.jpg" alt="Post 5"></div>
-        <div class="card card_small"><img src="../images/profilePic.PNG" alt="Post 6"></div>
+        <div class="card card_small"><img src="images/img1.jpg" alt="Post 1"></div>
+        <div class="card card_small"><img src="images/img2.jpg" alt="Post 2"></div>
+        <div class="card card_small"><img src="images/img3.jpg" alt="Post 3"></div>
+        <div class="card card_small"><img src="images/img4.jpg" alt="Post 4"></div>
+        <div class="card card_small"><img src="images/img5.jpg" alt="Post 5"></div>
+        <div class="card card_small"><img src="images/profilePic.PNG" alt="Post 6"></div>
       </div>
     </div>
 
@@ -140,7 +140,7 @@
     <div class="form-popup" id="uploadForm">
       <form method="post" class="form-container">
         <span class="close-icon" onclick="closeUploadForm()">&times;</span>
-        <img src="../images/logo.png" alt="Logo" class="logo-img">
+        <img src="images/logo.png" alt="Logo" class="logo-img">
 
         <h3>Upload New Content</h3>
         <div class="info">
@@ -164,7 +164,7 @@
         <div class="info">
 
           <div class="profile-pic">
-              <img id="profilePreview" src="../images/profilePic.PNG" alt="Preview">
+              <img id="profilePreview" src="images/profilePic.PNG" alt="Preview">
             </div>
           <input type="file" id="profile-pic-input" name="profile_pic" accept="image/*" style="display:none;"
             onchange="previewProfilePic(this)">
