@@ -100,7 +100,7 @@ function webAppName() {
     $uri = explode("/", $_SERVER['REQUEST_URI']);
     $n = count($uri);
     $webApp = "";
-    for ($idx = 0; $idx < $n - 1; $idx++) {
+    for ($idx = 0; $idx < $n - 2; $idx++) {
         $webApp .= ($uri[$idx] . "/" );
     }
 
@@ -127,11 +127,11 @@ function showAuth($authType, $realm, $message) {
     echo $message;
 }
 
-function isValid($userName, $password) {
+function isValid($email, $password) {
 
     $userOk = -1;
 
-    dbConnect( "config/.htconfig.xml" );
+    dbConnect( ConfigFile );
     
     $dataBaseName = $GLOBALS['configDataBase']->db;
 
@@ -139,7 +139,7 @@ function isValid($userName, $password) {
 
     $query = 
             "SELECT * FROM `$dataBaseName`.`users` " .
-            "WHERE `email`='$userName' AND `password`='$password'";
+            "WHERE `email`='$email' AND `password`='$password'";
 
     $result = mysqli_query($GLOBALS['ligacao'], $query);
 
@@ -332,7 +332,7 @@ function getFileDetails($ids) {
 }
 
 function getConfiguration() {
-    dbConnect( "../Config/.htconfig.xml");
+    dbConnect( ConfigFile );
 
     $dataBaseName = $GLOBALS['configDataBase']->db;
 
@@ -347,6 +347,7 @@ function getConfiguration() {
     mysqli_free_result($result);
 
     dbDisconnect();
+
 
     return $configuration;
 }

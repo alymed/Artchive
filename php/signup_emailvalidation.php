@@ -4,8 +4,8 @@
     ini_set('display_startup_errors', 1);
     error_reporting(E_ALL);
 
-    require_once( "lib/lib.php" );
-    require_once( "lib/db.php" );
+    require_once( "../lib/lib.php" );
+    require_once( "../lib/db.php" );
 
     
     $flags[] = FILTER_NULL_ON_FAILURE;
@@ -32,7 +32,7 @@
     ){
 
 
-        /*
+        
         $serverName = filter_input( INPUT_SERVER, 'SERVER_NAME', FILTER_UNSAFE_RAW, $flags);
 
         $serverPort = 80;
@@ -42,7 +42,7 @@
         $baseUrl = "http://" . $serverName . ":" . $serverPort;
 
         $baseNextUrl = $baseUrl . $appname;
-        */
+        
 
         $emailExists = existUserField("email", $email);
 
@@ -50,13 +50,13 @@
 
         if(!$emailExists){
 
-           header("Location: index.php?signupStep=2&email=" . urlencode($email) . 
+           header("Location: " . $baseNextUrl . "index.html?signupStep=2&email=" . urlencode($email) . 
             "&name=" . urlencode($name) . 
             "&birthdate=" . urlencode($birthdate));
 
         }else {
 
-            header("Location: index.php?signupError=EmailInUse");
+            header("Location: ". $baseNextUrl . "index.html?signupError=EmailInUse");
         }
 
     }

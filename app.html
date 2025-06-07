@@ -301,14 +301,14 @@
   </div>
 
   <div class="form-popup" id="uploadForm">
-    <form method="post" class="form-container">
+    <form method="POST" class="form-container" action="php/fileUpload.php" enctype="multipart/form-data">
       <span class="close-icon" onclick="closeUploadForm()">&times;</span>
       <img src="images/logo.png" alt="Logo" class="logo-img">
 
       <h3>Upload New Content</h3>
       <div class="info">
 
-        <input type="file" id="upload-file" name="file" accept="image/*" required>
+        <input type="file" id="upload-file" name="userFile" size="64" required>
 
         <input type="text" id="upload-title" name="title" placeholder="Enter a title" required>
         <textarea type="text" id="upload-description" name="description" placeholder="Write a short description..."

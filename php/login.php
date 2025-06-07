@@ -4,8 +4,8 @@
     ini_set('display_startup_errors', 1);
     error_reporting(E_ALL);
 
-    require_once( "lib/lib.php" );
-    require_once( "lib/db.php" );
+    require_once( "../lib/lib.php" );
+    require_once( "../lib/db.php" );
 
     
     $flags[] = FILTER_NULL_ON_FAILURE;
@@ -30,9 +30,7 @@
     $serverPort = 80;
     $name = webAppName();
 
-    $baseUrl = "http://" . $serverName . ":" . $serverPort;
-
-    $baseNextUrl = $baseUrl . $name;
+    $baseNextUrl = "http://" . $serverName . ":" . $serverPort . $name;
 
     $idUser = isValid($email, $password);
 
@@ -44,14 +42,14 @@
         $_SESSION['id'] = $idUser;
 
         if (isset($_SESSION['locationAfterAuth'])) {
-            $baseNextUrl = $baseUrl;
+
             $nextUrl = $_SESSION['locationAfterAuth'];
         } else {
-            $nextUrl = "app.php";
+            $nextUrl = "app.html";
         }
 
     } else {
-        header("Location: index.php?loginError=WrongCredentials");
+        header("Location: " . $baseNextUrl . "index.html?loginError=WrongCredentials");
         exit;
     }
 

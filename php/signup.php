@@ -4,8 +4,8 @@
     ini_set('display_startup_errors', 1);
     error_reporting(E_ALL);
 
-    require_once( "lib/lib.php" );
-    require_once( "lib/db.php" );
+    require_once( "../lib/lib.php" );
+    require_once( "../lib/db.php" );
 
     
     $flags[] = FILTER_NULL_ON_FAILURE;
@@ -36,7 +36,7 @@
 
         $a = 3;
         
-        /*
+        
         $serverName = filter_input( INPUT_SERVER, 'SERVER_NAME', FILTER_UNSAFE_RAW, $flags);
 
         $serverPort = 80;
@@ -46,7 +46,7 @@
         $baseUrl = "http://" . $serverName . ":" . $serverPort;
 
         $baseNextUrl = $baseUrl . $appname;
-        */
+        
         
 
         $userExists = existUserField("username", $username);
@@ -70,20 +70,20 @@
 
               
             } else {
-                
-                header("Location: index.html?signupError=RegisterError");
+
+                header("Location: " . $baseNextUrl. "index.html?signupError=RegisterError");
             }
 
         } else {
   
-            header("Location: index.html?signupError=UsernameInUse");
+            header("Location: " . $baseNextUrl. "index.html?signupError=UsernameInUse");
             
         }
 
     
     } else {
         
-        header("Location: index.html?signupError=InvalidInputs");
+        header("Location: " . $baseNextUrl. "index.html?signupError=InvalidInputs");
     }
 
     header( "Location: " . $baseNextUrl . $nextUrl );
