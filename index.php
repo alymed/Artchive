@@ -138,6 +138,11 @@ if (isset($_SESSION['id'])) {
             }
         }
 
+        if (params.has("signupSuccess")) {
+            alert("" + params.get("signupSuccess"));
+            openLoginForm();
+        }
+
         if (params.has("signupError")) {
             alert("Signup Error: " + params.get("signupError"));
             openSignupForm();

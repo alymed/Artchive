@@ -146,7 +146,7 @@ function isValid($email, $password) {
     if ( $result!=false ) {
         $userData = mysqli_fetch_array($result);
         if($userData != null){
-            $userOk = $userData['idUser'];
+            $userOk = $userData['id'];
         }
        
     }
@@ -175,28 +175,54 @@ function register($name, $username, $password, $email, $birthdate) {
     $birthdate = mysqli_real_escape_string($GLOBALS['ligacao'], $birthdate);
     $createdAt = date("Y-m-d H:i:s");
 
+
     $query = 
-            "INSERT INTO  `$dataBaseName`.`users-auth` (`email`, `password`, `created_at`, `status`) ".
+            "INSERT INTO  `$dataBaseName`.`users-auth` (`email`, `password`, `created_at`,`status`) ".
             "VALUES ('$email', '$password', '$createdAt', '1')";
 
     $result = mysqli_query($GLOBALS['ligacao'], $query);
 
     if ($result !== false) {
-        
+
         $userOk = mysqli_insert_id($GLOBALS['ligacao']);
       
         if (createProfile($userOk, $name, $username, $birthdate)) {
 
+            createToken($userOk);
+
         } else {
-            $query = "DELETE FROM `users-auth` WHERE idUser = $userOk";
+            $query = "DELETE FROM `users-auth` WHERE `id` = '$userOk'";
             mysqli_query($GLOBALS['ligacao'], $query);
         }
-    }
+    } 
 
     dbDisconnect();
 
     return $userOk;
 }
+
+function createToken($idUser){
+    
+    $dataBaseName = $GLOBALS['configDataBase']->db;
+
+    mysqli_select_db($GLOBALS['ligacao'], $dataBaseName );
+
+    $token = bin2hex(random_bytes(16));
+    $createdAt = date('Y-m-d H:i:s');
+
+    $query = 
+            "INSERT INTO  `$dataBaseName`.`tokens-verification` (`token`, `createdAt`, `usedAt`,`idUser`) ".
+            "VALUES ('$token', '$createdAt', NULL, '$idUser')";
+
+    $result = mysqli_query($GLOBALS['ligacao'], $query);
+
+    if ($result !== false) {
+        echo "Token created with success!";
+    }else{
+        echo "Error creating token: " . dbGetLastError();
+    }
+}
+
 
 function createProfile($idUser, $name, $username, $birthdate) {
     
@@ -206,7 +232,7 @@ function createProfile($idUser, $name, $username, $birthdate) {
 
 
     $query = 
-            "INSERT INTO  `$dataBaseName`.`users-profile` (`idUser`,`name`, `username`, `birthdate`, `biography`) ".
+            "INSERT INTO  `$dataBaseName`.`users-profile` (`id`,`name`, `username`, `birthdate`, `biography`) ".
             "VALUES ('$idUser', '$name', '$username', '$birthdate', NULL)";
 
     $result = mysqli_query($GLOBALS['ligacao'], $query);
@@ -256,7 +282,7 @@ function getUserData($idUser) {
     mysqli_select_db($GLOBALS['ligacao'], $dataBaseName );
 
     $query = "SELECT * FROM `$dataBaseName`.`users-profile` " .
-            "WHERE `idUser`='$idUser'";
+            "WHERE `id`='$idUser'";
 
     $result = mysqli_query($GLOBALS['ligacao'], $query);
 
@@ -267,6 +293,97 @@ function getUserData($idUser) {
     dbDisconnect();
 
     return $userData;
+}
+
+function getUserAuthData($idUser) {
+
+    dbConnect( ConfigFile );
+    
+    $dataBaseName = $GLOBALS['configDataBase']->db;
+
+    mysqli_select_db($GLOBALS['ligacao'], $dataBaseName );
+
+    $query = "SELECT * FROM `$dataBaseName`.`users-auth` " .
+            "WHERE `id`='$idUser'";
+
+    $result = mysqli_query($GLOBALS['ligacao'], $query);
+
+    $userData = mysqli_fetch_array($result);
+
+    mysqli_free_result($result);
+
+    dbDisconnect();
+
+    return $userData;
+}
+
+
+
+function getTokenDataFromToken($token){
+    
+    dbConnect( ConfigFile );
+    
+    $dataBaseName = $GLOBALS['configDataBase']->db;
+
+    mysqli_select_db($GLOBALS['ligacao'], $dataBaseName );
+
+    $query = "SELECT * FROM `$dataBaseName`.`tokens-verification` " .
+            "WHERE `token`='$token'";
+
+    $result = mysqli_query($GLOBALS['ligacao'], $query);
+
+    $tokenData = mysqli_fetch_array($result);
+
+    mysqli_free_result($result);
+
+    dbDisconnect();
+
+    return $tokenData;
+}
+
+function getTokenFromUser($idUser){
+    
+    dbConnect( ConfigFile );
+    
+    $dataBaseName = $GLOBALS['configDataBase']->db;
+
+    mysqli_select_db($GLOBALS['ligacao'], $dataBaseName );
+
+    $query = "SELECT * FROM `$dataBaseName`.`tokens-verification` " .
+            "WHERE `id`='$idUser'";
+
+    $result = mysqli_query($GLOBALS['ligacao'], $query);
+
+    $userData = mysqli_fetch_array($result);
+
+    mysqli_free_result($result);
+
+    dbDisconnect();
+
+    return $userData;
+}
+
+function accountVerifyDB($idUser){
+
+    dbConnect(ConfigFile);
+
+    $dataBaseName = $GLOBALS['configDataBase']->db;
+    mysqli_select_db($GLOBALS['ligacao'], $dataBaseName);
+
+
+    $query = "UPDATE `$dataBaseName`.`users-auth` SET `status`='2' WHERE `id` = '$idUser'";
+
+    $result = mysqli_query($GLOBALS['ligacao'], $query);
+
+
+    if ($result !== false) {
+        echo 'Account is now verified!';
+    }   else {
+        echo "Error verifying profile: " . dbGetLastError();
+    }
+
+    dbDisconnect();
+
 }
 
 function editProfile($idUser, $name, $username, $bio) {
@@ -293,7 +410,7 @@ function editProfile($idUser, $name, $username, $bio) {
 
     if (!empty($fieldsToUpdate)) {
         $setClause = implode(", ", $fieldsToUpdate);
-        $query = "UPDATE `$dataBaseName`.`users-profile` SET $setClause WHERE `idUser` = '$idUser'";
+        $query = "UPDATE `$dataBaseName`.`users-profile` SET $setClause WHERE `id` = '$idUser'";
 
         $result = mysqli_query($GLOBALS['ligacao'], $query);
         dbDisconnect();
@@ -321,7 +438,7 @@ function getEmail($idUser, $authType) {
 
     mysqli_select_db($GLOBALS['ligacao'], $dataBaseName );
 
-    $query = "SELECT `email` FROM `$dataBaseName`.`auth-$authType` WHERE `idUser`='$idUser'";
+    $query = "SELECT `email` FROM `$dataBaseName`.`auth-$authType` WHERE `id`='$idUser'";
 
     $result = mysqli_query($GLOBALS['ligacao'], $query);
 
@@ -346,7 +463,63 @@ function logout() {
     exit;
 }
 
-function getFileDetails($id) {
+function uploadFile(
+    $filename, $mimeFilename, $typeFilename, 
+    $imageFilename, $imageMimeFilename, $imageTypeFilename, 
+    $thumbFilename, $thumbMimeFilename, $thumbTypeFilename
+){
+    $fileOk = -1;
+
+    dbConnect( ConfigFile );
+    $dataBaseName = $GLOBALS['configDataBase']->db;
+
+    mysqli_select_db( $GLOBALS['ligacao'], $dataBaseName );
+    
+    $query = 
+            "INSERT INTO `$dataBaseName`.`images-details`" .
+            "(`filename`, `mimeFilename`, `typeFilename`, `imageFilename`, `imageMimeFilename`, `imageTypeFilename`, `thumbFilename`, `thumbMimeFilename`, `thumbTypeFilename`) values " .
+            "('$filename', '$mimeFilename', '$typeFilename', '$imageFilename', '$imageMimeFilename', '$imageTypeFilename', '$thumbFilename', '$thumbMimeFilename', '$thumbTypeFilename')";
+
+    $result =  mysqli_query( $GLOBALS['ligacao'], $query );
+
+    if ( $result !== false ) {
+      $fileOk = mysqli_insert_id($GLOBALS['ligacao']);
+    } 
+   
+    dbDisconnect();
+
+    return $fileOk;
+}
+
+function uploadPost($title, $description, $idUser, $idImage){
+
+    $postOk = -1;
+
+    dbConnect( ConfigFile );
+    $dataBaseName = $GLOBALS['configDataBase']->db;
+
+    mysqli_select_db( $GLOBALS['ligacao'], $dataBaseName );
+
+    $createdAt = date("Y-m-d H:i:s");
+    
+    $query = 
+            "INSERT INTO `$dataBaseName`.`users-posts`" .
+            "(`title`, `description`, `createdAt`, `idUser`, `idImage`) values " .
+            "('$title', '$description', '$createdAt', '$idUser', '$idImage')";
+
+    $result =  mysqli_query( $GLOBALS['ligacao'], $query );
+
+    if ( $result !== false ) {
+
+        $postOk = mysqli_insert_id($GLOBALS['ligacao']);
+    }
+   
+    dbDisconnect();
+
+    return $postOk;
+}
+
+function getFileDetails($idUser) {
  
 
     dbConnect(ConfigFile);
@@ -355,7 +528,7 @@ function getFileDetails($id) {
 
     mysqli_select_db($GLOBALS['ligacao'], $dataBaseName );
 
-    $query = "SELECT * FROM `$dataBaseName`.`images-details` WHERE `id`='$id'";
+    $query = "SELECT * FROM `$dataBaseName`.`images-details` WHERE `id`='$idUser'";
 
     $result = mysqli_query($GLOBALS['ligacao'], $query);
 
@@ -367,7 +540,7 @@ function getFileDetails($id) {
     mysqli_free_result($result);
     dbDisconnect();
 
-    if ( !is_array($ids)) {
+    if ( !is_array($idUser)) {
         return $fileData[0];
     } else {
         return $fileData;
@@ -383,14 +556,14 @@ function getFilesID($idUser) {
 
     mysqli_select_db($GLOBALS['ligacao'], $dataBaseName );
 
-    $query = "SELECT `id` FROM `$dataBaseName`.`images-details` WHERE `idUser`='$idUser'";
+    $query = "SELECT `id` FROM `$dataBaseName`.`users-posts` WHERE `idUser`='$idUser'";
 
     $result = mysqli_query($GLOBALS['ligacao'], $query);
 
     $filesID = array();
 
     while (($fileDataRecord = mysqli_fetch_array($result)) != false) {
-        $filesID[] = $fileDataRecord['id'];
+        $filesID[] = $fileDataRecord['idImage'];
     }
 
     mysqli_free_result($result);
@@ -515,6 +688,27 @@ function showUploadFileError($errorCode) {
     }
 
     return $errorMessage;
+}
+
+function getEmailAccount($idAccount){
+
+    dbConnect( ConfigFile);
+            
+    $dataBaseName = $GLOBALS['configDataBase']->db;
+
+    mysqli_select_db( $GLOBALS['ligacao'], $dataBaseName );
+
+    $queryString = "SELECT * FROM `$dataBaseName`.`email-accounts` WHERE `id`='$idAccount'";
+
+    $result = mysqli_query( $GLOBALS['ligacao'], $queryString );
+
+    $account = mysqli_fetch_array( $result );
+
+    mysqli_free_result($result);
+
+    dbDisconnect();
+
+    return $account;
 }
 
 function getXdebugArg() {

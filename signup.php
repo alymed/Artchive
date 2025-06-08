@@ -55,17 +55,9 @@
             $idUser = register($name, $username, $password, $email, $birthdate);
      
             if ($idUser > 0) {
-               
-                session_start();
-                $_SESSION['id'] = $idUser;
 
-                if (isset($_SESSION['locationAfterAuth'])) {
-                    $nextUrl = $_SESSION['locationAfterAuth']; // redirect to the page user was trying to go, but was not authenticated      
-                } else {
-                    $nextUrl = "app.php";
-                }
+                $nextUrl = "email.php?id=" . urlencode($idUser);
 
-              
             } else {
 
                 header("Location: " . $baseNextUrl. "index.php?signupError=RegisterError");
@@ -83,8 +75,7 @@
         header("Location: " . $baseNextUrl. "index.php?signupError=InvalidInputs");
     }
 
-    header( "Location: " . $baseNextUrl . $nextUrl );
-
+    redirectToPage($nextUrl, "Signup Success", "Verification email sent! Verify your email. ", 1);
 ?>
 
 

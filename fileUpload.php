@@ -25,10 +25,8 @@ if (!isset($_SESSION['id'])) {
     ini_set('display_startup_errors', 1);
     error_reporting(E_ALL);
 
-    session_start();
 
     require_once( "Lib/lib.php" );
-    require_once( "Lib/db.php" );
     require_once( "Lib/ImageResize.php" );
 
     
@@ -53,9 +51,9 @@ if (!isset($_SESSION['id'])) {
     $src = $_FILES['userFile']['tmp_name'];
 
 
-    $userID = $_SESSION['id'];
+    $idUser = $_SESSION['id'];
 
-    $dstUser = $dstDir. DIRECTORY_SEPARATOR . $userID;
+    $dstUser = $dstDir. DIRECTORY_SEPARATOR . $idUser;
     $dst = $dstUser. DIRECTORY_SEPARATOR . $srcName;
 
     if (!is_dir($dstUser)) {
@@ -159,31 +157,26 @@ $fileInfo = finfo_open(FILEINFO_MIME);
     }
 
 
-    dbConnect( ConfigFile );
-    $dataBaseName = $GLOBALS['configDataBase']->db;
-
-    mysqli_select_db( $GLOBALS['ligacao'], $dataBaseName );
-
     $filename = addslashes($dst);
     $imageFilename = addslashes($imageFilenameAux);
     $thumbFilename = addslashes($thumbFilenameAux);
 
-    $query = 
-            "INSERT INTO `$dataBaseName`.`images-details`" .
-            "(`filename`, `mimeFilename`, `typeFilename`, `imageFilename`, `imageMimeFilename`, `imageTypeFilename`, `thumbFilename`, `thumbMimeFilename`, `thumbTypeFilename`, `title`, `description`,`idUser`) values " .
-            "('$filename', '$mimeFilename', '$typeFilename', '$imageFilename', '$imageMimeFilename', '$imageTypeFilename', '$thumbFilename', '$thumbMimeFilename', '$thumbTypeFilename', '$title', '$description', '$userID')";
+    $idFile = uploadFile($filename, $mimeFilename, $typeFilename, $imageFilename, $imageMimeFilename, $imageTypeFilename, $thumbFilename, $thumbMimeFilename, $thumbTypeFilename);
 
 
-    if ( mysqli_query( $GLOBALS['ligacao'], $query )==false ) {
-        $msg = "Information about file could not be inserted into the data base. Details : " . dbGetLastError() ;
+    if ( $idFile > 0 ) {
+
+        $idPost = uploadPost($title, $description, $idUser, $idFile);
+        if($idPost > 0){
+                 echo "Success!";
+        }else{
+            echo "Information about file could not be inserted into the data base. Details : " . dbGetLastError() ;
+        }
     }
     else {
-        $msg = "Information about file was inserted into data base.";
+        echo "Information about file could not be inserted into the data base. Details : " . dbGetLastError() ;
     }
 
-    dbDisconnect();
-
-    redirectToLastPage("","",0);
 
 ?>
 

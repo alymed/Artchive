@@ -36,16 +36,23 @@
 
     $idUser = isValid($email, $password);
 
-      
     if ( $idUser>0 ) {
         
-       session_start();
-        $_SESSION['id'] = $idUser;
+        $isVerified = intval(getUserAuthData($idUser)['status']);
 
-        if (isset($_SESSION['locationAfterAuth'])) {
-            $nextUrl = $_SESSION['locationAfterAuth'];
+        if ( $isVerified == 2) {
+
+            session_start();
+            $_SESSION['id'] = $idUser;
+
+            if (isset($_SESSION['locationAfterAuth'])) {
+                $nextUrl = $_SESSION['locationAfterAuth'];
+            } else {
+                $nextUrl = "app.php";
+            }
         } else {
-            $nextUrl = "app.php";
+            header("Location: " . $baseNextUrl . "index.php?loginError=AccountNotVerified");
+            exit;
         }
 
     } else {
