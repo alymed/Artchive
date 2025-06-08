@@ -1,3 +1,15 @@
+<?php
+
+session_start();
+
+if (!isset($_SESSION['id'])) {
+    
+    header('Location: index.php');
+    exit();
+}
+?>
+
+
 <!DOCTYPE html>
 <html>
 
@@ -16,13 +28,13 @@
   <div class="form-overlay" id="formOverlay"></div>
 
   <div class="search-container">
-    <a href="app.html" class="nav-logo">
+    <a href="app.php" class="nav-logo">
       <img src="images/logo.png" alt="Logo" class="logo-img">
     </a>
     <input type="text" class="search-box" placeholder="Search...">
-    <a href="perfil.html" class="user-icon">
+    <label for="profile" class="user-icon">
       <i class="bi bi-person-circle"></i>
-    </a>
+    </label>
   </div>
 
   <input type="radio" name="tab" id="home" checked>
@@ -31,6 +43,7 @@
   <input type="radio" name="tab" id="film">
   <input type="radio" name="tab" id="photos">
   <input type="radio" name="tab" id="music">
+  <input type="radio" name="tab" id="profile">
   <input type="radio" name="tab" id="settings">
 
 
@@ -59,6 +72,10 @@
       <i class="bi bi-file-music default-icon"></i>
       <i class="bi bi-file-music-fill active-icon"></i>
     </label>
+    <label for="profile" class="tab">
+      <i class="bi bi-person default-icon"></i>         
+      <i class="bi bi-person-fill active-icon"></i>    
+    </label>
     <label for="settings" class="tab">
       <i class="bi bi-gear default-icon"></i>
       <i class="bi bi-gear-fill active-icon"></i>
@@ -66,7 +83,7 @@
   </div>
 
   <div class="tab-content">
-    <div id="content1" class="content">
+    <div id="homeContent" class="content">
       <input type="radio" name="top_tab" id="all" checked>
       <input type="radio" name="top_tab" id="tag2">
       <input type="radio" name="top_tab" id="tag3">
@@ -249,6 +266,15 @@
       <h2>Content 3</h2>
       <p>This is the content for Tab 3.</p>
     </div>
+
+    <?php 
+      include "perfil.php"
+    ?>
+
+    <div id="settingsContent" class="content">
+      <h2>Content 3</h2>
+      <p><a href="logout.php">Logout</a></p>
+    </div>
   </div>
 
   <!-- Bootstrap JS and Popper -->
@@ -301,7 +327,7 @@
   </div>
 
   <div class="form-popup" id="uploadForm">
-    <form method="POST" class="form-container" action="php/fileUpload.php" enctype="multipart/form-data">
+    <form method="POST" class="form-container" action="fileUpload.php" enctype="multipart/form-data">
       <span class="close-icon" onclick="closeUploadForm()">&times;</span>
       <img src="images/logo.png" alt="Logo" class="logo-img">
 

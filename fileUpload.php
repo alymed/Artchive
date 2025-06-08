@@ -1,3 +1,14 @@
+<?php
+
+session_start();
+
+if (!isset($_SESSION['id'])) {
+    
+    header('Location: index.php');
+    exit();
+}
+?>
+
 <!DOCTYPE html>
 <html>
     <head>
@@ -16,9 +27,9 @@
 
     session_start();
 
-    require_once( "../Lib/lib.php" );
-    require_once( "../Lib/db.php" );
-    require_once( "../Lib/ImageResize.php" );
+    require_once( "Lib/lib.php" );
+    require_once( "Lib/db.php" );
+    require_once( "Lib/ImageResize.php" );
 
     
     if ( $_FILES['userFile']['error']!=0 ) {
@@ -159,8 +170,8 @@ $fileInfo = finfo_open(FILEINFO_MIME);
 
     $query = 
             "INSERT INTO `$dataBaseName`.`images-details`" .
-            "(`filename`, `mimeFilename`, `typeFilename`, `imageFilename`, `imageMimeFilename`, `imageTypeFilename`, `thumbFilename`, `thumbMimeFilename`, `thumbTypeFilename`, `title`, `description`) values " .
-            "('$filename', '$mimeFilename', '$typeFilename', '$imageFilename', '$imageMimeFilename', '$imageTypeFilename', '$thumbFilename', '$thumbMimeFilename', '$thumbTypeFilename', '$title', '$description')";
+            "(`filename`, `mimeFilename`, `typeFilename`, `imageFilename`, `imageMimeFilename`, `imageTypeFilename`, `thumbFilename`, `thumbMimeFilename`, `thumbTypeFilename`, `title`, `description`,`idUser`) values " .
+            "('$filename', '$mimeFilename', '$typeFilename', '$imageFilename', '$imageMimeFilename', '$imageTypeFilename', '$thumbFilename', '$thumbMimeFilename', '$thumbTypeFilename', '$title', '$description', '$userID')";
 
 
     if ( mysqli_query( $GLOBALS['ligacao'], $query )==false ) {
@@ -172,11 +183,10 @@ $fileInfo = finfo_open(FILEINFO_MIME);
 
     dbDisconnect();
 
-  
+    redirectToLastPage("","",0);
 
 ?>
-        <p>AAAAAAAA</p>
-        <p><?php echo $msg ?></p>
-        <p><a href='javascript:history.back()'>Back</a></p>
+
+
     </body>
 </html>

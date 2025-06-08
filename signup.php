@@ -4,20 +4,19 @@
     ini_set('display_startup_errors', 1);
     error_reporting(E_ALL);
 
-    require_once( "../lib/lib.php" );
-    require_once( "../lib/db.php" );
+    require_once( "lib/lib.php" );
 
-    
     $flags[] = FILTER_NULL_ON_FAILURE;
     $method = filter_input( INPUT_SERVER, 'REQUEST_METHOD', FILTER_UNSAFE_RAW, $flags);
     
     if ( $method=='POST') {
         $_INPUT_METHOD = INPUT_POST;
     } elseif ( $method=='GET' ) {
-        $_INPUT_METHOD = INPUT_GET;
+        header('Location: index.php');
+        exit();
     }
     else {
-        echo "Invalid HTTP method (" . $method . ")";
+        header('Location: index.php');
         exit();
     }
     
@@ -49,41 +48,39 @@
         
         
 
-        $userExists = existUserField("username", $username);
+        $userExists = existUserField("username", $username, "users-profile");
 
         if ( !$userExists ) {
 
-            $idUser = register($name, $username, $password, $email, $birthdate );
+            $idUser = register($name, $username, $password, $email, $birthdate);
      
             if ($idUser > 0) {
                
                 session_start();
-                $_SESSION['username'] = $username;
                 $_SESSION['id'] = $idUser;
 
                 if (isset($_SESSION['locationAfterAuth'])) {
-                    $baseNextUrl = $baseUrl;
-                    $nextUrl = $_SESSION['locationAfterAuth']; // redirect to the page user was trying to go, but was not authenticated
+                    $nextUrl = $_SESSION['locationAfterAuth']; // redirect to the page user was trying to go, but was not authenticated      
                 } else {
-                    $nextUrl = "app.html";
+                    $nextUrl = "app.php";
                 }
 
               
             } else {
 
-                header("Location: " . $baseNextUrl. "index.html?signupError=RegisterError");
+                header("Location: " . $baseNextUrl. "index.php?signupError=RegisterError");
             }
 
         } else {
   
-            header("Location: " . $baseNextUrl. "index.html?signupError=UsernameInUse");
+            header("Location: " . $baseNextUrl. "index.php?signupError=UsernameInUse");
             
         }
 
     
     } else {
         
-        header("Location: " . $baseNextUrl. "index.html?signupError=InvalidInputs");
+        header("Location: " . $baseNextUrl. "index.php?signupError=InvalidInputs");
     }
 
     header( "Location: " . $baseNextUrl . $nextUrl );

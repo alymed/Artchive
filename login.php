@@ -1,11 +1,12 @@
 <?php
 
+
     ini_set('display_errors', 1);
     ini_set('display_startup_errors', 1);
     error_reporting(E_ALL);
 
-    require_once( "../lib/lib.php" );
-    require_once( "../lib/db.php" );
+    require_once( "lib/lib.php" );
+    require_once( "lib/db.php" );
 
     
     $flags[] = FILTER_NULL_ON_FAILURE;
@@ -14,10 +15,11 @@
     if ( $method=='POST') {
         $_INPUT_METHOD = INPUT_POST;
     } elseif ( $method=='GET' ) {
-        $_INPUT_METHOD = INPUT_GET;
+        header('Location: index.php');
+        exit();
     }
     else {
-        echo "Invalid HTTP method (" . $method . ")";
+        header('Location: index.php');
         exit();
     }
     
@@ -38,18 +40,16 @@
     if ( $idUser>0 ) {
         
        session_start();
-        $_SESSION['username'] = $username;
         $_SESSION['id'] = $idUser;
 
         if (isset($_SESSION['locationAfterAuth'])) {
-
             $nextUrl = $_SESSION['locationAfterAuth'];
         } else {
-            $nextUrl = "app.html";
+            $nextUrl = "app.php";
         }
 
     } else {
-        header("Location: " . $baseNextUrl . "index.html?loginError=WrongCredentials");
+        header("Location: " . $baseNextUrl . "index.php?loginError=WrongCredentials");
         exit;
     }
 

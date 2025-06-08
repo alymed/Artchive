@@ -1,3 +1,14 @@
+<?php
+
+session_start();
+
+if (isset($_SESSION['id'])) {
+    
+    header('Location: app.php');
+    exit();
+}
+?>
+
 <!DOCTYPE html>
 <html>
 
@@ -16,7 +27,7 @@
   <div class="form-overlay" id="formOverlay"></div>
 
   <div class="search-container">
-    <a href="exploreConvidado.html" class="nav-logo">
+    <a href="exploreConvidado.php" class="nav-logo">
       <img src="images/logo.png" alt="Logo" class="logo-img">
     </a>
     <input type="text" class="search-box" placeholder="Search...">
@@ -229,86 +240,11 @@
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
 
 
-  <!-- The form -->
-  <div class="form-popup" id="loginForm">
-    <form method="post" class="form-container" action="">
-      <span class="close-icon" onclick="closeLoginForm()">&times;</span>
-      <img src="images/logo.png" alt="Logo" class="logo-img">
-
-      <h3>Login to see more</h3>
-      <div class="info">
-        <label for="email"><b>Email</b></label>
-        <input type="text" placeholder="Email" name="email" required>
-        <label for="passe"><b>Password</b></label>
-        <input type="password" placeholder="Password" name="passe" required>
-        <a href="#" class="action" id="password">Forgot your password?</a>
-
-        <button type="submit" class="default-btn" name="login">Log in</button>
-        <a class="action" id="signup" onclick="openSignupForm()">Not on Artchive yet? Sign up</a>
-      </div>
-    </form>
-  </div>
-
-  <div class="form-popup" id="signupForm">
-    <form method="post" class="form-container" action="">
-      <span class="close-icon" onclick="closeSignupForm()">&times;</span>
-      <img src="images/logo.png" alt="Logo" class="logo-img">
-
-      <h3>Welcome to Artchive</h3>
-      <div class="info">
-        <label for="email"><b>Email</b></label>
-        <input type="text" placeholder="Email" name="email" required>
-
-        <label for="passe"><b>Password</b></label>
-        <input type="password" placeholder="Password" name="passe" required>
-
-        <button type="submit" class="default-btn" name="signup" onclick="openSignupForm2()">Continue</button>
-        <a class="action" id="signup" onclick="openLoginForm()">Already a member? Log in</a>
-
-      </div>
-
-    </form>
-  </div>
-
-  <div class="form-popup" id="signupForm2">
-    <form method="post" class="form-container" action="">
-      <span class="close-icon" onclick="closeSignupForm()">&times;</span>
-      <img src="images/logo.png" alt="Logo" class="logo-img">
-
-      <h3>Sign Up</h3>
-      <div class="info">
-        <label for="name"><b>Full Name</b></label>
-        <input type="text" placeholder="Full Name" name="name" required>
-
-        <label for="birthdate"><b>Date of Birth</b></label>
-        <input type="date" name="birthdate" required>
-
-        <button type="submit" class="default-btn" name="signup" onclick="openSignupForm3()">Continue</button>
-      </div>
-    </form>
-  </div>
-
-  <div class="form-popup" id="signupForm3">
-    <form method="post" class="form-container" action="">
-      <span class="close-icon" onclick="closeSignupForm()">&times;</span>
-      <img src="images/logo.png" alt="Logo" class="logo-img">
-
-      <h3>Sign Up</h3>
-      <div class="info">
-
-        <label for="profilePicUpload" class="profile-pic-label" title="Upload Profile Picture">
-          <img id="profilePicPreview" src="images/profilePicHandler.jpg" alt="User Icon" class="profile-pic-circle">
-          <input type="file" id="profilePicUpload" name="profilePic" accept="image/*" style="display:none"
-            onchange="previewProfilePic(event)" />
-        </label>
-        <label for="username"><b>Username</b></label>
-        <input type="text" placeholder="Username" name="username" required>
+  <?php 
+    include 'auth_forms.php'
+  ?>
 
 
-        <button type="submit" class="default-btn" name="signup">Continue</button>
-      </div>
-    </form>
-  </div>
 </body>
 <script>
 

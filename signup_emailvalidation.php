@@ -4,8 +4,7 @@
     ini_set('display_startup_errors', 1);
     error_reporting(E_ALL);
 
-    require_once( "../lib/lib.php" );
-    require_once( "../lib/db.php" );
+    require_once( "lib/lib.php" );
 
     
     $flags[] = FILTER_NULL_ON_FAILURE;
@@ -14,10 +13,11 @@
     if ( $method=='POST') {
         $_INPUT_METHOD = INPUT_POST;
     } elseif ( $method=='GET' ) {
-        $_INPUT_METHOD = INPUT_GET;
+        header('Location: index.php');
+        exit();
     }
     else {
-        echo "Invalid HTTP method (" . $method . ")";
+        header('Location: index.php');
         exit();
     }
     
@@ -44,19 +44,19 @@
         $baseNextUrl = $baseUrl . $appname;
         
 
-        $emailExists = existUserField("email", $email);
+        $emailExists = existUserField("email", $email, "users-auth");
 
         $a = 3;
 
         if(!$emailExists){
 
-           header("Location: " . $baseNextUrl . "index.html?signupStep=2&email=" . urlencode($email) . 
+           header("Location: " . $baseNextUrl . "index.php?signupStep=2&email=" . urlencode($email) . 
             "&name=" . urlencode($name) . 
             "&birthdate=" . urlencode($birthdate));
 
         }else {
 
-            header("Location: ". $baseNextUrl . "index.html?signupError=EmailInUse");
+            header("Location: ". $baseNextUrl . "index.php?signupError=EmailInUse");
         }
 
     }

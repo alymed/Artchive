@@ -143,6 +143,12 @@ input#music:checked ~ .tabs label[for="music"] .default-icon {
 input#music:checked ~ .tabs label[for="music"] .active-icon {
   display: inline;
 }
+input#profile:checked ~ .tabs label[for="profile"] .default-icon {
+  display: none;
+}
+input#profile:checked ~ .tabs label[for="profile"] .active-icon {
+  display: inline;
+}
 
 /* ///////////////////////////////////////////////////////////////////////////// */
 .tab-content {
@@ -160,17 +166,19 @@ input#notification:checked ~ .tabs label[for="notification"],
 input#film:checked ~ .tabs label[for="film"],
 input#settings:checked ~ .tabs label[for="settings"],
 input#music:checked ~ .tabs label[for="music"],
+input#profile:checked ~ .tabs label[for="profile"],
 input#photos:checked ~ .tabs label[for="photos"] {
   background-color: white;
   font-weight: bold;
 }
 
-input#home:checked ~ .tab-content #content1,
-input#create:checked ~ .tab-content #content1,
+input#home:checked ~ .tab-content #homeContent,
+input#create:checked ~ .tab-content #homeContent,
 input#notification:checked ~ .tab-content #notification,
-input#settings:checked ~ .tab-content #content2,
+input#settings:checked ~ .tab-content #settingsContent,
 input#film:checked ~ .tab-content #filmContent,
 input#music:checked ~ .tab-content #musicContent,
+input#profile:checked ~ .tab-content #profileContent,
 input#photos:checked ~ .tab-content #photoContent {
   display: block;
 }
@@ -230,6 +238,7 @@ input#photos:checked ~ .tab-content #photoContent {
 }
 
 .user-icon {
+  cursor: pointer;
   font-size: 28px;
   color: #0a2c5a;
   text-decoration: none;
