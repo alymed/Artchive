@@ -358,9 +358,12 @@
             <div class="comment-section">
                 <h4>Comments</h4>
                 <div class="comment-list" id="commentList">
-                    <div class="comment"><strong>@alice</strong> Wow!</div>
-                    <div class="comment"><strong>@bob</strong> Amazing!</div>
+                    <!-- Comentários serão carregados aqui via JS -->
                 </div>
+
+                <!-- input hidden para guardar o post_id atual -->
+                <input type="hidden" id="currentPostId" value="">
+
                 <div class="comment-input">
                     <input type="text" id="newComment" placeholder="Add a comment..." />
                     <button onclick="addComment()">Post</button>
@@ -384,7 +387,8 @@
             <textarea type="text" id="upload-description" name="description" placeholder="Write a short description..."
                 rows="6"></textarea>
 
-            <button type="button" id="privacyToggle" class="privacy-btn" name="privacy" aria-pressed="false" title="Definir como público ou privado">
+            <button type="button" id="privacyToggle" class="privacy-btn" name="privacy" aria-pressed="false"
+                title="Definir como público ou privado">
                 <i class="fa-solid fa-lock-open"></i>
             </button>
             <input type="hidden" name="privacy" id="privacyInput" value="public">
@@ -395,23 +399,23 @@
 </div>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
 <script>
-    const privacyToggle = document.getElementById('privacyToggle');
-    const privacyInput = document.getElementById('privacyInput');
+const privacyToggle = document.getElementById('privacyToggle');
+const privacyInput = document.getElementById('privacyInput');
 
-    privacyToggle.addEventListener('click', () => {
-        const icon = privacyToggle.querySelector('i');
-        if (privacyInput.value === 'public') {
-            privacyInput.value = 'private';
-            privacyToggle.setAttribute('aria-pressed', 'true');
-            icon.classList.remove('fa-lock-open');
-            icon.classList.add('fa-lock');
-            privacyToggle.title = "Definido como privado";
-        } else {
-            privacyInput.value = 'public';
-            privacyToggle.setAttribute('aria-pressed', 'false');
-            icon.classList.remove('fa-lock');
-            icon.classList.add('fa-lock-open');
-            privacyToggle.title = "Definido como público";
-        }
-    });
+privacyToggle.addEventListener('click', () => {
+    const icon = privacyToggle.querySelector('i');
+    if (privacyInput.value === 'public') {
+        privacyInput.value = 'private';
+        privacyToggle.setAttribute('aria-pressed', 'true');
+        icon.classList.remove('fa-lock-open');
+        icon.classList.add('fa-lock');
+        privacyToggle.title = "Definido como privado";
+    } else {
+        privacyInput.value = 'public';
+        privacyToggle.setAttribute('aria-pressed', 'false');
+        icon.classList.remove('fa-lock');
+        icon.classList.add('fa-lock-open');
+        privacyToggle.title = "Definido como público";
+    }
+});
 </script>

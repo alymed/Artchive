@@ -69,11 +69,14 @@ function openEditProfileForm() {
     }
   }
 
-function openPost(imageSrc) {
+function openPost(src, postId) {
   const modal = document.getElementById('postModal');
-  const modalImage = document.getElementById('modalImage');
+  document.getElementById('modalImage').src = src;
+  document.getElementById('currentPostId').value = postId;
 
-  modalImage.src = imageSrc;
+  loadComments(postId);
+
+  modal.style.display = 'block';
   modal.style.display = 'flex';
 }
 
@@ -87,15 +90,74 @@ function togglePostMenu() {
   menu.style.display = menu.style.display === "block" ? "none" : "block";
 }
 
-function addComment() {
-  const input = document.getElementById("newComment");
-  const commentList = document.getElementById("commentList");
+// function addComment() {
+//   const input = document.getElementById("newComment");
+//   const commentList = document.getElementById("commentList");
 
-  if (input.value.trim() !== "") {
-    const newComment = document.createElement("div");
-    newComment.classList.add("comment");
-    newComment.innerHTML = `<strong>@you</strong> ${input.value}`;
-    commentList.appendChild(newComment);
-    input.value = "";
-  }
+//   if (input.value.trim() !== "") {
+//     const newComment = document.createElement("div");
+//     newComment.classList.add("comment");
+//     newComment.innerHTML = `<strong>@you</strong> ${input.value}`;
+//     commentList.appendChild(newComment);
+//     input.value = "";
+//   }
+// }
+
+
+function addComment() {
+    const commentInput = document.getElementById('newComment');
+    const commentText = commentInput.value.trim();
+    const postId = document.getElementById('currentPostId').value;
+
+    if (!commentText) {
+        alert("Please enter a comment");
+        return;
+    }
+
+    const formData = new FormData();
+    formData.append('post_id', postId);
+    formData.append('comment', commentText);
+
+    fetch('addComment.php', {
+        method: 'POST',
+        body: formData,
+        credentials: 'same-origin' // para enviar cookies de sessão
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            // Limpa o input
+            commentInput.value = '';
+
+            // Atualiza a lista de comentários no modal
+            loadComments(postId);
+        } else {
+            alert('Error: ' + data.message);
+        }
+    })
+    .catch(err => {
+        console.error('Fetch error:', err);
+        alert('Error sending comment');
+    });
+}
+
+function loadComments(postId) {
+    fetch(`getComments.php?post_id=${postId}`, {
+        credentials: 'same-origin'
+    })
+    .then(res => res.json())
+    .then(comments => {
+        const commentList = document.getElementById('commentList');
+        commentList.innerHTML = ''; // limpa a lista atual
+
+        comments.forEach(comment => {
+            const div = document.createElement('div');
+            div.className = 'comment';
+            div.innerHTML = `<strong>@${comment.username}</strong> ${comment.content}`;
+            commentList.appendChild(div);
+        });
+    })
+    .catch(err => {
+        console.error('Error loading comments:', err);
+    });
 }

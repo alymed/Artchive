@@ -723,12 +723,9 @@ function getFileDetails($idImage) {
 }
 
 function getPosts($idUser, $owner) {
-
-
     dbConnect(ConfigFile);
-    
-    $dataBaseName = $GLOBALS['configDataBase']->db;
 
+    $dataBaseName = $GLOBALS['configDataBase']->db;
     mysqli_select_db($GLOBALS['ligacao'], $dataBaseName );
 
     if ($owner) {
@@ -739,9 +736,7 @@ function getPosts($idUser, $owner) {
         $query ="SELECT * FROM `$dataBaseName`.`users-posts` WHERE `idUser`='$idUser' AND `privacy` = 'public'";
     }
 
-
     $result = mysqli_query($GLOBALS['ligacao'], $query);
-
     $filesID = array();
 
     while (($fileDataRecord = mysqli_fetch_array($result)) != false) {
@@ -752,7 +747,6 @@ function getPosts($idUser, $owner) {
     dbDisconnect();
 
     return $filesID;
-
 }
 
 function getConfiguration() {

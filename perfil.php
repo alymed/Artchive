@@ -76,17 +76,11 @@
         </div>
       </form>
   </div>
-
-  
 </body>
 
 
 <script>
-
- 
-
   document.addEventListener('DOMContentLoaded', function () {
-
     document.getElementById('profile').checked = true;
 
     document.querySelectorAll('.card').forEach(card => {
