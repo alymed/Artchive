@@ -101,6 +101,7 @@ input[type="radio"] {
 .active-icon {
   display: none;
 }
+
 input#home:checked ~ .tabs label[for="home"] .default-icon {
   display: none;
 }
@@ -119,10 +120,10 @@ input#create:checked ~ .tabs label[for="create"] .default-icon {
 input#create:checked ~ .tabs label[for="create"] .active-icon {
   display: inline;
 }
-input#notification:checked ~ .tabs label[for="notification"] .default-icon {
+input#notification:checked ~ .tabs a[for="notification"] .default-icon {
   display: none;
 }
-input#notification:checked ~ .tabs label[for="notification"] .active-icon {
+input#notification:checked ~ .tabs a[for="notification"] .active-icon {
   display: inline;
 }
 input#settings:checked ~ .tabs label[for="settings"] .default-icon {
@@ -143,12 +144,6 @@ input#music:checked ~ .tabs label[for="music"] .default-icon {
 input#music:checked ~ .tabs label[for="music"] .active-icon {
   display: inline;
 }
-input#profile:checked ~ .tabs label[for="profile"] .default-icon {
-  display: none;
-}
-input#profile:checked ~ .tabs label[for="profile"] .active-icon {
-  display: inline;
-}
 
 /* ///////////////////////////////////////////////////////////////////////////// */
 .tab-content {
@@ -160,25 +155,25 @@ input#profile:checked ~ .tabs label[for="profile"] .active-icon {
   display: none;
 }
 
+
 input#home:checked ~ .tabs label[for="home"],
 input#create:checked ~ .tabs label[for="create"],
 input#notification:checked ~ .tabs label[for="notification"],
 input#film:checked ~ .tabs label[for="film"],
 input#settings:checked ~ .tabs label[for="settings"],
 input#music:checked ~ .tabs label[for="music"],
-input#profile:checked ~ .tabs label[for="profile"],
 input#photos:checked ~ .tabs label[for="photos"] {
   background-color: white;
   font-weight: bold;
 }
 
+input#profile:checked ~ .tab-content #profileContent,
 input#home:checked ~ .tab-content #homeContent,
 input#create:checked ~ .tab-content #homeContent,
 input#notification:checked ~ .tab-content #notification,
 input#settings:checked ~ .tab-content #settingsContent,
 input#film:checked ~ .tab-content #filmContent,
 input#music:checked ~ .tab-content #musicContent,
-input#profile:checked ~ .tab-content #profileContent,
 input#photos:checked ~ .tab-content #photoContent {
   display: block;
 }

@@ -124,7 +124,9 @@ $fileInfo = finfo_open(FILEINFO_MIME);
 
 
     $width = $configuration['thumbWidth'];
-    $height = $configuration['thumbHeightS'];
+    $heightS = $configuration['thumbHeightS'];
+    $heightM = $configuration['thumbHeightM'];
+    $heightL = $configuration['thumbHeightL'];
 
 
     ?>
@@ -132,49 +134,69 @@ $fileInfo = finfo_open(FILEINFO_MIME);
 <?php
 
     $imageFilenameAux = $imageMimeFilename = $imageTypeFilename = null;
-
-    $thumbFilenameAux = $thumbMimeFilename = $thumbTypeFilename = null;
+    $thumbFilenameSAux = $thumbFilenameMAux = $thumbFilenameLAux = $thumbMimeFilename = $thumbTypeFilename = null;
 
     switch ($mimeFilename) {
         case "image":
            
-              
+
+     
+
             $imageFilenameAux = $dst;
             $imageMimeFilename = "image";
             $imageTypeFilename = $typeFilename;
 
-            $thumbFilenameAux = $thumbsDir . DIRECTORY_SEPARATOR . $pathParts['filename'] . "." . $typeFilename;
+            $thumbFilenameSAux = $thumbsDir . DIRECTORY_SEPARATOR . $pathParts['filename'] . 'S' . "." . $typeFilename;
+            $thumbFilenameMAux = $thumbsDir . DIRECTORY_SEPARATOR . $pathParts['filename'] . 'M' . "." . $typeFilename;
+            $thumbFilenameLAux = $thumbsDir . DIRECTORY_SEPARATOR . $pathParts['filename'] . 'L' . "." . $typeFilename;
             $thumbMimeFilename = "image";
             $thumbTypeFilename = $typeFilename;
 
-            $resizeObj = new ImageResize( $dst );
-            $resizeObj->resizeImage($width, $height, 'crop');
-            $resizeObj->saveImage($thumbFilenameAux, $typeFilename, 100);
-            $resizeObj->close();
-    
-            break;
+            $sizes = [
+                $thumbFilenameSAux => $heightS,
+                $thumbFilenameMAux => $heightM,
+                $thumbFilenameLAux => $heightL
+            ];
+
+            foreach ($sizes as $savepath => $height) {
+              
+                $resizeObj = new ImageResize( $dst );
+                $resizeObj->resizeImage($width, $height, 'crop');
+                $resizeObj->saveImage($savepath, $typeFilename, 100);
+                $resizeObj->close();
+
+            }
 
     }
 
 
     $filename = addslashes($dst);
     $imageFilename = addslashes($imageFilenameAux);
-    $thumbFilename = addslashes($thumbFilenameAux);
+    $thumbFilenameS= addslashes($thumbFilenameSAux);
+    $thumbFilenameM= addslashes($thumbFilenameMAux);
+    $thumbFilenameL= addslashes($thumbFilenameLAux);
 
-    $idFile = uploadFile($filename, $mimeFilename, $typeFilename, $imageFilename, $imageMimeFilename, $imageTypeFilename, $thumbFilename, $thumbMimeFilename, $thumbTypeFilename);
+    $idFile = uploadFile($filename, $mimeFilename, $typeFilename,
+     $imageFilename, $imageMimeFilename, $imageTypeFilename,
+      $thumbFilenameS,$thumbFilenameM,$thumbFilenameL,
+       $thumbMimeFilename, $thumbTypeFilename);
 
 
     if ( $idFile > 0 ) {
 
         $idPost = uploadPost($title, $description, $idUser, $idFile);
         if($idPost > 0){
-                 echo "Success!";
+                echo "Success!";
+                header("Location: index.php");
+
         }else{
             echo "Information about file could not be inserted into the data base. Details : " . dbGetLastError() ;
+            header("Location: index.php");
         }
     }
     else {
         echo "Information about file could not be inserted into the data base. Details : " . dbGetLastError() ;
+        header("Location: index.php");
     }
 
 

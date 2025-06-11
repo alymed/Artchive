@@ -1,58 +1,94 @@
-
 <?php
 
-    ini_set('display_errors', 1);
-    ini_set('display_startup_errors', 1);
-    error_reporting(E_ALL);
+  session_start();
 
-    require_once( "lib/lib.php" );
+  if (!isset($_SESSION['id'])) {
+      
+      header('Location: index.php');
+      exit();
+  }
 
-    $idUser = $_SESSION['id'];
 
-    $filesID = getFilesID($idUser);
-    $userData = getUserData($idUser);
+  ini_set('display_errors', 1);
+  ini_set('display_startup_errors', 1);
+  error_reporting(E_ALL);
+
+  require_once( "lib/lib.php" );
+   
+  if (isset($_GET["username"])) {
+    $username = $_GET["username"];
+  }
+
 
 ?>
 
-<!-- HOME TAB -->
-    <div id="profileContent" class="content">
-      <div class="profile-header">
-        <div class="profile-pic">
-          <img src="images/profilePic.PNG" alt="Profile Picture" />
-        </div>
-        <div class="profile-info">
-          <h1 id="userName"> <?php echo $userData['username']; ?> </h1>
-          <!--<p class="username" id="userUsername">massama.jpeg</p>-->
-          <p class="bio" id="userBio"><?php echo $userData['biography']; ?></p>
 
-          <div class="social-stats">
-            <div><strong>120</strong><br />Followers</div>
-            <div><strong>80</strong><br />Following</div>
-            <div><strong>34</strong><br />Posts</div>
-            <button class="default-btn" onclick="openEditProfileForm()">Edit Profile</button>
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Artchive</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+  <link rel="icon" type="image/png" href="images/logo.png">
+  <script src="js/script.js"></script>
+</head>
+
+<body>
+
+  <?php
+    include('header.php');
+  ?>
+
+  <?php
+    include('menu_nav.php');
+  ?>
+
+
+
+  <div class="form-popup" id="editProfileForm">
+      <form method="post" class="form-container">
+        <span class="close-icon" onclick="closeEditProfileForm()">&times;</span>
+        <h3>Edit Profile</h3>
+        <div class="info">
+
+          <div class="profile-pic">
+              <img id="profilePreview" src="images/profilePic.PNG" alt="Preview">
           </div>
+          
+          <input type="file" id="profile-pic-input" name="profile_pic" accept="image/*" style="display:none;"
+            onchange="previewProfilePic(this)">
+
+          <label for="name">Name</label>
+          <input type="text" id="name" name="name" placeholder="Your name" required>
+
+          <label for="username">Username</label>
+          <input type="text" id="username" name="username" placeholder="Your username" required>
+
+          <label for="bio">Bio</label>
+          <textarea type="text" id="bio" name="bio" placeholder="Tell us about you..." rows="4"></textarea>
+
+          <button type="submit" class="default-btn">Save Changes</button>
         </div>
-      </div>
+      </form>
+  </div>
 
-
-      <!-- Gallery -->
-      <div class="img_container">
-        <h2 class="section-title">Gallery</h2>
-        <?php 
-        for($idx=0; $idx<count($filesID); $idx++){
-          $fileID = $filesID[$idx];
-          $target = "<img src=\"showFileThumb.php?id=$fileID\" alt=\"Post\">";
-          echo "<div class=\"card card_small\">$target</div>";
-        }
-        ?>
-      </div>
-    </div>
+  
+</body>
 
 
 <script>
 
+ 
 
   document.addEventListener('DOMContentLoaded', function () {
+
+    document.getElementById('profile').checked = true;
+
     // 1. Abre modal de post
     const cards = document.querySelectorAll('.img_container .card img');
     cards.forEach(img => {
@@ -92,6 +128,7 @@
       closeUploadForm();
     });
 
+  });
 
 
   // Preview da imagem

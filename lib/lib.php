@@ -317,6 +317,139 @@ function getUserAuthData($idUser) {
     return $userData;
 }
 
+function getUserFollowers($idUser) {
+
+    dbConnect( ConfigFile );
+    
+    $dataBaseName = $GLOBALS['configDataBase']->db;
+
+    mysqli_select_db($GLOBALS['ligacao'], $dataBaseName );
+
+    $query = "SELECT * FROM `$dataBaseName`.`users-follows` " .
+            "WHERE `idFollowed`='$idUser'";
+
+    $result = mysqli_query($GLOBALS['ligacao'], $query);
+
+    $followers = array();
+    if($result){
+        while(($row = mysqli_fetch_array($result)) != false) {
+            $followers[] = $row;
+        }
+        mysqli_free_result($result);
+    }
+    dbDisconnect();
+
+    return $followers;
+}
+
+function getUserFollowing($idUser) {
+
+    dbConnect( ConfigFile );
+    
+    $dataBaseName = $GLOBALS['configDataBase']->db;
+
+    mysqli_select_db($GLOBALS['ligacao'], $dataBaseName );
+
+    $query = "SELECT * FROM `$dataBaseName`.`users-follows` " .
+            "WHERE `idFollower`='$idUser'";
+
+    $result = mysqli_query($GLOBALS['ligacao'], $query);
+
+    $following = array();
+    if($result){
+        while(($row = mysqli_fetch_array($result)) != false) {
+            $following[] = $row;
+        }
+        mysqli_free_result($result);
+    }
+
+    dbDisconnect();
+
+    return $following;
+}
+
+function follow($idFollower, $idFollowed) {
+
+    dbConnect( ConfigFile );
+    
+    $dataBaseName = $GLOBALS['configDataBase']->db;
+
+    mysqli_select_db($GLOBALS['ligacao'], $dataBaseName );
+
+    $followedAt = date("Y-m-d H:i:s");
+    
+    $idFollower = mysqli_real_escape_string($GLOBALS['ligacao'], $idFollower);
+    $idFollowed    = mysqli_real_escape_string($GLOBALS['ligacao'], $idFollowed);
+    $followedAt = mysqli_real_escape_string($GLOBALS['ligacao'], $followedAt);
+
+
+    $query = 
+            "INSERT INTO  `$dataBaseName`.`users-follows` (`idFollower`,`idFollowed`, `followedAt`) ".
+            "VALUES ('$idFollower', '$idFollowed', '$followedAt')";
+
+    $result = mysqli_query($GLOBALS['ligacao'], $query);
+
+    if ($result === false) {
+        
+        echo "Error inserting profile: " . mysqli_error($GLOBALS['ligacao']);
+        return false;
+    }
+
+    return true;
+}
+
+function unfollow($idFollower, $idFollowed) {
+
+    dbConnect( ConfigFile );
+    
+    $dataBaseName = $GLOBALS['configDataBase']->db;
+
+    mysqli_select_db($GLOBALS['ligacao'], $dataBaseName );
+
+
+    $query = 
+            "DELETE FROM  `$dataBaseName`.`users-follows` WHERE `idFollower` = '$idFollower' AND `idFollowed` = '$idFollowed'";
+
+    $result = mysqli_query($GLOBALS['ligacao'], $query);
+
+    if ($result === false) {
+        
+        echo "Error inserting profile: " . mysqli_error($GLOBALS['ligacao']);
+        return false;
+    }
+
+    return true;
+}
+
+
+function searchUsers($search, $idUser) {
+
+    dbConnect( ConfigFile );
+    
+    $dataBaseName = $GLOBALS['configDataBase']->db;
+
+    mysqli_select_db($GLOBALS['ligacao'], $dataBaseName );
+
+    $search = mysqli_real_escape_string($GLOBALS['ligacao'], $search);
+
+    $query = "SELECT * FROM `$dataBaseName`.`users-profile` " .
+            "WHERE `username` LIKE '%$search%' AND `id` != '$idUser'";
+
+    $result = mysqli_query($GLOBALS['ligacao'], $query);
+
+    $users = array();
+    if($result){
+        while(($row = mysqli_fetch_array($result)) != false) {
+            $users[] = $row;
+        }
+        mysqli_free_result($result);
+    }
+
+    dbDisconnect();
+
+    return $users;
+}
+
 
 
 function getTokenDataFromToken($token){
@@ -466,7 +599,8 @@ function logout() {
 function uploadFile(
     $filename, $mimeFilename, $typeFilename, 
     $imageFilename, $imageMimeFilename, $imageTypeFilename, 
-    $thumbFilename, $thumbMimeFilename, $thumbTypeFilename
+    $thumbFilenameS, $thumbFilenameM, $thumbFilenameL, 
+    $thumbMimeFilename,$thumbTypeFilename
 ){
     $fileOk = -1;
 
@@ -477,8 +611,10 @@ function uploadFile(
     
     $query = 
             "INSERT INTO `$dataBaseName`.`images-details`" .
-            "(`filename`, `mimeFilename`, `typeFilename`, `imageFilename`, `imageMimeFilename`, `imageTypeFilename`, `thumbFilename`, `thumbMimeFilename`, `thumbTypeFilename`) values " .
-            "('$filename', '$mimeFilename', '$typeFilename', '$imageFilename', '$imageMimeFilename', '$imageTypeFilename', '$thumbFilename', '$thumbMimeFilename', '$thumbTypeFilename')";
+            "(`filename`, `mimeFilename`, `typeFilename`, `imageFilename`, `imageMimeFilename`, `imageTypeFilename`," .
+            " `thumbFilenameS`,`thumbFilenameM`,`thumbFilenameL`, `thumbMimeFilename`, `thumbTypeFilename`) values " .
+            "('$filename', '$mimeFilename', '$typeFilename', '$imageFilename', '$imageMimeFilename', '$imageTypeFilename', ".
+            "'$thumbFilenameS', '$thumbFilenameM', '$thumbFilenameL', '$thumbMimeFilename', '$thumbTypeFilename')";
 
     $result =  mysqli_query( $GLOBALS['ligacao'], $query );
 
@@ -519,7 +655,29 @@ function uploadPost($title, $description, $idUser, $idImage){
     return $postOk;
 }
 
-function getFileDetails($idUser) {
+function getPostData($idPost){
+
+    dbConnect( ConfigFile );
+    
+    $dataBaseName = $GLOBALS['configDataBase']->db;
+
+    mysqli_select_db($GLOBALS['ligacao'], $dataBaseName );
+
+    $query = "SELECT * FROM `$dataBaseName`.`users-posts` " .
+            "WHERE `id`='$idPost'";
+
+    $result = mysqli_query($GLOBALS['ligacao'], $query);
+
+    $postData = mysqli_fetch_array($result);
+
+    mysqli_free_result($result);
+
+    dbDisconnect();
+
+    return $postData;
+}
+
+function getFileDetails($idImage) {
  
 
     dbConnect(ConfigFile);
@@ -528,7 +686,7 @@ function getFileDetails($idUser) {
 
     mysqli_select_db($GLOBALS['ligacao'], $dataBaseName );
 
-    $query = "SELECT * FROM `$dataBaseName`.`images-details` WHERE `id`='$idUser'";
+    $query = "SELECT * FROM `$dataBaseName`.`images-details` WHERE `id`='$idImage'";
 
     $result = mysqli_query($GLOBALS['ligacao'], $query);
 
@@ -540,14 +698,14 @@ function getFileDetails($idUser) {
     mysqli_free_result($result);
     dbDisconnect();
 
-    if ( !is_array($idUser)) {
+    if ( !is_array($idImage)) {
         return $fileData[0];
     } else {
         return $fileData;
     }
 }
 
-function getFilesID($idUser) {
+function getPosts($idUser) {
 
 
     dbConnect(ConfigFile);
@@ -556,14 +714,14 @@ function getFilesID($idUser) {
 
     mysqli_select_db($GLOBALS['ligacao'], $dataBaseName );
 
-    $query = "SELECT `id` FROM `$dataBaseName`.`users-posts` WHERE `idUser`='$idUser'";
+    $query = "SELECT * FROM `$dataBaseName`.`users-posts` WHERE `idUser`='$idUser'";
 
     $result = mysqli_query($GLOBALS['ligacao'], $query);
 
     $filesID = array();
 
     while (($fileDataRecord = mysqli_fetch_array($result)) != false) {
-        $filesID[] = $fileDataRecord['idImage'];
+        $filesID[] = $fileDataRecord;
     }
 
     mysqli_free_result($result);
@@ -593,6 +751,65 @@ function getConfiguration() {
 
     return $configuration;
 }
+
+function addActivity($idAactor, $idAction, $idTarget, $sendTo) {
+
+    $postOk = -1;
+
+    dbConnect( ConfigFile );
+    $dataBaseName = $GLOBALS['configDataBase']->db;
+
+    mysqli_select_db( $GLOBALS['ligacao'], $dataBaseName );
+
+    $createdAt = date("Y-m-d H:i:s");
+
+    $idAactor = mysqli_real_escape_string($GLOBALS['ligacao'], $idAactor);    
+    $idAction = mysqli_real_escape_string($GLOBALS['ligacao'], $idAction);
+    $idTarget = mysqli_real_escape_string($GLOBALS['ligacao'], $idTarget);
+    $sendTo = mysqli_real_escape_string($GLOBALS['ligacao'], $sendTo);
+    $createdAt = mysqli_real_escape_string($GLOBALS['ligacao'], $createdAt);
+    
+    $query = 
+            "INSERT INTO `$dataBaseName`.`users-activity`" .
+            "(`idActor`, `action`, `idTarget`, `sendTo`, `isRead`, `createdAt`) values " .
+            "('$idAactor', '$idAction', '$idTarget',  '$sendTo', '0', '$createdAt')";
+
+    $result =  mysqli_query( $GLOBALS['ligacao'], $query );
+
+    if ( $result !== false ) {
+
+        $postOk = mysqli_insert_id($GLOBALS['ligacao']);
+    }
+   
+    dbDisconnect();
+
+    return $postOk;
+}
+
+function getActivities($idUser) {
+
+    dbConnect( ConfigFile );
+    
+    $dataBaseName = $GLOBALS['configDataBase']->db;
+
+    mysqli_select_db( $GLOBALS['ligacao'], $dataBaseName );
+
+    $query = "SELECT * FROM `$dataBaseName`.`users-activity` WHERE `sendTo`='$idUser'";
+
+    $result = mysqli_query($GLOBALS['ligacao'], $query);
+
+    $activies = array();
+    while(($row = mysqli_fetch_array($result)) != false) {
+        $activies[] = $row;
+    }
+
+    mysqli_free_result($result);
+
+    dbDisconnect();
+    
+    return $activies;
+}
+
 
 function getStats() {
     dbConnect(ConfigFile);

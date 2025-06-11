@@ -17,9 +17,26 @@
     // Read from the data base details about the file
     $fileDetails = getFileDetails( $id );
 
-    $thumbFilenameAux = $fileDetails[ 'thumbFilename' ];
+    $size = $_GET['size'];
+
+    switch ($size) {
+        case 'small':
+            $thumbFilenameAux = $fileDetails[ 'thumbFilenameS' ];
+            break;
+        case 'medium':
+            $thumbFilenameAux = $fileDetails[ 'thumbFilenameM' ];
+            break;
+        case 'large':
+            $thumbFilenameAux = $fileDetails[ 'thumbFilenameL' ];
+            break;
+    }
+
     $thumbMimeFilename = $fileDetails[ 'thumbMimeFilename' ];
     $thumbTypeFilename = $fileDetails[ 'thumbTypeFilename' ];
+
+
+
+
 
     header( "Content-type: $thumbMimeFilename/$thumbTypeFilename");
     header( "Content-Length: " . filesize($thumbFilenameAux) );

@@ -1,0 +1,451 @@
+<?php
+
+  
+
+    ini_set('display_errors', 1);
+    ini_set('display_startup_errors', 1);
+    error_reporting(E_ALL);
+
+    require_once( "lib/lib.php" );
+
+    $idUser = $_SESSION['id'];
+
+    if(isset($username)){
+        $idUserProfile = searchUsers($username, $idUser)[0]["id"];
+        $owner = false;
+
+    }else{
+        $idUserProfile = $_SESSION['id'];
+        $owner = true;
+    }
+
+
+
+    $followers = getUserFollowers( $idUser);
+    $following = getUserFollowing($idUser);
+    
+
+    #Profile
+    $profile_posts = getPosts($idUserProfile);
+    $profile_userData = getUserData($idUserProfile);
+    $profile_followers = getUserFollowers($idUserProfile);
+    $profile_following = getUserFollowing($idUserProfile);
+
+    $notifications = getActivities($idUser);
+
+    
+    if(!$owner){
+        $isfollowing = false;
+        for($i= 0;$i<count($profile_followers);$i++){
+            
+            if($profile_followers[$i]['idFollower'] == $idUser){
+                $isfollowing = true;
+            }
+        }
+    }
+
+  
+
+
+
+
+
+?>
+
+
+
+
+<input hidden type="radio" name="tab" id="profile" >
+<input type="radio" name="tab" id="home" >
+<input type="radio" name="tab" id="create" >
+<input type="radio" name="tab" id="notification" >
+<input type="radio" name="tab" id="film">
+<input type="radio" name="tab" id="photos">
+<input type="radio" name="tab" id="music">
+<input type="radio" name="tab" id="settings">
+
+
+<div class="tabs">
+    <label for="home" class="tab">
+        <i class="bi bi-house-door default-icon"></i>
+        <i class="bi bi-house-door-fill active-icon"></i>
+    </label>
+    <label for="create" class="tab" onclick="openUploadForm()">
+        <i class="bi bi-plus-square default-icon"></i>
+        <i class="bi bi-plus-square-fill active-icon"></i>
+    </label>
+    <label for="notification" class="tab">
+        <i class="bi bi-bell default-icon"></i>
+        <i class="bi bi-bell-fill active-icon"></i>
+    </label>
+    <label for="film" class="tab">
+        <i class="bi bi-camera-reels default-icon"></i>
+        <i class="bi bi-camera-reels-fill active-icon"></i>
+    </label>
+    <label for="photos" class="tab">
+        <i class="bi bi-camera default-icon"></i>
+        <i class="bi bi-camera-fill active-icon"></i>
+    </label>
+    <label for="music" class="tab">
+        <i class="bi bi-file-music default-icon"></i>
+        <i class="bi bi-file-music-fill active-icon"></i>
+    </label>
+    <label for="settings" class="tab">
+        <i class="bi bi-gear default-icon"></i>
+        <i class="bi bi-gear-fill active-icon"></i>
+    </label>
+</div>
+
+<div class="tab-content">
+
+    <div id="homeContent" class="content">
+        <input type="radio" name="top_tab" id="all" checked>
+        <input type="radio" name="top_tab" id="tag2">
+        <input type="radio" name="top_tab" id="tag3">
+        <input type="radio" name="top_tab" id="tag4">
+        <input type="radio" name="top_tab" id="tag5">
+
+        <div class="top_tabs">
+            <label for="all" class="top_tab">All</label>
+            <label for="tag2" class="top_tab">Tag 2</label>
+            <label for="tag3" class="top_tab">Tag 3</label>
+            <label for="tag4" class="top_tab">Tag 4</label>
+            <label for="tag5" class="top_tab">Tag 5</label>
+
+        </div>
+
+        <div class="img_container">
+        <?php
+            for( $i= 0;$i<count($following);$i++){
+                $followingUserPosts = getPosts($following[$i]['idFollowed']);
+                for($j= 0;$j<count($followingUserPosts);$j++){
+
+                    $postTitle = $followingUserPosts[$j]['title'];
+                    $fileID = $followingUserPosts[$j]['idImage'];
+
+                    $image = "<img src=\"showFileThumb.php?id=$fileID&size=small\" alt=\"Post\"></img>";
+                    $caption = "<figcaption> aaaaaaaa </figcaption>";
+                    echo "<figure class=\"card card_small\">$image $caption </figure>";
+                }
+            }
+        ?>
+        </div>
+
+        <div class="tag2-content">
+            <div class="img_container">
+                <figure class="card card_medium">
+                    <img src="images/img1.jpg" alt="Description of img3">
+                    <figcaption>Legend for img3</figcaption>
+                </figure>
+
+                <figure class="card card_large">
+                    <img src="images/img4.jpg" alt="Description of img4 again">
+                    <figcaption>Legend for second img4 (large)</figcaption>
+                </figure>
+            </div>
+        </div>
+
+        <div class="tag3-content">
+            <div class="img_container">
+                <figure class="card card_medium">
+                    <img src="images/img2.jpg" alt="Description of img3">
+                    <figcaption>Legend for img3</figcaption>
+                </figure>
+
+                <figure class="card card_large">
+                    <img src="images/img4.jpg" alt="Description of img4 again">
+                    <figcaption>Legend for second img4 (large)</figcaption>
+                </figure>
+            </div>
+        </div>
+
+        <div class="tag4-content">
+            <div class="img_container">
+                <figure class="card card_medium">
+                    <img src="images/img2.jpg" alt="Description of img3">
+                    <figcaption>Legend for img3</figcaption>
+                </figure>
+
+                <figure class="card card_large">
+                    <img src="images/img4.jpg" alt="Description of img4 again">
+                    <figcaption>Legend for second img4 (large)</figcaption>
+                </figure>
+            </div>
+        </div>
+
+        <div class="tag5-content">
+            <div class="img_container">
+                <figure class="card card_medium">
+                    <img src="images/img2.jpg" alt="Description of img3">
+                    <figcaption>Legend for img3</figcaption>
+                </figure>
+
+                <figure class="card card_large">
+                    <img src="images/img4.jpg" alt="Description of img4 again">
+                    <figcaption>Legend for second img4 (large)</figcaption>
+                </figure>
+            </div>
+        </div>
+    </div>
+    <div id="notification" class="content">
+        <h2>Notificações</h2>
+        <ul class="notification-list">
+            <?php
+                for($i= 0;$i<count($notifications);$i++){
+
+                    $actor = getUserData($notifications[$i]['idActor']);
+                    $action = $notifications[$i]['action'];
+                    $isRead = $notifications[$i]['isRead'];
+
+                    $createdAt = new DateTime($notifications[$i]['createdAt']);
+                    $now = new DateTime(); 
+                    $diffInSeconds = $now->getTimestamp() - $createdAt->getTimestamp();
+                    
+                    if ($diffInSeconds < 60) {
+                        $time =  "A few seconds ago";
+                    } elseif ($diffInSeconds < 3600) {
+                        $time = floor($diffInSeconds / 60) . "m";
+                    } elseif ($diffInSeconds < 86400) {
+                        $time  = floor($diffInSeconds / 3600) . "h";
+                    } else {
+                        $time = floor($diffInSeconds / 86400) . "d";
+                    }
+
+
+                    switch($action){
+                        case 'follow':
+                            $text = $actor['username'] . " followed you!";
+                            break;
+                        
+                        case  'comment':
+                            $target = getPostData($notifications[$i]["idTarget"]);
+                            $text = $target["username"] . " commented on your post!";
+                            break;
+
+                        case  'liked':
+                            $target = getPostData($notifications[$i]["idTarget"]);
+                            $text = $target["username"] . " liked your post!";
+                            break;
+                    }
+            ?>
+            <li class="notification-item">
+                <i class="bi bi-info-circle"></i>
+                <?php echo $text?>
+                <span class="time"><?php echo $time ?></span>
+            </li>
+            <?php
+                }
+            ?>
+
+        </ul>
+    </div>
+    <div id="filmContent" class="content">
+        <div class="img_container">
+            <figure class="card card_medium">
+                <img src="images/img3.jpg" alt="Description of img3">
+                <figcaption>Legend for img3</figcaption>
+            </figure>
+
+            <figure class="card card_small">
+                <img src="images/img4.jpg" alt="Description of img4">
+                <figcaption>Legend for img4 (small)</figcaption>
+            </figure>
+
+            <figure class="card card_large">
+                <img src="images/img5.jpg" alt="Description of img5">
+                <figcaption>Legend for img5</figcaption>
+            </figure>
+
+            <figure class="card card_large">
+                <img src="images/img4.jpg" alt="Description of img4 again">
+                <figcaption>Legend for second img4 (large)</figcaption>
+            </figure>
+            <figure class="card card_medium">
+                <img src="images/img3.jpg" alt="Description of img3">
+                <figcaption>Legend for img3</figcaption>
+            </figure>
+
+            <figure class="card card_small">
+                <img src="images/img4.jpg" alt="Description of img4">
+                <figcaption>Legend for img4 (small)</figcaption>
+            </figure>
+
+            <figure class="card card_large">
+                <img src="images/img5.jpg" alt="Description of img5">
+                <figcaption>Legend for img5</figcaption>
+            </figure>
+
+            <figure class="card card_large">
+                <img src="images/img4.jpg" alt="Description of img4 again">
+                <figcaption>Legend for second img4 (large)</figcaption>
+            </figure>
+            <figure class="card card_medium">
+                <img src="images/img3.jpg" alt="Description of img3">
+                <figcaption>Legend for img3</figcaption>
+            </figure>
+
+            <figure class="card card_small">
+                <img src="images/img4.jpg" alt="Description of img4">
+                <figcaption>Legend for img4 (small)</figcaption>
+            </figure>
+
+            <figure class="card card_large">
+                <img src="images/img5.jpg" alt="Description of img5">
+                <figcaption>Legend for img5</figcaption>
+            </figure>
+
+            <figure class="card card_large">
+                <img src="images/img4.jpg" alt="Description of img4 again">
+                <figcaption>Legend for second img4 (large)</figcaption>
+            </figure>
+        </div>
+    </div>
+    <div id="musicContent" class="content">
+        <h2>Content 3</h2>
+        <p>This is the content for Tab 3.</p>
+    </div>
+    <div id="photoContent" class="content">
+        <h2>Content 3</h2>
+        <p>This is the content for Tab 3.</p>
+    </div>
+
+
+    <div id="settingsContent" class="content">
+        <h2>Content 3</h2>
+        <p><a href="logout.php">Logout</a></p>
+    </div>
+
+
+
+
+
+
+
+
+
+    
+    <div id="profileContent" class="content">
+      <div class="profile-header">
+        <div class="profile-pic">
+          <img src="images/profilePic.PNG" alt="Profile Picture" />
+        </div>
+        <div class="profile-info">
+          <h1 id="userName"> <?php echo $profile_userData['username']; ?> </h1>
+          <!--<p class="username" id="userUsername">massama.jpeg</p>-->
+          <p class="bio" id="userBio"><?php echo $profile_userData['biography']; ?></p>
+
+        
+
+          <div class="social-stats">
+            <div><strong><?php echo count($profile_followers) ?></strong><br />Followers</div>
+            <div><strong><?php echo count($profile_following) ?> </strong><br />Following</div>
+            <div><strong><?php echo count($profile_posts) ?></strong><br />Posts</div>
+            <button class="default-btn" onclick="openEditProfileForm()">Edit Profile</button>
+            <?php
+            if (!$owner && !$isfollowing){
+            ?>
+            <a href="follow.php?idFollower=<?php echo urlencode($idUser)?>&idFollowed=<?php echo urlencode($idUserProfile)?>" 
+            class="button-link">Follow</a>
+            <?php
+            } else if (!$owner && $isfollowing){    
+            ?>
+            <a href="unfollow.php?idFollower=<?php echo urlencode($idUser)?>&idFollowed=<?php echo urlencode($idUserProfile)?>" 
+            class="button-link">Unfollow</a>
+            <?php
+            }  
+            ?>
+          </div>
+        </div>
+      </div>
+
+
+
+      
+      <div class="img_container">
+        <h2 class="section-title"> Gallery </h2>
+        <?php 
+
+        for($idx=0; $idx<count($profile_posts); $idx++){
+          $fileID = $profile_posts[$idx]['idImage'];
+          $target = "<img src=\"showFileThumb.php?id=" . $fileID . "&size=small\" alt=\"Post\"></img>";
+          echo "<div class=\"card card_small\">$target</div>";
+        }
+        ?>
+      </div>
+    </div>
+</div>
+
+     <!-- Bootstrap JS and Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
+
+
+    <div id="postModal" class="modal">
+      <div class="modal-content">
+        <span class="close-icon" onclick="closePost()">&times;</span>
+        <div class="post">
+          <div class="post-header">
+            <img src="https://i.pravatar.cc/40" alt="User profile" class="profile-pic">
+            <span class="username">user_one</span>
+            <div class="post-menu">
+              <i class="bi bi-three-dots-vertical menu-icon" onclick="togglePostMenu()"></i>
+              <div class="dropdown-menu" id="postMenu">
+                <button onclick="alert('Analytics clicked')">Analytics</button>
+                <button onclick="alert('Share clicked')">Share</button>
+              </div>
+            </div>
+          </div>
+          <img id="modalImage" class="post-image" alt="Post">
+          <div class="post-footer">
+            <div class="post-actions">
+              <button class="like-button"><i class="bi bi-heart"></i></button>
+              <span class="action-count">120</span>
+
+              <button class="comment-button"><i class="bi bi-chat"></i></button>
+              <span class="action-count">34</span>
+
+              <button class="save-button"><i class="bi bi-bookmark"></i></button>
+              <span class="action-count">18</span>
+            </div>
+
+            <p class="caption"><span class="username">user_one</span> Loving the view!</p>
+          </div>
+          <div class="comment-section">
+            <h4>Comments</h4>
+            <div class="comment-list" id="commentList">
+              <div class="comment"><strong>@alice</strong> Wow!</div>
+              <div class="comment"><strong>@bob</strong> Amazing!</div>
+            </div>
+            <div class="comment-input">
+              <input type="text" id="newComment" placeholder="Add a comment..." />
+              <button onclick="addComment()">Post</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="form-popup" id="uploadForm">
+      <form method="POST" class="form-container" action="fileUpload.php" enctype="multipart/form-data">
+        <span class="close-icon" onclick="closeUploadForm()">&times;</span>
+        <img src="images/logo.png" alt="Logo" class="logo-img">
+
+        <h3>Upload New Content</h3>
+        <div class="info">
+
+          <input type="file" id="upload-file" name="userFile" size="64" required>
+
+          <input type="text" id="upload-title" name="title" placeholder="Enter a title" required>
+          <textarea type="text" id="upload-description" name="description" placeholder="Write a short description..."
+            rows="6"></textarea>
+
+
+          <button type="submit" class="default-btn">Upload</button>
+        </div>
+      </form>
+    </div>
+
+
+
+ 
+
