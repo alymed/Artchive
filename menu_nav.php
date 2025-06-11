@@ -55,10 +55,10 @@
 
 
 
-<input hidden type="radio" name="tab" id="profile" >
-<input type="radio" name="tab" id="home" >
-<input type="radio" name="tab" id="create" >
-<input type="radio" name="tab" id="notification" >
+<input hidden type="radio" name="tab" id="profile">
+<input type="radio" name="tab" id="home">
+<input type="radio" name="tab" id="create">
+<input type="radio" name="tab" id="notification">
 <input type="radio" name="tab" id="film">
 <input type="radio" name="tab" id="photos">
 <input type="radio" name="tab" id="music">
@@ -115,7 +115,7 @@
         </div>
 
         <div class="img_container">
-        <?php
+            <?php
             for( $i= 0;$i<count($following);$i++){
                 $followingUserPosts = getPosts($following[$i]['idFollowed']);
                 for($j= 0;$j<count($followingUserPosts);$j++){
@@ -323,47 +323,47 @@
 
 
 
-    
+
     <div id="profileContent" class="content">
-      <div class="profile-header">
-        <div class="profile-pic">
-          <img src="images/profilePic.PNG" alt="Profile Picture" />
-        </div>
-        <div class="profile-info">
-          <h1 id="userName"> <?php echo $profile_userData['username']; ?> </h1>
-          <!--<p class="username" id="userUsername">massama.jpeg</p>-->
-          <p class="bio" id="userBio"><?php echo $profile_userData['biography']; ?></p>
+        <div class="profile-header">
+            <div class="profile-pic">
+                <img src="images/profilePic.PNG" alt="Profile Picture" />
+            </div>
+            <div class="profile-info">
+                <h1 id="userName"> <?php echo $profile_userData['username']; ?> </h1>
+                <!--<p class="username" id="userUsername">massama.jpeg</p>-->
+                <p class="bio" id="userBio"><?php echo $profile_userData['biography']; ?></p>
 
-        
 
-          <div class="social-stats">
-            <div><strong><?php echo count($profile_followers) ?></strong><br />Followers</div>
-            <div><strong><?php echo count($profile_following) ?> </strong><br />Following</div>
-            <div><strong><?php echo count($profile_posts) ?></strong><br />Posts</div>
-            <button class="default-btn" onclick="openEditProfileForm()">Edit Profile</button>
-            <?php
+
+                <div class="social-stats">
+                    <div><strong><?php echo count($profile_followers) ?></strong><br />Followers</div>
+                    <div><strong><?php echo count($profile_following) ?> </strong><br />Following</div>
+                    <div><strong><?php echo count($profile_posts) ?></strong><br />Posts</div>
+                    <button class="default-btn" onclick="openEditProfileForm()">Edit Profile</button>
+                    <?php
             if (!$owner && !$isfollowing){
             ?>
-            <a href="follow.php?idFollower=<?php echo urlencode($idUser)?>&idFollowed=<?php echo urlencode($idUserProfile)?>" 
-            class="button-link">Follow</a>
-            <?php
+                    <a href="follow.php?idFollower=<?php echo urlencode($idUser)?>&idFollowed=<?php echo urlencode($idUserProfile)?>"
+                        class="button-link">Follow</a>
+                    <?php
             } else if (!$owner && $isfollowing){    
             ?>
-            <a href="unfollow.php?idFollower=<?php echo urlencode($idUser)?>&idFollowed=<?php echo urlencode($idUserProfile)?>" 
-            class="button-link">Unfollow</a>
-            <?php
+                    <a href="unfollow.php?idFollower=<?php echo urlencode($idUser)?>&idFollowed=<?php echo urlencode($idUserProfile)?>"
+                        class="button-link">Unfollow</a>
+                    <?php
             }  
             ?>
-          </div>
+                </div>
+            </div>
         </div>
-      </div>
 
 
 
-      
-      <div class="img_container">
-        <h2 class="section-title"> Gallery </h2>
-        <?php 
+
+        <div class="img_container">
+            <h2 class="section-title"> Gallery </h2>
+            <?php 
 
         for($idx=0; $idx<count($profile_posts); $idx++){
           $fileID = $profile_posts[$idx]['idImage'];
@@ -371,81 +371,97 @@
           echo "<div class=\"card card_small\">$target</div>";
         }
         ?>
-      </div>
+        </div>
+        <?php if (!$owner) { ?>
+        <div id="contact" class="contact-container">
+            <h2>Contact Me</h2>
+            <form action="sendEmail.php?id=<?php echo urlencode($idUserProfile); ?>" method="POST">
+                <label for="name">Name</label>
+                <input type="text" id="name" name="name" placeholder="Your name..." required>
+
+                <label for="email">Email</label>
+                <input type="email" id="email" name="email" placeholder="Your email..." required>
+
+                <label for="subject">Subject</label>
+                <input type="text" id="subject" name="subject" placeholder="Subject..." required>
+
+                <label for="message">Message</label>
+                <textarea id="message" name="message" rows="6" placeholder="Write your message..." required></textarea>
+                <input type="hidden" name="redirect" value="<?php echo htmlspecialchars($_SERVER['REQUEST_URI']); ?>">
+
+                <button class="default-btn" type="submit">Send</button>
+            </form>
+        </div>
+        <?php } ?>
     </div>
 </div>
 
-     <!-- Bootstrap JS and Popper -->
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
+<!-- Bootstrap JS and Popper -->
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
 
 
-    <div id="postModal" class="modal">
-      <div class="modal-content">
+<div id="postModal" class="modal">
+    <div class="modal-content">
         <span class="close-icon" onclick="closePost()">&times;</span>
         <div class="post">
-          <div class="post-header">
-            <img src="https://i.pravatar.cc/40" alt="User profile" class="profile-pic">
-            <span class="username">user_one</span>
-            <div class="post-menu">
-              <i class="bi bi-three-dots-vertical menu-icon" onclick="togglePostMenu()"></i>
-              <div class="dropdown-menu" id="postMenu">
-                <button onclick="alert('Analytics clicked')">Analytics</button>
-                <button onclick="alert('Share clicked')">Share</button>
-              </div>
+            <div class="post-header">
+                <img src="https://i.pravatar.cc/40" alt="User profile" class="profile-pic">
+                <span class="username">user_one</span>
+                <div class="post-menu">
+                    <i class="bi bi-three-dots-vertical menu-icon" onclick="togglePostMenu()"></i>
+                    <div class="dropdown-menu" id="postMenu">
+                        <button onclick="alert('Analytics clicked')">Analytics</button>
+                        <button onclick="alert('Share clicked')">Share</button>
+                    </div>
+                </div>
             </div>
-          </div>
-          <img id="modalImage" class="post-image" alt="Post">
-          <div class="post-footer">
-            <div class="post-actions">
-              <button class="like-button"><i class="bi bi-heart"></i></button>
-              <span class="action-count">120</span>
+            <img id="modalImage" class="post-image" alt="Post">
+            <div class="post-footer">
+                <div class="post-actions">
+                    <button class="like-button"><i class="bi bi-heart"></i></button>
+                    <span class="action-count">120</span>
 
-              <button class="comment-button"><i class="bi bi-chat"></i></button>
-              <span class="action-count">34</span>
+                    <button class="comment-button"><i class="bi bi-chat"></i></button>
+                    <span class="action-count">34</span>
 
-              <button class="save-button"><i class="bi bi-bookmark"></i></button>
-              <span class="action-count">18</span>
-            </div>
+                    <button class="save-button"><i class="bi bi-bookmark"></i></button>
+                    <span class="action-count">18</span>
+                </div>
 
-            <p class="caption"><span class="username">user_one</span> Loving the view!</p>
-          </div>
-          <div class="comment-section">
-            <h4>Comments</h4>
-            <div class="comment-list" id="commentList">
-              <div class="comment"><strong>@alice</strong> Wow!</div>
-              <div class="comment"><strong>@bob</strong> Amazing!</div>
+                <p class="caption"><span class="username">user_one</span> Loving the view!</p>
             </div>
-            <div class="comment-input">
-              <input type="text" id="newComment" placeholder="Add a comment..." />
-              <button onclick="addComment()">Post</button>
+            <div class="comment-section">
+                <h4>Comments</h4>
+                <div class="comment-list" id="commentList">
+                    <div class="comment"><strong>@alice</strong> Wow!</div>
+                    <div class="comment"><strong>@bob</strong> Amazing!</div>
+                </div>
+                <div class="comment-input">
+                    <input type="text" id="newComment" placeholder="Add a comment..." />
+                    <button onclick="addComment()">Post</button>
+                </div>
             </div>
-          </div>
         </div>
-      </div>
     </div>
+</div>
 
-    <div class="form-popup" id="uploadForm">
-      <form method="POST" class="form-container" action="fileUpload.php" enctype="multipart/form-data">
+<div class="form-popup" id="uploadForm">
+    <form method="POST" class="form-container" action="fileUpload.php" enctype="multipart/form-data">
         <span class="close-icon" onclick="closeUploadForm()">&times;</span>
         <img src="images/logo.png" alt="Logo" class="logo-img">
 
         <h3>Upload New Content</h3>
         <div class="info">
 
-          <input type="file" id="upload-file" name="userFile" size="64" required>
+            <input type="file" id="upload-file" name="userFile" size="64" required>
 
-          <input type="text" id="upload-title" name="title" placeholder="Enter a title" required>
-          <textarea type="text" id="upload-description" name="description" placeholder="Write a short description..."
-            rows="6"></textarea>
+            <input type="text" id="upload-title" name="title" placeholder="Enter a title" required>
+            <textarea type="text" id="upload-description" name="description" placeholder="Write a short description..."
+                rows="6"></textarea>
 
 
-          <button type="submit" class="default-btn">Upload</button>
+            <button type="submit" class="default-btn">Upload</button>
         </div>
-      </form>
-    </div>
-
-
-
- 
-
+    </form>
+</div>

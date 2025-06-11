@@ -46,6 +46,9 @@ function closeUploadForm() {
   document.getElementById("home").checked = true;
 }
 
+function scrollToContact(){
+  document.getElementById("contact").scrollIntoView({ behavior: "smooth" });
+}
 function openEditProfileForm() {
     document.getElementById("editProfileForm").style.display = "block";
     document.getElementById("formOverlay").style.display = "block";
