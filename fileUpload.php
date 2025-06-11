@@ -21,6 +21,8 @@ if (!isset($_SESSION['id'])) {
     <body>
 <?php
 
+
+    
     ini_set('display_errors', 1);
     ini_set('display_startup_errors', 1);
     error_reporting(E_ALL);
@@ -28,6 +30,8 @@ if (!isset($_SESSION['id'])) {
 
     require_once( "Lib/lib.php" );
     require_once( "Lib/ImageResize.php" );
+
+    $ffmpegBinary = "/usr/local/bin/ffmpeg";
 
     
     if ( $_FILES['userFile']['error']!=0 ) {
@@ -38,6 +42,7 @@ if (!isset($_SESSION['id'])) {
         echo "</html>\n";
         die();
     }
+
 
 
 
@@ -167,6 +172,51 @@ $fileInfo = finfo_open(FILEINFO_MIME);
                 $resizeObj->close();
 
             }
+<<<<<<< Updated upstream
+=======
+            break;
+
+        
+        case "video":
+
+            $size = "$width" . "x" . "$heightL";
+
+            $imageFilenameAux = $thumbsDir . DIRECTORY_SEPARATOR . $pathParts['filename'] . "-Large.jpg";
+            $imageMimeFilename = "image";
+            $imageTypeFilename = "jpeg";
+            echo "\t\t<p>Generating video 1st image...</p>\n";
+
+
+            echo "<p>FFmpeg path: $ffmpegBinary</p>";
+            echo "<p>Video source path: $dst</p>";
+            echo "<p>Image output path (1st frame): $imageFilenameAux</p>";
+            echo "<p>Image output path (thumb): $thumbFilenameLAux</p>";
+
+            // -itsoffset -1 -> "moves" the film one second forward
+            // -i $dst -> input file
+            // -vcodec mjpeg -> codec do tipo mjpeg
+            // -vframes 1 -> obter uma frame
+            // -s 640x480 -> dimensão do output
+            $cmdFirstImage = "$ffmpegBinary -itsoffset -1 -i " . escapeshellarg($dst) . " -frames:v 1 -q:v 2 -s 640x480 " . escapeshellarg($imageFilenameAux);
+        
+            echo "\t\t<p><code>$cmdFirstImage</code></p>\n";
+            system($cmdFirstImage, $status);
+            echo "\t\t<p>Status from the generation of video 1st image: $status.</p>\n";
+
+            $thumbFilenameSAux = "";
+            $thumbFilenameMAux = "";
+            $thumbFilenameLAux = $thumbsDir . DIRECTORY_SEPARATOR . $pathParts['filename'] . ".jpg";
+            $thumbMimeFilename = "image";
+            $thumbTypeFilename = "jpeg";
+            echo "\t\t<p>Generating video thumb...</p>\n";
+
+            $cmdVideoThumb = "$ffmpegBinary -itsoffset -1 -i " . escapeshellarg($dst) . " -frames:v 1 -q:v 2 -s $size " . escapeshellarg($thumbFilenameLAux);
+            echo "\t\t<p><code>$cmdVideoThumb</code></p>\n";
+            system($cmdVideoThumb, $status);
+            echo "\t\t<p>Status from the generation of video thumb: $status.</p>\n";
+            break;
+
+>>>>>>> Stashed changes
     }
 
 

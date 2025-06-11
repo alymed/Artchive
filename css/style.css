@@ -169,7 +169,7 @@ input#photos:checked ~ .tabs label[for="photos"] {
 
 input#profile:checked ~ .tab-content #profileContent,
 input#home:checked ~ .tab-content #homeContent,
-input#create:checked ~ .tab-content #homeContent,
+input#create:checked ~ .tab-content #createContent,
 input#notification:checked ~ .tab-content #notification,
 input#settings:checked ~ .tab-content #settingsContent,
 input#film:checked ~ .tab-content #filmContent,

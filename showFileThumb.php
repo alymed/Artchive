@@ -19,22 +19,32 @@
 
     $size = $_GET['size'];
 
-    switch ($size) {
-        case 'small':
-            $thumbFilenameAux = $fileDetails[ 'thumbFilenameS' ];
+    switch ($fileDetails['mimeFilename']) {
+
+        case 'image':  
+
+            switch ($size) {
+                case 'small':
+                    $thumbFilenameAux = $fileDetails[ 'thumbFilenameS' ];
+                    break;
+                case 'medium':
+                    $thumbFilenameAux = $fileDetails[ 'thumbFilenameM' ];
+                    break;
+                case 'large':
+                    $thumbFilenameAux = $fileDetails[ 'thumbFilenameL' ];
+                    break;
+            }
             break;
-        case 'medium':
-            $thumbFilenameAux = $fileDetails[ 'thumbFilenameM' ];
-            break;
-        case 'large':
+
+        case 'video':
+
             $thumbFilenameAux = $fileDetails[ 'thumbFilenameL' ];
             break;
+
     }
 
     $thumbMimeFilename = $fileDetails[ 'thumbMimeFilename' ];
     $thumbTypeFilename = $fileDetails[ 'thumbTypeFilename' ];
-
-
 
 
 

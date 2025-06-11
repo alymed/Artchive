@@ -43,13 +43,10 @@ if (!isset($_SESSION['id'])) {
   });
 
 
-  document.addEventListener('DOMContentLoaded', function () {
-    const cards = document.querySelectorAll('.img_container .card img');
-
-    cards.forEach(img => {
-      img.addEventListener('click', function () {
-        openPost(this.src);
-      });
+  document.querySelectorAll('.card').forEach(card => {
+    card.addEventListener('click', function () {
+      const postId = this.dataset.postId;
+      console.log('Post ID:', postId);
     });
   });
 
