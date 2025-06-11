@@ -89,11 +89,10 @@
 
     document.getElementById('profile').checked = true;
 
-    // 1. Abre modal de post
-    const cards = document.querySelectorAll('.img_container .card img');
-    cards.forEach(img => {
-      img.addEventListener('click', function () {
-        openPost(this.src);
+    document.querySelectorAll('.card').forEach(card => {
+      card.addEventListener('click', function (event) {
+      const postId = event.currentTarget.dataset.postId;
+      console.log('Post ID:', postId);
       });
     });
 

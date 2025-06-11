@@ -100,77 +100,48 @@
         </div>
 
         <div class="img_container">
+<<<<<<< Updated upstream
             <?php
+=======
+        <?php
+            $posts = array();
+>>>>>>> Stashed changes
             for( $i= 0;$i<count($following);$i++){
                 $followingUserPosts = getPosts($following[$i]['idFollowed'], $owner);
                 for($j= 0;$j<count($followingUserPosts);$j++){
-
-                    $postTitle = $followingUserPosts[$j]['title'];
-                    $fileID = $followingUserPosts[$j]['idImage'];
-
-                    $image = "<img src=\"showFileThumb.php?id=$fileID&size=small\" alt=\"Post\"></img>";
-                    $caption = "<figcaption> aaaaaaaa </figcaption>";
-                    echo "<figure class=\"card card_small\">$image $caption </figure>";
+                    $posts[] = $followingUserPosts[$j];
                 }
+            }
+
+            if(count($posts) > 0){
+                $randomKeys = array_rand($posts, count($posts));
+            }
+
+            for( $k= 0;$k<count($posts);$k++){
+
+                $post = $posts[$randomKeys[$k]];
+
+                $sizes = ['small', 'medium', 'large'];
+
+                $randomKey = array_rand($sizes);
+                $randomSize = $sizes[$randomKey];
+
+                $idPost = $post['id'];
+                $postTitle = $post['title'];
+                $fileID = $post['idImage'];
+
+                $image = "<img src=\"showFileThumb.php?id=$fileID&size=$randomSize\" alt=\"Post\"></img>";
+                $caption = "<figcaption> aaaaaaaa </figcaption>";
+                echo "<figure class=\"card card_$randomSize\" data-post-id=\"$idPost\">$image $caption </figure>";
+
             }
         ?>
         </div>
 
-        <div class="tag2-content">
-            <div class="img_container">
-                <figure class="card card_medium">
-                    <img src="images/img1.jpg" alt="Description of img3">
-                    <figcaption>Legend for img3</figcaption>
-                </figure>
+  
+    </div>
+    <div id="createContent" class="content">
 
-                <figure class="card card_large">
-                    <img src="images/img4.jpg" alt="Description of img4 again">
-                    <figcaption>Legend for second img4 (large)</figcaption>
-                </figure>
-            </div>
-        </div>
-
-        <div class="tag3-content">
-            <div class="img_container">
-                <figure class="card card_medium">
-                    <img src="images/img2.jpg" alt="Description of img3">
-                    <figcaption>Legend for img3</figcaption>
-                </figure>
-
-                <figure class="card card_large">
-                    <img src="images/img4.jpg" alt="Description of img4 again">
-                    <figcaption>Legend for second img4 (large)</figcaption>
-                </figure>
-            </div>
-        </div>
-
-        <div class="tag4-content">
-            <div class="img_container">
-                <figure class="card card_medium">
-                    <img src="images/img2.jpg" alt="Description of img3">
-                    <figcaption>Legend for img3</figcaption>
-                </figure>
-
-                <figure class="card card_large">
-                    <img src="images/img4.jpg" alt="Description of img4 again">
-                    <figcaption>Legend for second img4 (large)</figcaption>
-                </figure>
-            </div>
-        </div>
-
-        <div class="tag5-content">
-            <div class="img_container">
-                <figure class="card card_medium">
-                    <img src="images/img2.jpg" alt="Description of img3">
-                    <figcaption>Legend for img3</figcaption>
-                </figure>
-
-                <figure class="card card_large">
-                    <img src="images/img4.jpg" alt="Description of img4 again">
-                    <figcaption>Legend for second img4 (large)</figcaption>
-                </figure>
-            </div>
-        </div>
     </div>
     <div id="notification" class="content">
         <h2>Notificações</h2>
@@ -225,70 +196,52 @@
         </ul>
     </div>
     <div id="filmContent" class="content">
-        <div class="img_container">
-            <figure class="card card_medium">
-                <img src="images/img3.jpg" alt="Description of img3">
-                <figcaption>Legend for img3</figcaption>
-            </figure>
-
-            <figure class="card card_small">
-                <img src="images/img4.jpg" alt="Description of img4">
-                <figcaption>Legend for img4 (small)</figcaption>
-            </figure>
-
-            <figure class="card card_large">
-                <img src="images/img5.jpg" alt="Description of img5">
-                <figcaption>Legend for img5</figcaption>
-            </figure>
-
-            <figure class="card card_large">
-                <img src="images/img4.jpg" alt="Description of img4 again">
-                <figcaption>Legend for second img4 (large)</figcaption>
-            </figure>
-            <figure class="card card_medium">
-                <img src="images/img3.jpg" alt="Description of img3">
-                <figcaption>Legend for img3</figcaption>
-            </figure>
-
-            <figure class="card card_small">
-                <img src="images/img4.jpg" alt="Description of img4">
-                <figcaption>Legend for img4 (small)</figcaption>
-            </figure>
-
-            <figure class="card card_large">
-                <img src="images/img5.jpg" alt="Description of img5">
-                <figcaption>Legend for img5</figcaption>
-            </figure>
-
-            <figure class="card card_large">
-                <img src="images/img4.jpg" alt="Description of img4 again">
-                <figcaption>Legend for second img4 (large)</figcaption>
-            </figure>
-            <figure class="card card_medium">
-                <img src="images/img3.jpg" alt="Description of img3">
-                <figcaption>Legend for img3</figcaption>
-            </figure>
-
-            <figure class="card card_small">
-                <img src="images/img4.jpg" alt="Description of img4">
-                <figcaption>Legend for img4 (small)</figcaption>
-            </figure>
-
-            <figure class="card card_large">
-                <img src="images/img5.jpg" alt="Description of img5">
-                <figcaption>Legend for img5</figcaption>
-            </figure>
-
-            <figure class="card card_large">
-                <img src="images/img4.jpg" alt="Description of img4 again">
-                <figcaption>Legend for second img4 (large)</figcaption>
-            </figure>
-        </div>
+       
+      
     </div>
     <div id="musicContent" class="content">
-        <h2>Content 3</h2>
-        <p>This is the content for Tab 3.</p>
+    <div class="img_container"></div>
+        <?php
+            $posts = array();
+
+            $allUsers = getAllUsersData();
+
+            for( $i= 0;$i<count($allUsers);$i++){
+                $allUsersPosts = getPosts($allUsers[$i]['id']);
+                for($j= 0;$j<count($allUsersPosts);$j++){
+                    $idFile = $allUsersPosts[$j]['idImage'];
+                    $fileData = getFileDetails($idFile);
+                    if($fileData['mimeFilename'] == 'audio'){
+                        $posts[] = $allUsersPosts[$j];
+                    }
+                }
+            }
+
+            if(count($posts) > 0){
+                $randomKeys = array_rand($posts, count($posts));
+            }
+
+            for( $k= 0;$k<count($posts);$k++){
+
+                $post = $posts[$randomKeys[$k]];
+
+                $sizes = ['small', 'medium', 'large'];
+
+                $randomKey = array_rand($sizes);
+                $randomSize = $sizes[$randomKey];
+
+                $postTitle = $post['title'];
+                $fileID = $post['idImage'];
+
+                $image = "<img src=\"showFileThumb.php?id=$fileID&size=$randomSize\" alt=\"Post\"></img>";
+                $caption = "<figcaption> aaaaaaaa </figcaption>";
+                echo "<figure class=\"card card_$randomSize\">$image $caption </figure>";
+
+            }
+
+        ?>
     </div>
+
     <div id="photoContent" class="content">
         <h2>Content 3</h2>
         <p>This is the content for Tab 3.</p>
@@ -338,9 +291,10 @@
             <?php 
 
         for($idx=0; $idx<count($profile_posts); $idx++){
-          $fileID = $profile_posts[$idx]['idImage'];
-          $target = "<img src=\"showFileThumb.php?id=" . $fileID . "&size=small\" alt=\"Post\"></img>";
-          echo "<div class=\"card card_small\">$target</div>";
+          $idFile = $profile_posts[$idx]['idImage'];
+          $idPost = $profile_posts[$idx]['id'];
+          $target = "<img src=\"showFileThumb.php?id=" . $idFile . "&size=small\" alt=\"Post\"></img>";
+          echo "<div class=\"card card_small\" data_post_id=\"$idPost\">$target</div>";
         }
         ?>
         </div>

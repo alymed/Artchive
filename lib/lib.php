@@ -273,7 +273,7 @@ function existUserField($field, $value, $table) {
     return $exists;
 }
 
-function getUserData($idUser) {
+function getUserData($idUser = "") {
 
     dbConnect( ConfigFile );
     
@@ -315,6 +315,30 @@ function getUserAuthData($idUser) {
     dbDisconnect();
 
     return $userData;
+}
+
+function getAllUsersData() {
+
+    dbConnect( ConfigFile );
+    
+    $dataBaseName = $GLOBALS['configDataBase']->db;
+
+    mysqli_select_db($GLOBALS['ligacao'], $dataBaseName );
+
+    $query = "SELECT * FROM `$dataBaseName`.`users-profile`";
+
+    $result = mysqli_query($GLOBALS['ligacao'], $query);
+
+    $usersData = array();
+    while (($row = mysqli_fetch_array($result)) != false) {
+        $usersData[] = $row;
+    }
+
+    mysqli_free_result($result);
+
+    dbDisconnect();
+
+    return $usersData;
 }
 
 function getUserFollowers($idUser) {
@@ -690,19 +714,12 @@ function getFileDetails($idImage) {
 
     $result = mysqli_query($GLOBALS['ligacao'], $query);
 
-    $fileData = array();
-    while (($fileDataRecord = mysqli_fetch_array($result)) != false) {
-        $fileData[] = $fileDataRecord;
-    }
+    $fileData = mysqli_fetch_array($result);
 
     mysqli_free_result($result);
     dbDisconnect();
 
-    if ( !is_array($idImage)) {
-        return $fileData[0];
-    } else {
-        return $fileData;
-    }
+    return $fileData;
 }
 
 function getPosts($idUser, $owner) {
