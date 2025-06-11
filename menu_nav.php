@@ -100,12 +100,8 @@
         </div>
 
         <div class="img_container">
-<<<<<<< Updated upstream
-            <?php
-=======
         <?php
             $posts = array();
->>>>>>> Stashed changes
             for( $i= 0;$i<count($following);$i++){
                 $followingUserPosts = getPosts($following[$i]['idFollowed'], $owner);
                 for($j= 0;$j<count($followingUserPosts);$j++){
@@ -200,14 +196,16 @@
       
     </div>
     <div id="musicContent" class="content">
-    <div class="img_container"></div>
+
+    </div>
+    <div class="img_container">
         <?php
             $posts = array();
 
             $allUsers = getAllUsersData();
 
             for( $i= 0;$i<count($allUsers);$i++){
-                $allUsersPosts = getPosts($allUsers[$i]['id']);
+                $allUsersPosts = getPosts($allUsers[$i]['id'], $owner);
                 for($j= 0;$j<count($allUsersPosts);$j++){
                     $idFile = $allUsersPosts[$j]['idImage'];
                     $fileData = getFileDetails($idFile);
@@ -294,7 +292,7 @@
           $idFile = $profile_posts[$idx]['idImage'];
           $idPost = $profile_posts[$idx]['id'];
           $target = "<img src=\"showFileThumb.php?id=" . $idFile . "&size=small\" alt=\"Post\"></img>";
-          echo "<div class=\"card card_small\" data_post_id=\"$idPost\">$target</div>";
+          echo "<div class=\"card card_small\" data-post-id=\"$idPost\">$target</div>";
         }
         ?>
         </div>
