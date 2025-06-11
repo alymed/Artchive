@@ -1,7 +1,4 @@
 <?php
-
-  
-
     ini_set('display_errors', 1);
     ini_set('display_startup_errors', 1);
     error_reporting(E_ALL);
@@ -19,21 +16,17 @@
         $owner = true;
     }
 
-
-
     $followers = getUserFollowers( $idUser);
     $following = getUserFollowing($idUser);
     
-
     #Profile
-    $profile_posts = getPosts($idUserProfile);
+    $profile_posts = getPosts($idUserProfile, $owner);
     $profile_userData = getUserData($idUserProfile);
     $profile_followers = getUserFollowers($idUserProfile);
     $profile_following = getUserFollowing($idUserProfile);
 
     $notifications = getActivities($idUser);
 
-    
     if(!$owner){
         $isfollowing = false;
         for($i= 0;$i<count($profile_followers);$i++){
@@ -44,15 +37,7 @@
         }
     }
 
-  
-
-
-
-
-
 ?>
-
-
 
 
 <input hidden type="radio" name="tab" id="profile">
@@ -117,7 +102,7 @@
         <div class="img_container">
             <?php
             for( $i= 0;$i<count($following);$i++){
-                $followingUserPosts = getPosts($following[$i]['idFollowed']);
+                $followingUserPosts = getPosts($following[$i]['idFollowed'], $owner);
                 for($j= 0;$j<count($followingUserPosts);$j++){
 
                     $postTitle = $followingUserPosts[$j]['title'];
@@ -309,20 +294,10 @@
         <p>This is the content for Tab 3.</p>
     </div>
 
-
     <div id="settingsContent" class="content">
         <h2>Content 3</h2>
         <p><a href="logout.php">Logout</a></p>
     </div>
-
-
-
-
-
-
-
-
-
 
     <div id="profileContent" class="content">
         <div class="profile-header">
@@ -331,16 +306,16 @@
             </div>
             <div class="profile-info">
                 <h1 id="userName"> <?php echo $profile_userData['username']; ?> </h1>
-                <!--<p class="username" id="userUsername">massama.jpeg</p>-->
                 <p class="bio" id="userBio"><?php echo $profile_userData['biography']; ?></p>
-
-
 
                 <div class="social-stats">
                     <div><strong><?php echo count($profile_followers) ?></strong><br />Followers</div>
                     <div><strong><?php echo count($profile_following) ?> </strong><br />Following</div>
                     <div><strong><?php echo count($profile_posts) ?></strong><br />Posts</div>
                     <button class="default-btn" onclick="openEditProfileForm()">Edit Profile</button>
+                    <?php if (!$owner) { ?>
+                    <button class="default-btn" onclick="scrollToContact()">Contact Me</button>
+                    <?php } ?>
                     <?php
             if (!$owner && !$isfollowing){
             ?>
@@ -357,9 +332,6 @@
                 </div>
             </div>
         </div>
-
-
-
 
         <div class="img_container">
             <h2 class="section-title"> Gallery </h2>
@@ -460,8 +432,34 @@
             <textarea type="text" id="upload-description" name="description" placeholder="Write a short description..."
                 rows="6"></textarea>
 
+            <button type="button" id="privacyToggle" class="privacy-btn" name="privacy" aria-pressed="false" title="Definir como público ou privado">
+                <i class="fa-solid fa-lock-open"></i>
+            </button>
+            <input type="hidden" name="privacy" id="privacyInput" value="public">
 
             <button type="submit" class="default-btn">Upload</button>
         </div>
     </form>
 </div>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+<script>
+    const privacyToggle = document.getElementById('privacyToggle');
+    const privacyInput = document.getElementById('privacyInput');
+
+    privacyToggle.addEventListener('click', () => {
+        const icon = privacyToggle.querySelector('i');
+        if (privacyInput.value === 'public') {
+            privacyInput.value = 'private';
+            privacyToggle.setAttribute('aria-pressed', 'true');
+            icon.classList.remove('fa-lock-open');
+            icon.classList.add('fa-lock');
+            privacyToggle.title = "Definido como privado";
+        } else {
+            privacyInput.value = 'public';
+            privacyToggle.setAttribute('aria-pressed', 'false');
+            icon.classList.remove('fa-lock');
+            icon.classList.add('fa-lock-open');
+            privacyToggle.title = "Definido como público";
+        }
+    });
+</script>

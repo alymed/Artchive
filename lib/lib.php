@@ -627,7 +627,7 @@ function uploadFile(
     return $fileOk;
 }
 
-function uploadPost($title, $description, $idUser, $idImage){
+function uploadPost($title, $description, $privacy, $idUser, $idImage){
 
     $postOk = -1;
 
@@ -640,8 +640,8 @@ function uploadPost($title, $description, $idUser, $idImage){
     
     $query = 
             "INSERT INTO `$dataBaseName`.`users-posts`" .
-            "(`title`, `description`, `createdAt`, `idUser`, `idImage`) values " .
-            "('$title', '$description', '$createdAt', '$idUser', '$idImage')";
+            "(`title`, `description`, `privacy`,`createdAt`, `idUser`, `idImage`) values " .
+            "('$title', '$description', '$privacy','$createdAt', '$idUser', '$idImage')";
 
     $result =  mysqli_query( $GLOBALS['ligacao'], $query );
 
@@ -705,7 +705,7 @@ function getFileDetails($idImage) {
     }
 }
 
-function getPosts($idUser) {
+function getPosts($idUser, $owner) {
 
 
     dbConnect(ConfigFile);
@@ -714,7 +714,14 @@ function getPosts($idUser) {
 
     mysqli_select_db($GLOBALS['ligacao'], $dataBaseName );
 
-    $query = "SELECT * FROM `$dataBaseName`.`users-posts` WHERE `idUser`='$idUser'";
+    if ($owner) {
+        // Owner can see all their posts
+        $query ="SELECT * FROM `$dataBaseName`.`users-posts` WHERE `idUser`='$idUser'";
+    } else {
+        // Other users see only public posts
+        $query ="SELECT * FROM `$dataBaseName`.`users-posts` WHERE `idUser`='$idUser' AND `privacy` = 'public'";
+    }
+
 
     $result = mysqli_query($GLOBALS['ligacao'], $query);
 

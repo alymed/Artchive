@@ -81,13 +81,11 @@ if (!isset($_SESSION['id'])) {
 $fileInfo = finfo_open(FILEINFO_MIME);
 
     $fileInfoData = finfo_file($fileInfo, $dst);
-    
 
         echo "<pre>\n";
         print_r( $fileInfoData );
         echo "</pre>\n<br>";
 
-    
     $fileTypeComponents = explode( ";", $fileInfoData);
 
     $mimeTypeFileUploaded = explode("/", $fileTypeComponents[0]);
@@ -122,6 +120,12 @@ $fileInfo = finfo_open(FILEINFO_MIME);
         $title = $pathParts['filename'];
     }
 
+    if ($_POST['privacy'] != NULL) {
+    $privacy = addslashes($_POST['privacy']);
+    } else {
+        $privacy = 'public';
+    }
+
 
     $width = $configuration['thumbWidth'];
     $heightS = $configuration['thumbHeightS'];
@@ -138,10 +142,7 @@ $fileInfo = finfo_open(FILEINFO_MIME);
 
     switch ($mimeFilename) {
         case "image":
-           
-
-     
-
+        
             $imageFilenameAux = $dst;
             $imageMimeFilename = "image";
             $imageTypeFilename = $typeFilename;
@@ -166,7 +167,6 @@ $fileInfo = finfo_open(FILEINFO_MIME);
                 $resizeObj->close();
 
             }
-
     }
 
 
@@ -184,7 +184,7 @@ $fileInfo = finfo_open(FILEINFO_MIME);
 
     if ( $idFile > 0 ) {
 
-        $idPost = uploadPost($title, $description, $idUser, $idFile);
+        $idPost = uploadPost($title, $description, $privacy, $idUser, $idFile);
         if($idPost > 0){
                 echo "Success!";
                 header("Location: index.php");
@@ -198,8 +198,6 @@ $fileInfo = finfo_open(FILEINFO_MIME);
         echo "Information about file could not be inserted into the data base. Details : " . dbGetLastError() ;
         header("Location: index.php");
     }
-
-
 ?>
 
 

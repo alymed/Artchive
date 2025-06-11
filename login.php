@@ -1,6 +1,36 @@
 <?php
 
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $secretKey = '6LcQV10rAAAAAPHRfN1r_AIwv0PJR69kA5NPNpIk';
+    $captchaResponse = $_POST['g-recaptcha-response'];
 
+    // Verify the CAPTCHA response with Google
+    $verifyUrl = 'https://www.google.com/recaptcha/api/siteverify';
+    $data = [
+        'secret' => $secretKey,
+        'response' => $captchaResponse,
+        'remoteip' => $_SERVER['REMOTE_ADDR']
+    ];
+
+    // Use cURL to send the request
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_URL, $verifyUrl);
+    curl_setopt($ch, CURLOPT_POST, true);
+    curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($data));
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    $apiResponse = curl_exec($ch);
+    curl_close($ch);
+
+    $responseData = json_decode($apiResponse);
+
+    if ($responseData->success) {
+        // CAPTCHA was successful – proceed with user registration
+        echo "User validated and can be registered.";
+    } else {
+        // CAPTCHA failed
+        echo "CAPTCHA verification failed. Please try again.";
+    }
+}
     ini_set('display_errors', 1);
     ini_set('display_startup_errors', 1);
     error_reporting(E_ALL);
