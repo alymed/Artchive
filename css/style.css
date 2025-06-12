@@ -596,14 +596,29 @@ input#tag5:checked ~ .tag5-content {
 }
 
 .profile-pic-circle {
-  width: 100px;
-  height: 100px;
+  width: 80px;              /* Tamanho reduzido fixo */
+  height: 80px;             /* Altura fixa para manter o círculo */
   border-radius: 50%;
   object-fit: cover;
   display: block;
   margin: 0 auto;
 }
 
+.info textarea[type="text"] {
+  width: 80%;               /* Aumenta a largura do campo de biografia */
+  height: 120px;            /* Aumenta a altura para mais espaço de escrita */
+  padding: 12px;
+  margin: 5px 0 3px 0;
+  border: 1px solid gray;
+  background: #fff;
+  border-radius: 16px;
+  resize: vertical;         /* Permite redimensionamento vertical pelo usuário (opcional) */
+}
+
+.info textarea[type="text"]:focus {
+  background-color: #ddd;
+  outline: none;
+}
 
 /* //////////////////////NOTIFICATIONS////////////////////////////////// */
 .notification-list {
@@ -859,3 +874,4 @@ input#tag5:checked ~ .tag5-content {
   border-radius: 5px;
   cursor: pointer;
 }
+

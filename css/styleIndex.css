@@ -271,6 +271,18 @@ button.navbar-brand#log:hover{
   color: black;
 }
 
+.back-icon button{
+  width: 100%;
+}
+
+.back-icon i {
+  width: 100%;
+}
+
+.back-icon:hover {
+  color: #071e3e;
+}
+
 .form-overlay {
   position: fixed;
   top: 0;

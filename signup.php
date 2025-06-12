@@ -32,44 +32,27 @@
         $name != null && $name != "" && $username != null && $username != "" && $birthdate != null && $birthdate != ""
        
     ){
-
         $a = 3;
-        
-        
         $serverName = filter_input( INPUT_SERVER, 'SERVER_NAME', FILTER_UNSAFE_RAW, $flags);
-
         $serverPort = 80;
-
         $appname = webAppName();
-
         $baseUrl = "http://" . $serverName . ":" . $serverPort;
-
         $baseNextUrl = $baseUrl . $appname;
-        
-        
-
         $userExists = existUserField("username", $username, "users-profile");
 
         if ( !$userExists ) {
-
             $idUser = register($name, $username, $password, $email, $birthdate);
      
             if ($idUser > 0) {
-
                 $nextUrl = "email.php?id=" . urlencode($idUser);
-
             } else {
-
                 header("Location: " . $baseNextUrl. "index.php?signupError=RegisterError");
             }
 
         } else {
-  
             header("Location: " . $baseNextUrl. "index.php?signupError=UsernameInUse");
-            
         }
 
-    
     } else {
         
         header("Location: " . $baseNextUrl. "index.php?signupError=InvalidInputs");
@@ -90,4 +73,3 @@
     <h1> <?php echo $a ?></h1>
 </body>
 </html>
-
