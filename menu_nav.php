@@ -109,28 +109,24 @@
                 }
             }
 
-            if(count($posts) > 0){
-                $randomKeys = array_rand($posts, count($posts));
-            }
+            if (count($posts) > 0) {
+            $randomKeys = array_rand($posts, count($posts));
 
-            for( $k= 0;$k<count($posts);$k++){
+            $sizes = ['small', 'medium', 'large'];
 
-                $post = $posts[$randomKeys[$k]];
-
-                $sizes = ['small', 'medium', 'large'];
-
-                $randomKey = array_rand($sizes);
-                $randomSize = $sizes[$randomKey];
-
-                $idPost = $post['id'];
-                $postTitle = $post['title'];
+            foreach ($randomKeys as $k) {
+                $post = $posts[$k];
+                $randomSize = $sizes[array_rand($sizes)];
+                $postTitle = htmlspecialchars($post['title']);
                 $fileID = $post['idImage'];
+                $postID = $post['id'];
 
-                $image = "<img src=\"showFileThumb.php?id=$fileID&size=$randomSize\" alt=\"Post\"></img>";
-                $caption = "<figcaption> aaaaaaaa </figcaption>";
-                echo "<figure class=\"card card_$randomSize\" data-post-id=\"$idPost\">$image $caption </figure>";
-
+                echo "<figure class=\"card card_$randomSize\" data-post-id=\"$postID\">";
+                echo "<img src=\"showFileThumb.php?id=$fileID&size=$randomSize\" alt=\"".htmlspecialchars($postTitle)."\">";
+                echo "<figcaption>$postTitle</figcaption>";
+                echo "</figure>";
             }
+        }
         ?>
         </div>
 
@@ -376,8 +372,8 @@
         <span class="close-icon" onclick="closePost()">&times;</span>
         <div class="post">
             <div class="post-header">
-                <img src="https://i.pravatar.cc/40" alt="User profile" class="profile-pic">
-                <span class="username">user_one</span>
+                <img id="modalProfilePic" src="" alt="User profile" class="profile-pic">
+                <span id="modalUsername" class="username">username</span>
                 <div class="post-menu">
                     <i class="bi bi-three-dots-vertical menu-icon" onclick="togglePostMenu()"></i>
                     <div class="dropdown-menu" id="postMenu">
@@ -390,24 +386,21 @@
             <div class="post-footer">
                 <div class="post-actions">
                     <button class="like-button"><i class="bi bi-heart"></i></button>
-                    <span class="action-count">120</span>
+                    <span id="likeCount" class="action-count">0</span>
 
                     <button class="comment-button"><i class="bi bi-chat"></i></button>
-                    <span class="action-count">34</span>
+                    <span id="commentCount" class="action-count">0</span>
 
                     <button class="save-button"><i class="bi bi-bookmark"></i></button>
-                    <span class="action-count">18</span>
                 </div>
-
-                <p class="caption"><span class="username">user_one</span> Loving the view!</p>
+                <p class="caption"><span class="username" id="captionUsername"></span>
+                    <span id="captionText"></span>
+                </p>
             </div>
             <div class="comment-section">
                 <h4>Comments</h4>
-                <div class="comment-list" id="commentList">
-                    <!-- Comentários serão carregados aqui via JS -->
-                </div>
+                <div class="comment-list" id="commentList"></div>
 
-                <!-- input hidden para guardar o post_id atual -->
                 <input type="hidden" id="currentPostId" value="">
 
                 <div class="comment-input">
@@ -418,6 +411,18 @@
         </div>
     </div>
 </div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    document.querySelectorAll('.card').forEach(card => {
+    card.addEventListener('click', function () {
+      const postId = this.dataset.postId;
+      openPost(postId)
+      console.log('Post ID:', postId);
+    });
+  });
+  });
+</script>
 
 <div class="form-popup" id="uploadForm">
     <form method="POST" class="form-container" action="fileUpload.php" enctype="multipart/form-data">

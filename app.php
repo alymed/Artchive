@@ -43,12 +43,13 @@ if (!isset($_SESSION['id'])) {
   });
 
 
-  document.querySelectorAll('.card').forEach(card => {
-    card.addEventListener('click', function () {
-      const postId = this.dataset.postId;
-      console.log('Post ID:', postId);
-    });
-  });
+  // document.querySelectorAll('.card').forEach(card => {
+  //   card.addEventListener('click', function () {
+  //     const postId = this.dataset.postId;
+  //     openPost(postId)
+  //     console.log('Post ID:', postId);
+  //   });
+  // });
 
   //make liked button red
   document.querySelector('.like-button').addEventListener('click', function () {
