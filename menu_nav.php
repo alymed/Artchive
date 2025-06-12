@@ -192,13 +192,54 @@
         </ul>
     </div>
     <div id="filmContent" class="content">
-       
-      
+        <div class="img_container">
+        <?php
+            $posts = array();
+
+            $allUsers = getAllUsersData();
+
+            for( $i= 0;$i<count($allUsers);$i++){
+                $allUsersPosts = getPosts($allUsers[$i]['id'], $owner);
+                for($j= 0;$j<count($allUsersPosts);$j++){
+                    $idFile = $allUsersPosts[$j]['idImage'];
+                    $fileData = getFileDetails($idFile);
+                    if($fileData['mimeFilename'] == 'video'){
+                        $posts[] = $allUsersPosts[$j];
+                    }
+                }
+            }
+
+            if(count($posts) > 0){
+
+
+                $randomKeys = array_rand($posts, count($posts));
+
+                if(count($posts) == 1){
+                    $randomKeys = [$randomKeys];
+                }
+
+                for( $k= 0;$k<count($posts);$k++){
+
+                    $post = $posts[$randomKeys[$k]];
+
+
+                    $postTitle = $post['title'];
+                    $fileID = $post['idImage'];
+
+                    $image = "<img src=\"showFileThumb.php?id=$fileID&size=Large\" alt=\"Post\"></img>";
+                    $caption = "<figcaption> aaaaaaaa </figcaption>";
+                    echo "<figure class=\"card card_large\">$image $caption </figure>";
+
+                }
+
+            }
+
+
+        ?>
+        </div>
     </div>
     <div id="musicContent" class="content">
-
-    </div>
-    <div class="img_container">
+        <div class="img_container">
         <?php
             $posts = array();
 
@@ -216,28 +257,33 @@
             }
 
             if(count($posts) > 0){
+
+
                 $randomKeys = array_rand($posts, count($posts));
+
+                if(count($posts) == 1){
+                    $randomKeys = [$randomKeys];
+                }
+
+                for( $k= 0;$k<count($posts);$k++){
+
+                    $post = $posts[$randomKeys[$k]];
+
+
+                    $postTitle = $post['title'];
+                    $fileID = $post['idImage'];
+
+                    $image = "<img src=\"showFileThumb.php?id=$fileID&size=small\" alt=\"Post\"></img>";
+                    $caption = "<figcaption> aaaaaaaa </figcaption>";
+                    echo "<figure class=\"card card_small\">$image $caption </figure>";
+
+                }
+
             }
 
-            for( $k= 0;$k<count($posts);$k++){
-
-                $post = $posts[$randomKeys[$k]];
-
-                $sizes = ['small', 'medium', 'large'];
-
-                $randomKey = array_rand($sizes);
-                $randomSize = $sizes[$randomKey];
-
-                $postTitle = $post['title'];
-                $fileID = $post['idImage'];
-
-                $image = "<img src=\"showFileThumb.php?id=$fileID&size=$randomSize\" alt=\"Post\"></img>";
-                $caption = "<figcaption> aaaaaaaa </figcaption>";
-                echo "<figure class=\"card card_$randomSize\">$image $caption </figure>";
-
-            }
 
         ?>
+        </div>
     </div>
 
     <div id="photoContent" class="content">

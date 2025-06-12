@@ -86,6 +86,7 @@ if (!isset($_SESSION['id'])) {
 $fileInfo = finfo_open(FILEINFO_MIME);
 
     $fileInfoData = finfo_file($fileInfo, $dst);
+    echo "fileInfo: " . $fileInfoData;
 
         echo "<pre>\n";
         print_r( $fileInfoData );
@@ -214,7 +215,40 @@ $fileInfo = finfo_open(FILEINFO_MIME);
             echo "\t\t<p>Status from the generation of video thumb: $status.</p>\n";
             break;
 
+
+
+        case "audio":
+
+            require_once( "lib/Zend/Media/Id3v2.php" );
+
+            $id3 = new Zend_Media_Id3v2($dst);
+
+            $mimeTypeAudioAPIC = explode("/", $id3->apic->mimeType);
+            //$mimeAudioAPIC = $mimeTypeAudioAPIC[0];
+            $typeAudioAPIC = $mimeTypeAudioAPIC[1];
+
+            $imageFilenameAux = $thumbsDir . DIRECTORY_SEPARATOR . $pathParts['filename'] . "-Large." . $typeAudioAPIC;
+            $imageMimeFileName = "image";
+            $imageTypeFileName = $typeAudioAPIC;
+            $fdMusicImage = fopen($imageFileNameAux, "wb");
+            fwrite($fdMusicImage, $id3->apic->getImageData());
+            fclose($fdMusicImage);
+
+            
+            $thumbFilenameSAux = $thumbsDir . DIRECTORY_SEPARATOR . $pathParts['filename'] . "." . $typeAudioAPIC;
+            $thumbFilenameMAux = "";
+            $thumbFilenameLAux = "";
+            $thumbMimeFileName = "image";
+            $thumbTypeFileName = $typeAudioAPIC;
+            $resizeObj = new ImageResize($imageFileNameAux);
+            $resizeObj->resizeImage($width, $heightS, 'crop');
+            $resizeObj->saveImage($thumbFileNameAux, $typeAudioAPIC, 100);
+            $resizeObj->close();
+            break;
+
     }
+
+
 
 
     $filename = addslashes($dst);
@@ -234,16 +268,16 @@ $fileInfo = finfo_open(FILEINFO_MIME);
         $idPost = uploadPost($title, $description, $privacy, $idUser, $idFile);
         if($idPost > 0){
                 echo "Success!";
-                header("Location: index.php");
+                //header("Location: index.php");
 
         }else{
             echo "Information about file could not be inserted into the data base. Details : " . dbGetLastError() ;
-            header("Location: index.php");
+            //header("Location: index.php");
         }
     }
     else {
         echo "Information about file could not be inserted into the data base. Details : " . dbGetLastError() ;
-        header("Location: index.php");
+        //header("Location: index.php");
     }
 ?>
 
