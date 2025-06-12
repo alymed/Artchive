@@ -72,12 +72,24 @@ function openEditProfileForm() {
 function openPost(postId) {
   const modal = document.getElementById('postModal');
   modal.style.display = "block";
+  setTimeout(() => modal.classList.add('show'), 10);
+
   console.log('Post ID JS:', postId);
 
-    // Seleciona o card correspondente pelo data-post-id
-  const card = document.querySelector(`.card[data-post-id="${postId}"] img`);
+  const card = document.querySelector(`.card[data-post-id="${postId}"]`);
   if (card) {
-    document.getElementById('modalImage').src = card.src;
+    const img = card.querySelector('img');
+    const username = card.getAttribute('data-username');
+    const description = card.getAttribute('data-description');
+    const date = card.getAttribute('data-date');
+
+    document.getElementById('modalImage').src = img.src;
+    document.getElementById('captionUsername').textContent = username;
+    document.getElementById('modalUsername').textContent = username;
+    document.getElementById('captionText').textContent = description;
+
+    // Opcional: Exibir a data em algum lugar
+    // document.getElementById('modalDate').textContent = new Date(date).toLocaleDateString();
   }
 
   document.getElementById('currentPostId').value = postId;
@@ -87,8 +99,12 @@ function openPost(postId) {
 
 function closePost() {
   const modal = document.getElementById('postModal');
-  modal.style.display = 'none';
+  modal.classList.remove('show');
+  setTimeout(() => {
+    modal.style.display = "none";
+  }, 300); // tempo igual ao transition do CSS
 }
+
 
 function togglePostMenu() {
   const menu = document.getElementById("postMenu");

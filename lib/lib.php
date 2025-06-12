@@ -273,6 +273,27 @@ function existUserField($field, $value, $table) {
     return $exists;
 }
 
+function getUsernameById($idUser) {
+    dbConnect(ConfigFile);
+
+    $dataBaseName = $GLOBALS['configDataBase']->db;
+    mysqli_select_db($GLOBALS['ligacao'], $dataBaseName);
+
+    $query = "SELECT `username` FROM `$dataBaseName`.`users-profile` WHERE `id` = '$idUser'";
+
+    $result = mysqli_query($GLOBALS['ligacao'], $query);
+
+    $username = null;
+    if ($result && $row = mysqli_fetch_array($result)) {
+        $username = $row['username'];
+    }
+
+    mysqli_free_result($result);
+    dbDisconnect();
+
+    return $username;
+}
+
 function getUserData($idUser = "") {
 
     dbConnect( ConfigFile );

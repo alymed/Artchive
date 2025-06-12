@@ -11,7 +11,7 @@
                 <label for="passe"><b>Password</b></label>
                 <input type="password" placeholder="Password" name="password" id="login_password" required>
                 <a href="#" class="action" id="password">Forgot your password?</a>
-                <div class="g-recaptcha" data-sitekey="6LcQV10rAAAAAB-XprIAz5u2HPQ6aZu4QRY6UyYw"></div>
+                <div class="g-recaptcha" data-sitekey="6LcQV10rAAAAAB-XprIAz5u2HPQ6aZu4QRY6UyYw" required></div>
                 <button type="submit" class="default-btn" name="login" id="login_button" >Log in</button>
                 <a class="action" id="signup" onclick="openSignupForm()">Not on Artchive yet? Sign up</a>
             </div>
