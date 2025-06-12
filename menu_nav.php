@@ -291,7 +291,7 @@
           $idFile = $profile_posts[$idx]['idImage'];
           $idPost = $profile_posts[$idx]['id'];
           $target = "<img src=\"showFileThumb.php?id=" . $idFile . "&size=small\" alt=\"Post\"></img>";
-          echo "<div class=\"card card_small\" data_post_id=\"$idPost\">$target</div>";
+          echo "<div class=\"card card_small\" data-post-id=\"$idPost\">$target</div>";
         }
         ?>
         </div>
