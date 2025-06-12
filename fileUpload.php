@@ -172,8 +172,6 @@ $fileInfo = finfo_open(FILEINFO_MIME);
                 $resizeObj->close();
 
             }
-<<<<<<< Updated upstream
-=======
             break;
 
         
@@ -216,7 +214,6 @@ $fileInfo = finfo_open(FILEINFO_MIME);
             echo "\t\t<p>Status from the generation of video thumb: $status.</p>\n";
             break;
 
->>>>>>> Stashed changes
     }
 
 

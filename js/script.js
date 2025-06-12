@@ -69,16 +69,21 @@ function openEditProfileForm() {
     }
   }
 
-function openPost(src, postId) {
+function openPost(postId) {
   const modal = document.getElementById('postModal');
-  document.getElementById('modalImage').src = src;
+  modal.style.display = "block";
+  console.log('Post ID JS:', postId);
+
+    // Seleciona o card correspondente pelo data-post-id
+  const card = document.querySelector(`.card[data-post-id="${postId}"] img`);
+  if (card) {
+    document.getElementById('modalImage').src = card.src;
+  }
+
   document.getElementById('currentPostId').value = postId;
-
   loadComments(postId);
-
-  modal.style.display = 'block';
-  modal.style.display = 'flex';
 }
+
 
 function closePost() {
   const modal = document.getElementById('postModal');

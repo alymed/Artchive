@@ -528,12 +528,12 @@ input#tag5:checked ~ .tag5-content {
   border: none;
   font-size: 20px;
   cursor: pointer;
-  color: #333;
+  color: #0a2c5a;
 }
 
 .post-actions .action-count {
   font-size: 14px;
-  color: #666;
+  color: #0a2c5a;
 }
 
 .caption {
