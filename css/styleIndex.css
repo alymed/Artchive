@@ -224,7 +224,10 @@ button.navbar-brand#log:hover{
 }
 
 /* Full-width input fields */
-.form-container input[type=text], .form-container input[type=password] {
+.form-container input[type="text"],
+.form-container input[type="email"],
+.form-container input[type="password"],
+.form-container input[type="date"] {
   width: 60%;
   padding: 12px;
   margin: 5px 0 3px 0;
@@ -234,11 +237,13 @@ button.navbar-brand#log:hover{
 }
 
 /* When the inputs get focus, do something */
-.form-container input[type=text]:focus, .form-container input[type=password]:focus {
+.form-container input[type="text"]:focus,
+.form-container input[type="email"]:focus,
+.form-container input[type="password"]:focus,
+.form-container input[type="date"]:focus {
   background-color: #ddd;
   outline: none;
 }
-
 /* Set a style for the submit/login button */
 .default-btn {
   background-color: #0a2c5a;

@@ -482,7 +482,7 @@ input#tag5:checked ~ .tag5-content {
   outline: none;
 }
 
-.form-container input[type="text"],
+
 .form-container input[type="file"],
 .form-container input[type="date"],
 .form-container input[type="password"],
@@ -494,6 +494,7 @@ input#tag5:checked ~ .tag5-content {
   background: #fff;
   border-radius: 16px;
 }
+
 
 /* Set a style for the submit/login button */
 .default-btn {

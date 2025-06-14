@@ -6,10 +6,7 @@
 
     require_once( "lib/lib.php");
     require_once( "lib/HtmlMimeMail.php" );
-
-
-
-
+    
     $emailAccount = getEmailAccount(1);
         
     $smtpServer = $emailAccount[ 'smtpServer' ];
