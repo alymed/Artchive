@@ -83,7 +83,7 @@ if (!isset($_SESSION['id'])) {
 <?php
 
 
-$fileInfo = finfo_open(FILEINFO_MIME);
+    $fileInfo = finfo_open(FILEINFO_MIME);
 
     $fileInfoData = finfo_file($fileInfo, $dst);
     echo "fileInfo: " . $fileInfoData;
@@ -97,6 +97,17 @@ $fileInfo = finfo_open(FILEINFO_MIME);
     $mimeTypeFileUploaded = explode("/", $fileTypeComponents[0]);
     $mimeFilename = $mimeTypeFileUploaded[0];
     $typeFilename = $mimeTypeFileUploaded[1];
+
+    if($mimeFilename == 'video'){
+        $typeFilename = strtolower(pathinfo($dst, PATHINFO_EXTENSION));
+        if($typeFilename == 'm4a'){
+            $mimeFilename = 'audio';
+        }
+    }
+
+    echo "realFileInfo: $mimeFilename/$typeFilename";
+
+  
 
     $thumbsDir = $dstUser. DIRECTORY_SEPARATOR .  "thumbs";
 
@@ -219,31 +230,47 @@ $fileInfo = finfo_open(FILEINFO_MIME);
 
         case "audio":
 
-            require_once( "lib/Zend/Media/Id3v2.php" );
+            $defaultDir = $dstDir . DIRECTORY_SEPARATOR . "Default";
 
-            $id3 = new Zend_Media_Id3v2($dst);
+            if (!is_dir($defaultDir)) {
+                mkdir($defaultDir, 0777, true);
+            }
 
-            $mimeTypeAudioAPIC = explode("/", $id3->apic->mimeType);
-            //$mimeAudioAPIC = $mimeTypeAudioAPIC[0];
-            $typeAudioAPIC = $mimeTypeAudioAPIC[1];
+            $destinationPath = $defaultDir  . DIRECTORY_SEPARATOR . "default-audio-thumbnail.jpg";
+            $sourcePath =  __DIR__ . '/images/default-audio-thumbnail.jpg';
+            $copyResult = copy($sourcePath, $destinationPath);
 
-            $imageFilenameAux = $thumbsDir . DIRECTORY_SEPARATOR . $pathParts['filename'] . "-Large." . $typeAudioAPIC;
-            $imageMimeFileName = "image";
-            $imageTypeFileName = $typeAudioAPIC;
-            $fdMusicImage = fopen($imageFileNameAux, "wb");
-            fwrite($fdMusicImage, $id3->apic->getImageData());
-            fclose($fdMusicImage);
+            if ( $copyResult === false ) {
+                $msg = "Could not write '$sourcePath' to '$destinationPath'";
+                echo "\t\t<p>$msg</p>\n";
+                echo "\t\t<p><a href='javascript:history.back()'>Back</a></p>";
+                echo "\t</bobdy>\n";
+                echo "\t</html>\n";
+                die();
+            }
 
-            
-            $thumbFilenameSAux = $thumbsDir . DIRECTORY_SEPARATOR . $pathParts['filename'] . "." . $typeAudioAPIC;
+            $imageFilenameAux = $defaultDir . DIRECTORY_SEPARATOR . "default-audio-thumbnail-Large.jpg";
+            $imageMimeFilename = "image";
+            $imageTypeFilename = "jpeg";
+
+            $resizeObj = new ImageResize( $destinationPath );
+            $resizeObj->resizeImage(640, 480, 'crop');
+            $resizeObj->saveImage($imageFilenameAux, $imageTypeFilename, 100);
+            $resizeObj->close();
+
+
+
+            $thumbFilenameSAux = $defaultDir . DIRECTORY_SEPARATOR . "default-audio-thumbnail.jpg";
             $thumbFilenameMAux = "";
             $thumbFilenameLAux = "";
-            $thumbMimeFileName = "image";
-            $thumbTypeFileName = $typeAudioAPIC;
-            $resizeObj = new ImageResize($imageFileNameAux);
+            $thumbMimeFilename = "image";
+            $thumbTypeFilename = "jpeg";
+
+            $resizeObj = new ImageResize( $destinationPath );
             $resizeObj->resizeImage($width, $heightS, 'crop');
-            $resizeObj->saveImage($thumbFileNameAux, $typeAudioAPIC, 100);
+            $resizeObj->saveImage($thumbFilenameSAux, $thumbTypeFilename, 100);
             $resizeObj->close();
+
             break;
 
     }

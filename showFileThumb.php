@@ -25,21 +25,27 @@
 
             switch ($size) {
                 case 'small':
-                    $thumbFilenameAux = $fileDetails[ 'thumbFilenameS' ];
+                    $thumbFilename = $fileDetails[ 'thumbFilenameS' ];
                     break;
                 case 'medium':
-                    $thumbFilenameAux = $fileDetails[ 'thumbFilenameM' ];
+                    $thumbFilename = $fileDetails[ 'thumbFilenameM' ];
                     break;
                 case 'large':
-                    $thumbFilenameAux = $fileDetails[ 'thumbFilenameL' ];
+                    $thumbFilename = $fileDetails[ 'thumbFilenameL' ];
                     break;
             }
             break;
 
         case 'video':
 
-            $thumbFilenameAux = $fileDetails[ 'thumbFilenameL' ];
+            $thumbFilename = $fileDetails[ 'thumbFilenameL' ];
             break;
+        
+        case 'audio':
+            
+            $thumbFilename = $fileDetails[ 'thumbFilenameS' ];
+            break;
+
 
     }
 
@@ -49,9 +55,9 @@
 
 
     header( "Content-type: $thumbMimeFilename/$thumbTypeFilename");
-    header( "Content-Length: " . filesize($thumbFilenameAux) );
+    header( "Content-Length: " . filesize($thumbFilename) );
 
-    $thumbFileHandler = fopen( $thumbFilenameAux, 'rb' );
+    $thumbFileHandler = fopen( $thumbFilename, 'rb' );
     fpassthru( $thumbFileHandler );
 
     fclose( $thumbFileHandler );

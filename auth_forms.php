@@ -11,7 +11,7 @@
                 <label for="passe"><b>Password</b></label>
                 <input type="password" placeholder="Password" name="password" id="login_password" required>
                 <a href="#" class="action" id="password">Forgot your password?</a>
-                <div class="g-recaptcha" data-sitekey="6LcQV10rAAAAAB-XprIAz5u2HPQ6aZu4QRY6UyYw"></div>
+                <div class="g-recaptcha" data-sitekey="6LcQV10rAAAAAB-XprIAz5u2HPQ6aZu4QRY6UyYw" required></div>
                 <button type="submit" class="default-btn" name="login" id="login_button" >Log in</button>
                 <a class="action" id="signup" onclick="openSignupForm()">Not on Artchive yet? Sign up</a>
             </div>
@@ -36,7 +36,7 @@
                 <label for="birthdate"><b>Date of Birth</b></label>
                 <input type="date" name="birthdate" id="register_birthdate" required>
 
-                <button type="submit" class="default-btn" name="signup" /*onclick="openSignupForm2()"*/ id="register_button1" >Continue</button>
+                <button type="submit" class="default-btn" name="signup" id="register_button1" >Continue</button>
                 <a class="action" id="signup" onclick="openLoginForm()">Already a member? Log in</a>
 
             </div>
@@ -46,28 +46,20 @@
 
     <div class="form-popup" id="signupForm2">
         <form method="post" class="form-container" action="signup.php">
+            <button type="button" class="back-icon" onclick="backToPreviousForm()" aria-label="Back">
+            <i class="fa-solid fa-arrow-left"></i>
+            </button>
             <span class="close-icon" onclick="closeSignupForm()">&times;</span>
             <img src="images/logo.png" alt="Logo" class="logo-img">
 
             <h3>Welcome to Artchive</h3>
             <div class="info">
 
-       
-                <label hidden for="name"><b>Name</b></label>
-                <input hidden type="text" placeholder="Name" name="name" id="register_name2" required>
-
-                <label hidden for="email"><b>Email</b></label>
-                <input hidden type="text" placeholder="Email" name="email" id="register_email2" required>
-
-                <label hidden for="birthdate"><b>Date of Birth</b></label>
-                <input hidden type="date" name="birthdate" id="register_birthdate2" required>>
-
                 <label for="username"><b>Username</b></label>
                 <input type="text" placeholder="Username" name="username" id="register_username" required>
 
                 <label for="password"><b>Password</b></label>
                 <input type="password" placeholder="Password" name="password" id="register_password" required>
-
 
                 <button type="submit" class="default-btn" name="signup" id="register_button2">Register</button>
 

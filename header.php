@@ -16,7 +16,7 @@
 
   <script>
 
-      document.getElementById('search').addEventListener('input', function() {
+    document.getElementById('search').addEventListener('input', function() {
     const search = this.value;
 
     if (search.length === 0) {
@@ -25,7 +25,7 @@
     }
 
     const xhr = new XMLHttpRequest();
-    xhr.open('GET', 'searchUsers.php?query=' + encodeURIComponent(search), true);
+    xhr.open('GET', 'searchUsersJS.php?query=' + encodeURIComponent(search), true);
     xhr.onreadystatechange = function () {
         if (xhr.readyState === 4 && xhr.status === 200) {
             const results = JSON.parse(xhr.responseText);
@@ -35,7 +35,7 @@
                 html += `<div class="autocomplete-item">${item.username}</div>`;
             });
 
-        document.getElementById('autocomplete-results').innerHTML = html;
+            document.getElementById('autocomplete-results').innerHTML = html;
 
             document.querySelectorAll('.autocomplete-item').forEach(item => {
                 item.addEventListener('click', function () {
@@ -43,7 +43,7 @@
                     window.location.href = `perfil.php?username=${encodeURIComponent(username)}`;
                 });
             });
-          }
+        }
     };
     xhr.send();
 

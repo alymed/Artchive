@@ -449,190 +449,6 @@ input#tag5:checked ~ .tag5-content {
   font-weight: 600;
 }
 
-/*teste post*/
-
-.modal {
-  display: none;
-  position: fixed;
-  z-index: 999;
-  left: 0;
-  top: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.7);
-  justify-content: center;
-  align-items: center;
-}
-
-.modal-content {
-  background-color: #fff;
-  padding: 1rem;
-  border-radius: 10px;
-  max-width: 600px;
-  width: 90%;
-  position: relative;
-}
-
-.close-button {
-  position: absolute;
-  top: 10px;
-  right: 15px;
-  font-size: 24px;
-  cursor: pointer;
-}
-
-.feed-container {
-  width: 100%;
-  max-width: 600px;
-}
-
-.post {
-  background-color: #fff;
-  border: 1px solid #ddd;
-  border-radius: 10px;
-  margin-bottom: 2rem;
-  overflow: hidden;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-}
-
-.post-header {
-  display: flex;
-  align-items: center;
-  padding: 10px;
-}
-
-.profile-pic {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  margin-right: 10px;
-}
-
-.username {
-  font-weight: bold;
-}
-
-.post-footer {
-  padding: 10px 15px;
-}
-
-.post-actions {
-  display: flex;
-  align-items: center;
-  gap: 15px;
-  margin-bottom: 8px;
-}
-
-.post-actions button {
-  background: none;
-  border: none;
-  font-size: 20px;
-  cursor: pointer;
-  color: #0a2c5a;
-}
-
-.post-actions .action-count {
-  font-size: 14px;
-  color: #0a2c5a;
-}
-
-.caption {
-  margin-top: 5px;
-}
-
-.modal .post-image {
-  max-width: 40%;
-  max-height: 70vh;
-  object-fit: contain;
-  border-radius: 12px;
-  box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
-  margin: 20px auto;
-  display: block;
-}
-
-.like-button.liked i {
-  color: red;
-}
-
-.post-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  position: relative;
-}
-
-.post-menu {
-  position: relative;
-}
-
-.menu-icon {
-  font-size: 20px;
-  cursor: pointer;
-}
-
-.dropdown-menu {
-  display: none;
-  position: absolute;
-  right: 0;
-  top: 24px;
-  background: #fff;
-  border: 1px solid #ddd;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-  z-index: 10;
-  border-radius: 5px;
-  overflow: hidden;
-}
-
-.dropdown-menu button {
-  display: block;
-  padding: 10px 15px;
-  background: none;
-  border: none;
-  width: 100%;
-  text-align: left;
-  cursor: pointer;
-}
-
-.dropdown-menu button:hover {
-  background-color: #f0f0f0;
-}
-
-.comment-section {
-  padding: 15px;
-  border-top: 1px solid #eee;
-}
-
-.comment-list {
-  max-height: 150px;
-  overflow-y: auto;
-  margin-bottom: 10px;
-}
-
-.comment {
-  padding: 5px 0;
-  font-size: 14px;
-}
-
-.comment-input {
-  display: flex;
-  gap: 8px;
-}
-
-.comment-input input {
-  flex: 1;
-  padding: 6px 10px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-}
-
-.comment-input button {
-  padding: 6px 12px;
-  background-color: #333;
-  color: white;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-}
 
 /* ///////////////////////////FORM POPUP//////////////////////////// */
 .form-popup {
@@ -701,7 +517,7 @@ input#tag5:checked ~ .tag5-content {
 .close-icon {
   position: absolute;
   top: 10px;
-  right: 15px;
+  right: 10px;
   font-size: 30px;
   font-weight: bold;
   color: #aaa;
@@ -780,14 +596,29 @@ input#tag5:checked ~ .tag5-content {
 }
 
 .profile-pic-circle {
-  width: 100px;
-  height: 100px;
+  width: 80px;              /* Tamanho reduzido fixo */
+  height: 80px;             /* Altura fixa para manter o círculo */
   border-radius: 50%;
   object-fit: cover;
   display: block;
   margin: 0 auto;
 }
 
+.info textarea[type="text"] {
+  width: 80%;               /* Aumenta a largura do campo de biografia */
+  height: 120px;            /* Aumenta a altura para mais espaço de escrita */
+  padding: 12px;
+  margin: 5px 0 3px 0;
+  border: 1px solid gray;
+  background: #fff;
+  border-radius: 16px;
+  resize: vertical;         /* Permite redimensionamento vertical pelo usuário (opcional) */
+}
+
+.info textarea[type="text"]:focus {
+  background-color: #ddd;
+  outline: none;
+}
 
 /* //////////////////////NOTIFICATIONS////////////////////////////////// */
 .notification-list {
@@ -866,7 +697,181 @@ input#tag5:checked ~ .tag5-content {
     .privacy-btn .fa-solid{
       color: #0a2c5a;
     }
-    .privacy-btn:focus ,     .privacy-btn:hover{
+    .privacy-btn:focus , .privacy-btn:hover{
         border: 2px solid #0a2c5a;
         background-color: transparent;
     }
+
+    /*teste post*/
+
+.post-popup {
+  display: none;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 999;
+  background-color: #fff;
+  padding: 1.5rem;
+  box-shadow: 0px 0px 25px rgba(0, 0, 0, 0.6);
+  border-radius: 16px;
+  max-width: 500px;
+  width: 80%;
+  overflow-y: auto;
+  max-height: 80vh;
+  opacity: 0;
+  transition: opacity 0.3s ease, display 0s linear 0.3s;
+}
+
+.post-popup.show {
+  display: block;
+  opacity: 1;
+  transition: opacity 0.3s ease;
+}
+
+
+/* Imagem do post */
+.post-popup .post-image {
+  width: 95%;
+  max-height: 400px;
+  object-fit: cover;
+  border-radius: 12px;
+  display: block;
+  margin: auto;
+}
+
+.post {
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  margin: 10px;
+}
+
+.post-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px;
+}
+
+.profile-pic {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  margin-right: 10px;
+}
+
+.username {
+  font-weight: bold;
+}
+
+.post-menu {
+  position: relative;
+}
+
+.menu-icon {
+  font-size: 20px;
+  cursor: pointer;
+}
+
+.dropdown-menu {
+  display: none;
+  position: absolute;
+  right: 0;
+  top: 24px;
+  background: #fff;
+  border: 1px solid #ddd;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  z-index: 10;
+  border-radius: 5px;
+  overflow: hidden;
+}
+
+.dropdown-menu button {
+  display: block;
+  padding: 10px 15px;
+  background: none;
+  border: none;
+  width: 100%;
+  text-align: left;
+  cursor: pointer;
+}
+
+.dropdown-menu button:hover {
+  background-color: #f0f0f0;
+}
+
+.post-footer {
+  padding: 10px 15px;
+}
+
+.post-actions {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.post-actions button {
+  background: none;
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
+  color: #0a2c5a;
+  width: auto;
+  padding-bottom: 5px;
+}
+
+.post-actions .action-count {
+  font-size: 14px;
+  color: #0a2c5a;
+}
+
+.caption {
+  margin-top: 5px;
+}
+
+.like-button.liked i {
+  color: red;
+}
+
+.comment-section {
+  padding: 15px;
+  border-top: 1px solid #eee;
+}
+
+.comment-list {
+  max-height: 150px;
+  overflow-y: auto;
+  margin-bottom: 10px;
+}
+
+.comment {
+  padding: 5px 0;
+  font-size: 14px;
+}
+
+.comment-input {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.comment-input input {
+  flex: 1;
+  padding: 6px 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  width: auto;
+}
+
+.comment-input button {
+  padding: 6px 12px;
+  background-color: #0a2c5a;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+

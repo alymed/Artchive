@@ -83,13 +83,6 @@
   document.addEventListener('DOMContentLoaded', function () {
     document.getElementById('profile').checked = true;
 
-    document.querySelectorAll('.card').forEach(card => {
-      card.addEventListener('click', function (event) {
-      const postId = event.currentTarget.dataset.postId;
-      console.log('Post ID:', postId);
-      });
-    });
-
     // 2. Like button toggle
     const likeButton = document.querySelector('.like-button');
     if (likeButton) {
