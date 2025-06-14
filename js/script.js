@@ -56,26 +56,7 @@ function closeAllForms() {
     document.getElementById("formOverlay").style.display = "none";
 }
 
-function backToPreviousForm() {
-    document.getElementById("signupForm2").style.display = "none";
-    document.getElementById("signupForm").style.display = "block";
-}
 
-function backToSignupForm2() {
-    document.getElementById("signupForm3").style.display = "none";
-    document.getElementById("signupForm2").style.display = "block";
-}
-
-function skipProfileSetup() {
-    const username = document.getElementById("signup3_username").value;
-    if (username) {
-        // You can redirect to a completion page or handle skip logic
-        window.location.href = `email.php?username=${encodeURIComponent(username)}`;
-    } else {
-        alert("Profile setup skipped! You can complete it later in your account settings.");
-        closeAllForms();
-    }
-}
 
 // Message handling
 function showMessage(message, type = 'info') {

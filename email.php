@@ -112,12 +112,61 @@ EOD;
 
         <link REL="stylesheet" TYPE="text/css" href="../Styles/GlobalStyle.css">
     </head>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f0f2f5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .container {
+            background: white;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+            text-align: center;
+            max-width: 400px;
+            width: 90%;
+        }
+
+        h1 {
+            color: #2146a6;
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+
+        p {
+            font-size: 16px;
+            color: #333;
+            margin-bottom: 30px;
+        }
+
+        .btn {
+            background-color: #2146a6;
+            color: white;
+            padding: 12px 24px;
+            text-decoration: none;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .btn:hover {
+            background-color: #19378c;
+        }
+    </style>
     <body>
-        <p>E-mail <?php echo $userMessage;?> delivered to e-mail server.</p>
-        
-        <hr>
-        <br>
-        <a href="<?php echo 'index.php'?>">Back</a>
+        <div class="container">
+        <h1>Email Verification</h1>
+        <p>The email <strong><?php echo $userMessage; ?></strong> delivered to the email server.</p>
+        <a href="index.php" class="btn">Back to Home</a>
+    </div>
     </body>
 </html>
 
