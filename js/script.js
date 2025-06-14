@@ -15,46 +15,7 @@ function openSignupForm() {
     document.getElementById("formOverlay").style.display = "block";
 }
 
-function openSignupForm2(email, name , birthdate ) {
-    // Populate hidden fields with data from step 1
-    if (email){
-      document.getElementById("signup2_email").value = email;
-    }
-    if (name) document.getElementById("signup2_name").value = name;
-    if (birthdate) document.getElementById("signup2_birthdate").value = birthdate;
-    
-    closeAllForms();
-    document.getElementById("signupForm2").style.display = "block";
-    document.getElementById("formOverlay").style.display = "block";
 
-    console.log("Going to Step 2:", email, name, birthdate);
-}
-
-function openSignupForm3(username = '', password = '') {
-    // Populate hidden field with user ID
-    if (username) document.getElementById("signup3_username").value = username;
-    if (password) document.getElementById("signup3_password").value = password;
-
-    closeAllForms();
-    document.getElementById("signupForm2").style.display = "none";
-    document.getElementById("signupForm3").style.display = "block";
-    document.getElementById("formOverlay").style.display = "block";
-}
-
-function closeSignupForm() {
-    document.getElementById("signupForm").style.display = "none";
-    document.getElementById("signupForm2").style.display = "none";
-    document.getElementById("signupForm3").style.display = "none";
-    document.getElementById("formOverlay").style.display = "none";
-}
-
-function closeAllForms() {
-    document.getElementById("loginForm").style.display = "none";
-    document.getElementById("signupForm").style.display = "none";
-    document.getElementById("signupForm2").style.display = "none";
-    document.getElementById("signupForm3").style.display = "none";
-    document.getElementById("formOverlay").style.display = "none";
-}
 
 
 
@@ -161,30 +122,18 @@ function handleUrlParameters() {
     }
 }
 
-// Biography character counter
-function updateBiographyCounter() {
-    const textarea = document.getElementById('biography');
-    const counter = document.getElementById('bio-count');
-    
-    if (textarea && counter) {
-        textarea.addEventListener('input', function() {
-            const count = this.value.length;
-            counter.textContent = count;
-            
-            if (count > 90) {
-                counter.style.color = 'red';
-            } else if (count > 75) {
-                counter.style.color = 'orange';
-            } else {
-                counter.style.color = 'inherit';
-            }
-        });
-    }
-}
 
 function openUploadForm() {
-  document.getElementById("uploadForm").style.display = "block";
-  document.getElementById("formOverlay").style.display = "block";
+  const form = document.getElementById("uploadForm");
+    const overlay = document.getElementById("formOverlay");
+
+  if (form && overlay) {
+        form.style.display = "block";
+        overlay.style.display = "block";
+        console.log("Form opened successfully");
+    } else {
+        console.error("Form or overlay element not found");
+    }
 }
 
 function closeUploadForm() {

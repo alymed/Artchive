@@ -48,8 +48,6 @@
     include('menu_nav.php');
   ?>
 
-
-
   <div class="form-popup" id="editProfileForm">
       <form method="post" class="form-container">
         <span class="close-icon" onclick="closeEditProfileForm()">&times;</span>

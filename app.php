@@ -64,7 +64,5 @@ if (!isset($_SESSION['id'])) {
     }
   });
 
-  document.getElementById("uploadOverlay").addEventListener('click', closeUploadForm);
-
 </script>
 </html>

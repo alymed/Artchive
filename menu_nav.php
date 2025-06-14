@@ -197,7 +197,7 @@
     </div>
     <div id="filmContent" class="content">
         <div class="img_container">
-        <?php
+            <?php
             $posts = array();
 
             $allUsers = getAllUsersData();
@@ -292,7 +292,7 @@
 
     <div id="photoContent" class="content">
         <div class="img_container">
-        <?php
+            <?php
             $posts = array();
 
             $allUsers = getAllUsersData();
@@ -346,7 +346,7 @@
     <div id="profileContent" class="content">
         <div class="profile-header">
             <div class="profile-pic">
-                <img src="images/profilePic.PNG" alt="Profile Picture" />
+                <img src="<?php echo htmlspecialchars($profile_userData['profile_pic']); ?>" alt="Profile Picture" />
             </div>
             <div class="profile-info">
                 <h1 id="userName"> <?php echo $profile_userData['username']; ?> </h1>
@@ -439,80 +439,79 @@
                     <a id="likeButton" class="like-button"><i class="bi bi-heart"></i></a>
                     <span id="likeCount" class="action-count">0</span>
 
-                <button class="comment-button"><i class="bi bi-chat"></i></button>
-                <span id="commentCount" class="action-count">0</span>
+                    <button class="comment-button"><i class="bi bi-chat"></i></button>
+                    <span id="commentCount" class="action-count">0</span>
 
-                <button class="save-button"><i class="bi bi-bookmark"></i></button>
+                    <button class="save-button"><i class="bi bi-bookmark"></i></button>
+                </div>
+                <p class="caption"><span class="username" id="captionUsername"></span>
+                    <span id="captionText"></span>
+                </p>
             </div>
-            <p class="caption"><span class="username" id="captionUsername"></span>
-                <span id="captionText"></span>
-            </p>
-        </div>
-        <div class="comment-section">
-            <h4>Comments</h4>
-            <div class="comment-list" id="commentList"></div>
-            <div class="comment-input">
-                <input type="text" id="newComment" placeholder="Add a comment..." />
-                <button onclick="addComment()">Post</button>
+            <div class="comment-section">
+                <h4>Comments</h4>
+                <div class="comment-list" id="commentList"></div>
+                <div class="comment-input">
+                    <input type="text" id="newComment" placeholder="Add a comment..." />
+                    <button onclick="addComment()">Post</button>
+                </div>
             </div>
         </div>
     </div>
-</div>
 
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    document.querySelectorAll('.card').forEach(card => {
-    card.addEventListener('click', async function () {
-        const postId = this.dataset.postId;
-        console.log('Post ID:', postId);
-        await openPost(postId); // now await works here
+    <div class="form-popup" id="uploadForm">
+        <form method="POST" class="form-container" action="fileUpload.php" enctype="multipart/form-data">
+            <span class="close-icon" onclick="closeUploadForm()">&times;</span>
+            <img src="images/logo.png" alt="Logo" class="logo-img">
+
+            <h3>Upload New Content</h3>
+            <div class="info">
+
+                <input type="file" id="upload-file" name="userFile" size="64" required>
+
+                <input type="text" id="upload-title" name="title" placeholder="Enter a title" required>
+                <textarea type="text" id="upload-description" name="description"
+                    placeholder="Write a short description..." rows="6"></textarea>
+
+                <button type="button" id="privacyToggle" class="privacy-btn" name="privacy" aria-pressed="false"
+                    title="Definir como público ou privado">
+                    <i class="fa-solid fa-lock-open"></i>
+                </button>
+                <input type="hidden" name="privacy" id="privacyInput" value="public">
+
+                <button type="submit" class="default-btn">Upload</button>
+            </div>
+        </form>
+    </div>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <script>
+    const privacyToggle = document.getElementById('privacyToggle');
+    const privacyInput = document.getElementById('privacyInput');
+
+    privacyToggle.addEventListener('click', () => {
+        const icon = privacyToggle.querySelector('i');
+        if (privacyInput.value === 'public') {
+            privacyInput.value = 'private';
+            privacyToggle.setAttribute('aria-pressed', 'true');
+            icon.classList.remove('fa-lock-open');
+            icon.classList.add('fa-lock');
+            privacyToggle.title = "Definido como privado";
+        } else {
+            privacyInput.value = 'public';
+            privacyToggle.setAttribute('aria-pressed', 'false');
+            icon.classList.remove('fa-lock');
+            icon.classList.add('fa-lock-open');
+            privacyToggle.title = "Definido como público";
+        }
     });
-});
-</script>
 
-<div class="form-popup" id="uploadForm">
-    <form method="POST" class="form-container" action="fileUpload.php" enctype="multipart/form-data">
-        <span class="close-icon" onclick="closeUploadForm()">&times;</span>
-        <img src="images/logo.png" alt="Logo" class="logo-img">
-
-        <h3>Upload New Content</h3>
-        <div class="info">
-
-            <input type="file" id="upload-file" name="userFile" size="64" required>
-
-            <input type="text" id="upload-title" name="title" placeholder="Enter a title" required>
-            <textarea type="text" id="upload-description" name="description" placeholder="Write a short description..."
-                rows="6"></textarea>
-
-            <button type="button" id="privacyToggle" class="privacy-btn" name="privacy" aria-pressed="false"
-                title="Definir como público ou privado">
-                <i class="fa-solid fa-lock-open"></i>
-            </button>
-            <input type="hidden" name="privacy" id="privacyInput" value="public">
-
-            <button type="submit" class="default-btn">Upload</button>
-        </div>
-    </form>
-</div>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
-<script>
-const privacyToggle = document.getElementById('privacyToggle');
-const privacyInput = document.getElementById('privacyInput');
-
-privacyToggle.addEventListener('click', () => {
-    const icon = privacyToggle.querySelector('i');
-    if (privacyInput.value === 'public') {
-        privacyInput.value = 'private';
-        privacyToggle.setAttribute('aria-pressed', 'true');
-        icon.classList.remove('fa-lock-open');
-        icon.classList.add('fa-lock');
-        privacyToggle.title = "Definido como privado";
-    } else {
-        privacyInput.value = 'public';
-        privacyToggle.setAttribute('aria-pressed', 'false');
-        icon.classList.remove('fa-lock');
-        icon.classList.add('fa-lock-open');
-        privacyToggle.title = "Definido como público";
-    }
-});
-</script>
+    document.addEventListener('DOMContentLoaded', function() {
+        document.querySelectorAll('.card').forEach(card => {
+            card.addEventListener('click', async function() {
+                const postId = this.dataset.postId;
+                console.log('Post ID:', postId);
+                await openPost(postId); // now await works here
+            });
+        });
+    });
+    </script>

@@ -163,6 +163,36 @@
     padding: 12px;
     margin: 5px 0 3px 0;
 }
+
+.char-counter {
+    font-size: 0.85rem;
+    color: #666;
+    text-align: right;
+    width: 65%;
+    margin-top: -5px;
+    margin-bottom: 10px;
+}
+
+.optional-text {
+    font-weight: normal;
+    font-size: 0.9em;
+    color: #888;
+}
+
+.skip-btn {
+    background-color: transparent;
+    border: none;
+    color: #0a2c5a;
+    font-size: 0.95rem;
+    margin-top: 15px;
+    cursor: pointer;
+    text-decoration: underline;
+}
+
+.skip-btn:hover {
+    color: #071e3e;
+}
+
 </style>
 
 
@@ -264,7 +294,8 @@
             <input type="file" name="profile_picture" id="profile_picture" accept="image/*">
 
             <label for="biography"><b>Biography</b> <span class="optional-text">(Optional)</span></label>
-            <textarea name="biography" id="biography" placeholder="Tell us about yourself..."></textarea>
+            <textarea name="biography" id="biography" placeholder="Tell us about yourself..." maxlength="90"> </textarea>
+            <div class="char-counter" id="bioCounter">0 / 90</div>
 
             <button type="submit" class="default-btn" name="complete_profile">Complete Registration</button>
 
@@ -274,6 +305,11 @@
 </div>
 
 <script>
+function updateBiographyCounter() {
+    const textarea = document.getElementById('biography');
+    const counter = document.getElementById('bioCounter');
+    counter.textContent = `${textarea.value.length} / 90`;
+}
 // Back button functions
 function backToPreviousForm() {
     closeAllForms();
@@ -333,6 +369,9 @@ function openSignupForm3(email = '', name = '', birthdate = '', username = '', p
 }
 // Handle URL parameters for signup steps
 window.addEventListener('DOMContentLoaded', function() {
+    document.getElementById('biography').addEventListener('input', updateBiographyCounter);
+
+
     const urlParams = new URLSearchParams(window.location.search);
     const signupStep = urlParams.get('signupStep');
 
@@ -379,6 +418,13 @@ window.addEventListener('DOMContentLoaded', function() {
         if (errorMessage) {
             alert(errorMessage);
         }
+    }
+    updateBiographyCounter(); // initial update on load
+
+    // Attach event listener to update counter on input
+    const bioTextarea = document.getElementById('biography');
+    if (bioTextarea) {
+        bioTextarea.addEventListener('input', updateBiographyCounter);
     }
 });
 </script>
