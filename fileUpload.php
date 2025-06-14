@@ -83,9 +83,10 @@ if (!isset($_SESSION['id'])) {
 <?php
 
 
-$fileInfo = finfo_open(FILEINFO_MIME);
+    $fileInfo = finfo_open(FILEINFO_MIME);
 
     $fileInfoData = finfo_file($fileInfo, $dst);
+    echo "fileInfo: " . $fileInfoData;
 
         echo "<pre>\n";
         print_r( $fileInfoData );
@@ -96,6 +97,17 @@ $fileInfo = finfo_open(FILEINFO_MIME);
     $mimeTypeFileUploaded = explode("/", $fileTypeComponents[0]);
     $mimeFilename = $mimeTypeFileUploaded[0];
     $typeFilename = $mimeTypeFileUploaded[1];
+
+    if($mimeFilename == 'video'){
+        $typeFilename = strtolower(pathinfo($dst, PATHINFO_EXTENSION));
+        if($typeFilename == 'm4a'){
+            $mimeFilename = 'audio';
+        }
+    }
+
+    echo "realFileInfo: $mimeFilename/$typeFilename";
+
+  
 
     $thumbsDir = $dstUser. DIRECTORY_SEPARATOR .  "thumbs";
 
@@ -214,7 +226,56 @@ $fileInfo = finfo_open(FILEINFO_MIME);
             echo "\t\t<p>Status from the generation of video thumb: $status.</p>\n";
             break;
 
+
+
+        case "audio":
+
+            $defaultDir = $dstDir . DIRECTORY_SEPARATOR . "Default";
+
+            if (!is_dir($defaultDir)) {
+                mkdir($defaultDir, 0777, true);
+            }
+
+            $destinationPath = $defaultDir  . DIRECTORY_SEPARATOR . "default-audio-thumbnail.jpg";
+            $sourcePath =  __DIR__ . '/images/default-audio-thumbnail.jpg';
+            $copyResult = copy($sourcePath, $destinationPath);
+
+            if ( $copyResult === false ) {
+                $msg = "Could not write '$sourcePath' to '$destinationPath'";
+                echo "\t\t<p>$msg</p>\n";
+                echo "\t\t<p><a href='javascript:history.back()'>Back</a></p>";
+                echo "\t</bobdy>\n";
+                echo "\t</html>\n";
+                die();
+            }
+
+            $imageFilenameAux = $defaultDir . DIRECTORY_SEPARATOR . "default-audio-thumbnail-Large.jpg";
+            $imageMimeFilename = "image";
+            $imageTypeFilename = "jpeg";
+
+            $resizeObj = new ImageResize( $destinationPath );
+            $resizeObj->resizeImage(640, 480, 'crop');
+            $resizeObj->saveImage($imageFilenameAux, $imageTypeFilename, 100);
+            $resizeObj->close();
+
+
+
+            $thumbFilenameSAux = $defaultDir . DIRECTORY_SEPARATOR . "default-audio-thumbnail.jpg";
+            $thumbFilenameMAux = "";
+            $thumbFilenameLAux = "";
+            $thumbMimeFilename = "image";
+            $thumbTypeFilename = "jpeg";
+
+            $resizeObj = new ImageResize( $destinationPath );
+            $resizeObj->resizeImage($width, $heightS, 'crop');
+            $resizeObj->saveImage($thumbFilenameSAux, $thumbTypeFilename, 100);
+            $resizeObj->close();
+
+            break;
+
     }
+
+
 
 
     $filename = addslashes($dst);
@@ -234,16 +295,16 @@ $fileInfo = finfo_open(FILEINFO_MIME);
         $idPost = uploadPost($title, $description, $privacy, $idUser, $idFile);
         if($idPost > 0){
                 echo "Success!";
-                header("Location: index.php");
+                //header("Location: index.php");
 
         }else{
             echo "Information about file could not be inserted into the data base. Details : " . dbGetLastError() ;
-            header("Location: index.php");
+            //header("Location: index.php");
         }
     }
     else {
         echo "Information about file could not be inserted into the data base. Details : " . dbGetLastError() ;
-        header("Location: index.php");
+        //header("Location: index.php");
     }
 ?>
 

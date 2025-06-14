@@ -216,31 +216,106 @@ function previewProfilePic(input) {
   }
 }
 
-function openPost(postId) {
-  const modal = document.getElementById('postModal');
-  modal.style.display = "block";
-  setTimeout(() => modal.classList.add('show'), 10);
 
-  console.log('Post ID JS:', postId);
+  
 
-  const card = document.querySelector(`.card[data-post-id="${postId}"]`);
-  if (card) {
-    const img = card.querySelector('img');
-    const username = card.getAttribute('data-username');
-    const description = card.getAttribute('data-description');
-    const date = card.getAttribute('data-date');
+async function openPost(idPost) {
+  try {
+    const postResponse = await fetch(`getPostDataJS.php?query=${encodeURIComponent(idPost)}`);
+    const postData = await postResponse.json();
 
-    document.getElementById('modalImage').src = img.src;
-    document.getElementById('captionUsername').textContent = username;
-    document.getElementById('modalUsername').textContent = username;
-    document.getElementById('captionText').textContent = description;
+    if (Object.keys(postData).length === 0) {
+      console.log("No post data found.");
+      return;
+    }
 
-    // Opcional: Exibir a data em algum lugar
-    // document.getElementById('modalDate').textContent = new Date(date).toLocaleDateString();
+    const { idUser, idImage, title, description, numLikes, numComments } = postData;
+
+    const [userRes, imageRes] = await Promise.all([
+      fetch(`getUserDataJS.php?query=${encodeURIComponent(idUser)}`),
+      fetch(`getImageDetailsJS.php?query=${encodeURIComponent(idImage)}`)
+    ]);
+
+    const userData = await userRes.json();
+    const imageData = await imageRes.json();
+
+    updatePostModal(postData, userData, imageData);
+
+  } catch (err) {
+    console.error("Error loading post data:", err);
+  }
+}
+
+  
+
+
+function updatePostModal(postData, userData, imageDetails){
+
+  if(Object.keys(imageDetails).length != 0){
+
+    mimeFilename = imageDetails.mimeFilename;
+    filename = imageDetails.filename;
+
+    const targetDiv = document.getElementById("modalMediaContainer");
+
+    if(targetDiv){
+
+      switch(mimeFilename){
+
+        case 'image':
+
+          targetDiv.innerHTML = `<img src="showFile.php?id=${imageDetails.id}" alt="Post">`;
+          break;
+        
+        case 'video':
+
+          targetDiv.innerHTML = `
+          <div class="DBGVideoContainer MyVideoContainer">
+              <div class="DBGVideoPlayer MyVideoPlayer">
+                  <video id="TheVideo" width="640" height="480" poster="showFileImage.php?id=${imageDetails.id}" controls >
+                      <source src="showFile.php?id=${imageDetails.id}" />
+                  </video>
+              </div>
+          </div>
+          `;
+          break;
+
+        case 'audio':
+
+          targetDiv.innerHTML = `
+          <div class="audio-post">
+            <audio controls>
+              <source src="showFile.php?id=${imageDetails.id}" type="audio/mpeg">
+              Your browser does not support the audio element.
+            </audio>
+          </div>
+          `;
+          break;
+
+      }
+
+      
+      document.getElementById("likeButton").href = "likePost.php?idPost=" + postData.id;
+      document.getElementById("modalUsername").textContent = userData.username
+      document.getElementById("likeCount").textContent = postData.numLikes;
+      document.getElementById("commentCount").textContent = postData.numComments;
+
+      const modal = document.getElementById('postModal');
+      modal.style.display = "block";
+
+
+    }
+
+
+    
+
+
+
+
   }
 
-  document.getElementById('currentPostId').value = postId;
-  loadComments(postId);
+
+
 }
 
 

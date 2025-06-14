@@ -196,8 +196,51 @@
         </ul>
     </div>
     <div id="filmContent" class="content">
+        <div class="img_container">
+        <?php
+            $posts = array();
+
+            $allUsers = getAllUsersData();
+
+            for( $i= 0;$i<count($allUsers);$i++){
+                $allUsersPosts = getPosts($allUsers[$i]['id'], $owner);
+                for($j= 0;$j<count($allUsersPosts);$j++){
+                    $idFile = $allUsersPosts[$j]['idImage'];
+                    $fileData = getFileDetails($idFile);
+                    if($fileData['mimeFilename'] == 'video'){
+                        $posts[] = $allUsersPosts[$j];
+                    }
+                }
+            }
+
+            if(count($posts) > 0){
 
 
+                $randomKeys = array_rand($posts, count($posts));
+
+                if(count($posts) == 1){
+                    $randomKeys = [$randomKeys];
+                }
+
+                for( $k= 0;$k<count($posts);$k++){
+
+                    $post = $posts[$randomKeys[$k]];
+
+                    $idPost = $post['id'];
+                    $postTitle = $post['title'];
+                    $fileID = $post['idImage'];
+
+                    $image = "<img src=\"showFileThumb.php?id=$fileID&size=Large\" alt=\"Post\"></img>";
+                    $caption = "<figcaption> aaaaaaaa </figcaption>";
+                    echo "<figure class=\"card card_large\" data-post-id=\"$idPost\">$image $caption </figure>";
+
+                }
+
+            }
+
+
+        ?>
+        </div>
     </div>
     <div id="musicContent" class="content">
         <div class="img_container">
@@ -230,13 +273,13 @@
 
                     $post = $posts[$randomKeys[$k]];
 
-
+                    $idPost = $post['id'];
                     $postTitle = $post['title'];
                     $fileID = $post['idImage'];
 
                     $image = "<img src=\"showFileThumb.php?id=$fileID&size=small\" alt=\"Post\"></img>";
                     $caption = "<figcaption> aaaaaaaa </figcaption>";
-                    echo "<figure class=\"card card_small\">$image $caption </figure>";
+                    echo "<figure class=\"card card_small\" data-post-id=\"$idPost\">$image $caption </figure>";
 
                 }
 
@@ -248,8 +291,51 @@
     </div>
 
     <div id="photoContent" class="content">
-        <h2>Content 3</h2>
-        <p>This is the content for Tab 3.</p>
+        <div class="img_container">
+        <?php
+            $posts = array();
+
+            $allUsers = getAllUsersData();
+
+            for( $i= 0;$i<count($allUsers);$i++){
+                $allUsersPosts = getPosts($allUsers[$i]['id'], $owner);
+                for($j= 0;$j<count($allUsersPosts);$j++){
+                    $idFile = $allUsersPosts[$j]['idImage'];
+                    $fileData = getFileDetails($idFile);
+                    if($fileData['mimeFilename'] == 'image'){
+                        $posts[] = $allUsersPosts[$j];
+                    }
+                }
+            }
+
+            if(count($posts) > 0){
+
+
+                $randomKeys = array_rand($posts, count($posts));
+
+                if(count($posts) == 1){
+                    $randomKeys = [$randomKeys];
+                }
+
+                for( $k= 0;$k<count($posts);$k++){
+
+                    $post = $posts[$randomKeys[$k]];
+
+                    $idPost = $post['id'];
+                    $postTitle = $post['title'];
+                    $fileID = $post['idImage'];
+
+                    $image = "<img src=\"showFileThumb.php?id=$fileID&size=small\" alt=\"Post\"></img>";
+                    $caption = "<figcaption> aaaaaaaa </figcaption>";
+                    echo "<figure class=\"card card_small\" data-post-id=\"$idPost\">$image $caption </figure>";
+
+                }
+
+            }
+
+
+        ?>
+        </div>
     </div>
 
     <div id="settingsContent" class="content">
@@ -332,25 +418,26 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
 
 
-<div id="postModal" class="post-popup">
-    <span class="close-icon" onclick="closePost()">&times;</span>
-    <div class="post">
-        <div class="post-header">
-            <img id="modalProfilePic" src="" alt="User profile" class="profile-pic">
-            <span id="modalUsername" class="username">username</span>
-            <div class="post-menu">
-                <i class="bi bi-three-dots-vertical menu-icon" onclick="togglePostMenu()"></i>
-                <div class="dropdown-menu" id="postMenu">
-                    <button onclick="alert('Analytics clicked')">Analytics</button>
-                    <button onclick="alert('Share clicked')">Share</button>
+<div id="postModal" class="modal">
+    <div class="modal-content">
+        <span class="close-icon" onclick="closePost()">&times;</span>
+        <div class="post">
+            <div class="post-header">
+                <img id="modalProfilePic" src="" alt="User profile" class="profile-pic">
+                <span id="modalUsername" class="username">Username</span>
+                <div class="post-menu">
+                    <i class="bi bi-three-dots-vertical menu-icon" onclick="togglePostMenu()"></i>
+                    <div class="dropdown-menu" id="postMenu">
+                        <button onclick="alert('Analytics clicked')">Analytics</button>
+                        <button onclick="alert('Share clicked')">Share</button>
+                    </div>
                 </div>
             </div>
-        </div>
-        <img id="modalImage" class="post-image" alt="Post">
-        <div class="post-footer">
-            <div class="post-actions">
-                <button class="like-button"><i class="bi bi-heart"></i></button>
-                <span id="likeCount" class="action-count">0</span>
+            <div id="modalMediaContainer"></div>
+            <div class="post-footer">
+                <div class="post-actions">
+                    <a id="likeButton" class="like-button"><i class="bi bi-heart"></i></a>
+                    <span id="likeCount" class="action-count">0</span>
 
                 <button class="comment-button"><i class="bi bi-chat"></i></button>
                 <span id="commentCount" class="action-count">0</span>
@@ -375,11 +462,10 @@
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     document.querySelectorAll('.card').forEach(card => {
-        card.addEventListener('click', function() {
-            const postId = this.dataset.postId;
-            openPost(postId)
-            console.log('Post ID:', postId);
-        });
+    card.addEventListener('click', async function () {
+        const postId = this.dataset.postId;
+        console.log('Post ID:', postId);
+        await openPost(postId); // now await works here
     });
 });
 </script>
