@@ -96,132 +96,156 @@ if (isset($_SESSION['id'])) {
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
 
-    
+
     <?php
         include 'auth_forms.php';
     ?>
-     
+
 
 </body>
-
-
-
 
 </html>
 
 
 <script>
-    
+window.addEventListener("DOMContentLoaded", () => {
 
-    //TODO: If you want to change the way errors are shown change here
-    window.addEventListener("DOMContentLoaded", () => {
+    // Event listeners
+    document.addEventListener('DOMContentLoaded', function() {
+        // Handle URL parameters on page load
+        handleUrlParameters();
 
-        const params = new URLSearchParams(window.location.search);
+        // Initialize character counter
+        updateBiographyCounter();
 
-        if (params.has("signupStep")) {
-            const step = params.get("signupStep");
+        // Initialize file validation
+        validateFileSize();
 
-            if (step === "1") {
-                openSignupForm();
-            } else if (step === "2") {
-                openSignupForm2();
+        // Close forms when clicking on overlay
+        const overlay = document.getElementById("formOverlay");
+        if (overlay) {
+            overlay.addEventListener("click", function() {
+                closeAllForms();
+            });
+        }
 
-                const name = params.get("name");
-                const email = params.get("email");
-                const birthdate = params.get("birthdate");
+        // Prevent form closing when clicking inside the form
+        document.querySelectorAll(".form-popup").forEach(function(form) {
+            form.addEventListener("click", function(e) {
+                e.stopPropagation();
+            });
+        });
 
-                if (email) {
-                    document.getElementById("register_name2").value = name;
-                    document.getElementById("register_email2").value = email;
-                    document.getElementById("register_birthdate2").value = birthdate;
+        // Age validation for birthdate
+        const birthdateInput = document.getElementById('register_birthdate');
+        if (birthdateInput) {
+            birthdateInput.addEventListener('change', function() {
+                const birthDate = new Date(this.value);
+                const today = new Date();
+                const age = today.getFullYear() - birthDate.getFullYear();
+                const monthDiff = today.getMonth() - birthDate.getMonth();
+
+                if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate
+                .getDate())) {
+                    age--;
                 }
-            }
-        }
 
-        if (params.has("signupSuccess")) {
-            alert("" + params.get("signupSuccess"));
-            openLoginForm();
-        }
+                if (age < 13) {
+                    alert('You must be at least 13 years old to register.');
+                    this.value = '';
+                }
 
-        if (params.has("signupError")) {
-            alert("Signup Error: " + params.get("signupError"));
-            openSignupForm();
-        }
-
-        if (params.has("loginError")) {
-            alert("Login Error: " + params.get("loginError"));
-            openLoginForm();
-            
-        }
-
-        // Clean up the URL
-        window.history.replaceState({}, document.title, window.location.pathname);
-    });
-
-
-
-
-    function updateImageGrid(slideIndex) {
-        const cards = document.querySelectorAll(".card.card_medium");
-
-        cards.forEach(card => {
-            // Remove qualquer classe antiga de animação
-            card.classList.remove("fade-in-up");
-            card.style.display = "none";
-
-            if (card.classList.contains("slide-" + slideIndex)) {
-                card.style.display = "block";
-
-                // Força reflow para reiniciar a animação
-
-            }
-        });
-    }
-
-    document.addEventListener("DOMContentLoaded", function () {
-        const carousel = document.getElementById("carouselExampleIndicators");
-
-        // Chamada inicial para mostrar os cards do primeiro slide
-        updateImageGrid(0);
-
-        // Adiciona o listener para quando o slide muda
-        carousel.addEventListener("slid.bs.carousel", function (event) {
-            const activeIndex = event.to; // novo índice do slide
-            updateImageGrid(activeIndex);
-        });
-    });
-
-
-    document.addEventListener("DOMContentLoaded", function () {
-        const imgCards = document.querySelectorAll(".card");
-
-        function updateImageGrid(slideIndex) {
-            imgCards.forEach(card => {
-                card.classList.remove("fade-in-up");
-                card.style.display = "none";
-
-
-                if (card.classList.contains("slide-" + slideIndex)) {
-                    card.style.display = "block";
-                    void card.offsetWidth;
-                    card.classList.add("fade-in-up");
-                } else {
-                    card.style.display = "none";
+                if (birthDate > today) {
+                    alert('Birthdate cannot be in the future.');
+                    this.value = '';
                 }
             });
         }
 
-        // Inicializa com o slide 0
-        updateImageGrid(0);
+        // Password strength indicator
+        const passwordInput = document.getElementById('register_password');
+        if (passwordInput) {
+            passwordInput.addEventListener('input', function() {
+                const password = this.value;
+                const hasLetter = /[A-Za-z]/.test(password);
+                const hasNumber = /\d/.test(password);
+                const isLongEnough = password.length >= 8;
 
-        const carousel = document.getElementById('carouselExampleAutoplaying');
-        carousel.addEventListener('slid.bs.carousel', function (event) {
-            // const activeItem = carousel.querySelector(".carousel-item.active");
-            // const allItems = carousel.querySelectorAll(".carousel-item");
-            // const activeIndex = Array.from(allItems).indexOf(activeItem);
-            const activeIndex = event.to; // novo índice do slide
-
-            updateImageGrid(activeIndex);
-        });
+                // You can add visual feedback here
+                if (isLongEnough && hasLetter && hasNumber) {
+                    this.style.borderColor = 'green';
+                } else {
+                    this.style.borderColor = 'red';
+                }
+            });
+        }
     });
+});
+
+
+
+
+function updateImageGrid(slideIndex) {
+    const cards = document.querySelectorAll(".card.card_medium");
+
+    cards.forEach(card => {
+        // Remove qualquer classe antiga de animação
+        card.classList.remove("fade-in-up");
+        card.style.display = "none";
+
+        if (card.classList.contains("slide-" + slideIndex)) {
+            card.style.display = "block";
+
+            // Força reflow para reiniciar a animação
+
+        }
+    });
+}
+
+document.addEventListener("DOMContentLoaded", function() {
+    const carousel = document.getElementById("carouselExampleIndicators");
+
+    // Chamada inicial para mostrar os cards do primeiro slide
+    updateImageGrid(0);
+
+    // Adiciona o listener para quando o slide muda
+    carousel.addEventListener("slid.bs.carousel", function(event) {
+        const activeIndex = event.to; // novo índice do slide
+        updateImageGrid(activeIndex);
+    });
+});
+
+
+document.addEventListener("DOMContentLoaded", function() {
+    const imgCards = document.querySelectorAll(".card");
+
+    function updateImageGrid(slideIndex) {
+        imgCards.forEach(card => {
+            card.classList.remove("fade-in-up");
+            card.style.display = "none";
+
+
+            if (card.classList.contains("slide-" + slideIndex)) {
+                card.style.display = "block";
+                void card.offsetWidth;
+                card.classList.add("fade-in-up");
+            } else {
+                card.style.display = "none";
+            }
+        });
+    }
+
+    // Inicializa com o slide 0
+    updateImageGrid(0);
+
+    const carousel = document.getElementById('carouselExampleAutoplaying');
+    carousel.addEventListener('slid.bs.carousel', function(event) {
+        // const activeItem = carousel.querySelector(".carousel-item.active");
+        // const allItems = carousel.querySelectorAll(".carousel-item");
+        // const activeIndex = Array.from(allItems).indexOf(activeItem);
+        const activeIndex = event.to; // novo índice do slide
+
+        updateImageGrid(activeIndex);
+    });
+});
 </script>

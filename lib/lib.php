@@ -383,6 +383,27 @@ function getUsernameById($idUser) {
     return $username;
 }
 
+function getUsernameById($idUser) {
+    dbConnect(ConfigFile);
+
+    $dataBaseName = $GLOBALS['configDataBase']->db;
+    mysqli_select_db($GLOBALS['ligacao'], $dataBaseName);
+
+    $query = "SELECT `username` FROM `$dataBaseName`.`users-profile` WHERE `id` = '$idUser'";
+
+    $result = mysqli_query($GLOBALS['ligacao'], $query);
+
+    $username = null;
+    if ($result && $row = mysqli_fetch_array($result)) {
+        $username = $row['username'];
+    }
+
+    mysqli_free_result($result);
+    dbDisconnect();
+
+    return $username;
+}
+
 function getUserData($idUser = "") {
 
     dbConnect( ConfigFile );
@@ -1036,4 +1057,68 @@ function logout() {
 }
 
 
+
+function updateUserProfile($userId, $profilePicture = null, $biography = '') {
+    
+    dbConnect( ConfigFile);
+    
+    $dataBaseName = $GLOBALS['configDataBase']->db;
+
+    mysqli_select_db($GLOBALS['ligacao'], $dataBaseName );
+
+    // Remover parêntesis extra no final da query
+    $query = "UPDATE `$dataBaseName`.`users-profile` SET
+            profile_pic = '$profilePicture', biography = '$biography' WHERE id = '$userId'";
+
+    $result = mysqli_query($GLOBALS['ligacao'], $query);
+    
+    // Adicionar verificação de erro e desconexão
+    if (!$result) {
+        error_log("Erro ao atualizar perfil: " . mysqli_error($GLOBALS['ligacao']));
+    }
+    
+    dbDisconnect();
+
+}
+
+
+function register($name, $username, $password, $email, $birthdate) {
+
+    $userOk = -1;
+
+    dbConnect( ConfigFile);
+    
+    $dataBaseName = $GLOBALS['configDataBase']->db;
+
+    mysqli_select_db($GLOBALS['ligacao'], $dataBaseName );
+
+    $name = mysqli_real_escape_string($GLOBALS['ligacao'], $name);
+    $username    = mysqli_real_escape_string($GLOBALS['ligacao'], $username);
+    $password = mysqli_real_escape_string($GLOBALS['ligacao'], $password);
+    $email    = mysqli_real_escape_string($GLOBALS['ligacao'], $email);
+    $birthdate = mysqli_real_escape_string($GLOBALS['ligacao'], $birthdate);
+    $createdAt = date("Y-m-d H:i:s");
+
+    $query = 
+            "INSERT INTO  `$dataBaseName`.`users-auth` (`email`, `password`, `created_at`,`status`) ".
+            "VALUES ('$email', '$password', '$createdAt', '1')";
+
+    $result = mysqli_query($GLOBALS['ligacao'], $query);
+
+    if ($result !== false) {
+
+        $userOk = mysqli_insert_id($GLOBALS['ligacao']);
+      
+        if (createProfile($userOk, $name, $username, $birthdate)) {
+            createToken($userOk);
+        } else {
+            $query = "DELETE FROM `users-auth` WHERE `id` = '$userOk'";
+            mysqli_query($GLOBALS['ligacao'], $query);
+        }
+    } 
+
+    dbDisconnect();
+
+    return $userOk;
+}
 ?>
