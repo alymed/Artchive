@@ -2,6 +2,36 @@
 
 require_once( "db.php" );
 
+function getBrowser() {
+    $userBrowser = '';
+    $userAgent = $_SERVER['HTTP_USER_AGENT'];
+
+    if (preg_match('/Trident/i', $userAgent)) {
+        $userBrowser = "Internet Explorer";
+    } elseif (preg_match('/MSIE/i', $userAgent)) {
+        $userBrowser = "Internet Explorer";
+    } elseif (preg_match('/Edg/i', $userAgent)) {
+        $userBrowser = "Microsoft Edge";
+    } elseif (preg_match('/Firefox/i', $userAgent)) {
+        $userBrowser = "Mozilla Firefox";
+    } elseif (preg_match('/Chrome/i', $userAgent)) {
+        $userBrowser = "Google Chrome";
+    } elseif (preg_match('/Safari/i', $userAgent)) {
+        $userBrowser = "Apple Safari";
+    } elseif (preg_match('/Flock/i', $userAgent)) {
+        $userBrowser = "Flock";
+    } elseif (preg_match('/Opera/i', $userAgent)) {
+        $userBrowser = "Opera";
+    } elseif (preg_match('/Netscape/i', $userAgent)) {
+        $userBrowser = "Netscape";
+    }
+
+    if (preg_match('/Mobile/i', $userAgent)) {
+        $userBrowser = "Mobile Device";
+    }
+    return $userBrowser;
+}
+
 function redirectToPage($url, $title, $message, $refreshTime = 5) {
     echo "<html>\n";
     echo "  <head>\n";
@@ -231,8 +261,8 @@ function createProfile($idUser, $name, $username, $birthdate, $user_type) {
 
 
     $query = 
-            "INSERT INTO  `$dataBaseName`.`users-profile` (`id`,`user_type`, `name`, `username`, `birthdate`, `biography`) ".
-            "VALUES ('$idUser', '$user_type', '$name', '$username', '$birthdate', NULL)";
+            "INSERT INTO  `$dataBaseName`.`users-profile` (`id`,`user_type`,`name`, `username`, `birthdate`, `biography`) ".
+            "VALUES ('$idUser', $user_type, '$name', '$username', '$birthdate', NULL)";
 
     $result = mysqli_query($GLOBALS['ligacao'], $query);
 
@@ -993,12 +1023,12 @@ function getAllCategories() {
     $dataBaseName = $GLOBALS['configDataBase']->db;
     mysqli_select_db($GLOBALS['ligacao'], $dataBaseName);
 
-    $query = "SELECT id, name FROM `$dataBaseName`.`tags` ORDER BY name ASC";
+    $query = "SELECT id, tagName FROM `$dataBaseName`.`tags` ORDER BY tagName ASC";
     $result = mysqli_query($GLOBALS['ligacao'], $query);
 
     $categories = [];
     while ($row = mysqli_fetch_assoc($result)) {
-        $categories[] = $row; // cada $row contém ['id' => ..., 'name' => ...]
+        $categories[] = $row;
     }
 
     mysqli_free_result($result);
@@ -1049,28 +1079,5 @@ function register($name, $username, $password, $email, $birthdate, $user_type) {
     dbDisconnect();
 
     return $userOk;
-}
-
-function accountVerifyDB($idUser){
-
-    dbConnect(ConfigFile);
-
-    $dataBaseName = $GLOBALS['configDataBase']->db;
-    mysqli_select_db($GLOBALS['ligacao'], $dataBaseName);
-
-
-    $query = "UPDATE `$dataBaseName`.`users-auth` SET `status`='2' WHERE `id` = '$idUser'";
-
-    $result = mysqli_query($GLOBALS['ligacao'], $query);
-
-
-    if ($result !== false) {
-        echo 'Account is now verified!';
-    }   else {
-        echo "Error verifying profile: " . dbGetLastError();
-    }
-
-    dbDisconnect();
-
 }
 ?>

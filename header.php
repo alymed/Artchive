@@ -6,7 +6,7 @@
     </a>
     <div style="position: relative;">
         <input type="text" class="search-box" id="search" placeholder="Search..." autocomplete="off">
-        <div id="autocomplete-results" style="position: absolute; top: 100%; left: 0; right: 0; background: white; border: 1px solid #ccc; z-index: 1000;"></div>
+        <div id="autocomplete-results" style="position: absolute; top: 100%; left: 0; right: 0; background: white; z-index: 1000;"></div>
     </div>  
 
     <a href="perfil.php" class="user-icon">

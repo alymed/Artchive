@@ -37,8 +37,10 @@
         }
     }
 
-?>
+    // Buscar categorias da base de dados
+    $categories = getAllCategories();
 
+?>
 
 <input hidden type="radio" name="tab" id="profile">
 <input type="radio" name="tab" id="home">
@@ -75,7 +77,7 @@
         <i class="bi bi-file-music default-icon"></i>
         <i class="bi bi-file-music-fill active-icon"></i>
     </label>
-   <a href="logout.php" class="tab" style="color:#212529">
+    <a href="logout.php" class="tab" style="color:#212529">
         <i class="bi bi-box-arrow-right default-icon"></i>
         <i class="bi bi-box-arrow-right active-icon"></i>
     </a>
@@ -226,15 +228,30 @@
 
                     $post = $posts[$randomKeys[$k]];
 
+                    // $idPost = $post['id'];
+                    // $postTitle = $post['title'];
+                    // $fileID = $post['idImage'];
+
+                    // $image = "<img src=\"showFileThumb.php?id=$fileID&size=Large\" alt=\"Post\"></img>";
+                    // $caption = "<figcaption> aaaaaaaa </figcaption>";
+                    // echo "<figure class=\"card card_large\" data-post-id=\"$idPost\">$image $caption </figure>";
+
+
                     $idPost = $post['id'];
                     $postTitle = $post['title'];
                     $fileID = $post['idImage'];
+                    $user = getUsernameById($post['idUser']);
+                    $description = $post['description'];
+                    $date = $post['createdAt'];
 
-                    $image = "<img src=\"showFileThumb.php?id=$fileID&size=Large\" alt=\"Post\"></img>";
-                    $caption = "<figcaption> aaaaaaaa </figcaption>";
-                    echo "<figure class=\"card card_large\" data-post-id=\"$idPost\">$image $caption </figure>";
-
-                }
+                    echo "<figure class=\"card card_large\" 
+                            data-post-id=\"$idPost\" 
+                            data-description=\"".htmlspecialchars($description)."\" 
+                            data-date=\"$date\">";
+                    echo "<img src=\"showFileThumb.php?id=$fileID&size=Large\" alt=\"Post\"></img>";
+                    echo "<figcaption>$postTitle</figcaption>";
+                    echo "</figure>";
+                    }
 
             }
 
@@ -378,7 +395,6 @@
         </div>
 
         <div class="img_container">
-            <h2 class="section-title"> Gallery </h2>
             <?php 
 
         for($idx=0; $idx<count($profile_posts); $idx++){
@@ -460,21 +476,6 @@
     </div>
 </div>
 
-<?php include 'lib/lib.php'; 
-
-function getCategoriesOptions() {
-    $categories = getAllCategories();
-    
-    $options = '<option value="" disabled selected>Select a category</option>';
-    foreach ($categories as $category) {
-        $id = htmlspecialchars($category['id']);
-        $name = htmlspecialchars($category['name']);
-        $options .= "<option value=\"$id\">$name</option>";
-    }
-
-    return $options;
-}
-?>
 <div class="form-popup" id="uploadForm">
     <form method="POST" class="form-container" action="fileUpload.php" enctype="multipart/form-data">
         <span class="close-icon" onclick="closeUploadForm()">&times;</span>
@@ -488,11 +489,20 @@ function getCategoriesOptions() {
             <input type="text" id="upload-title" name="title" placeholder="Enter a title" required>
             <textarea type="text" id="upload-description" name="description" placeholder="Write a short description..."
                 rows="6"></textarea>
-
-            <select name="category" id="upload-category" required>
-                <?php echo getCategoriesOptions(); ?>
+            
+            <label for="upload-category">Category:</label>
+            <select id="upload-category" name="category" required>
+                <option value="">Select a category...</option>
+                <?php
+                if (isset($categories) && count($categories) > 0) {
+                    for($i = 0; $i < count($categories); $i++) {
+                        $categoryId = htmlspecialchars($categories[$i]['id']);
+                        $categoryName = htmlspecialchars($categories[$i]['tagName']);
+                        echo "<option value=\"$categoryId\">$categoryName</option>";
+                    }
+                }
+                ?>
             </select>
-
 
             <button type="button" id="privacyToggle" class="privacy-btn" name="privacy" aria-pressed="false"
                 title="Definir como público ou privado">
