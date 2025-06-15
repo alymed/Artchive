@@ -102,6 +102,12 @@ function handleUrlParameters() {
 
 
 function openUploadForm() {
+  document.getElementById("upload-file").value=""
+  document.getElementById("upload-title").value=""
+  document.getElementById("upload-category").value=""
+  document.getElementById("upload-description").value=""
+
+
   document.getElementById("uploadForm").style.display = "block";
   document.getElementById("formOverlay").style.display = "block";
 }

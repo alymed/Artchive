@@ -76,7 +76,7 @@
     </div>
 
     <div class="form-popup" id="supporterForm">
-        <form method="post" class="form-container">
+        <form method="post" class="form-container" action="switchSupporter.php">
             <span class="close-icon" onclick="closeSupporterForm()">&times;</span>
             <h3>Become Supporter</h3>
             <div class="info">

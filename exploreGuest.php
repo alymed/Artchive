@@ -204,22 +204,17 @@
                 }
 
                 for( $k= 0;$k<count($posts);$k++){
-
                     $post = $posts[$randomKeys[$k]];
 
                     $idPost = $post['id'];
                     $postTitle = $post['title'];
                     $fileID = $post['idImage'];
 
-                    echo($fileID);
                     $image = "<img src=\"showFileThumb.php?id=$fileID&size=small\" alt=\"Post\"></img>";
                     $caption = "<figcaption> $postTitle </figcaption>";
                     echo "<figure class=\"card card_small\" data-post-id=\"$idPost\">$image $caption </figure>";
-
                 }
-
             }
-
         ?>
             </div>
         </div>

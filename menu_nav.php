@@ -163,7 +163,7 @@
 
     </div>
     <div id="notification" class="content">
-        <h2>Notificações</h2>
+        <h2>Notifications</h2>
         <ul class="notification-list">
             <?php
                 for($i= 0;$i<count($notifications);$i++){
