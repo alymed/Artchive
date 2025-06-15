@@ -211,7 +211,7 @@
             <a href="#" class="action" id="password">Forgot your password?</a>
             <div class="g-recaptcha" data-sitekey="6LcQV10rAAAAAB-XprIAz5u2HPQ6aZu4QRY6UyYw" required></div>
             <button type="submit" class="default-btn" name="login" id="login_button">Log in</button>
-            <a class="action" id="signup" onclick="openSignupForm()">Not on Artchive yet? Sign up</a>
+            <a class="action" id="signup" onclick="closeAllForms()">Not on Artchive yet? Sign up</a>
         </div>
 
     </form>
@@ -219,7 +219,7 @@
 
 <div class="form-popup" id="signupForm">
     <form method="post" class="form-container" action="signup_emailvalidation.php">
-        <span class="close-icon" onclick="closeSignupForm()">&times;</span>
+        <span class="close-icon" onclick="closeAllForms()">&times;</span>
         <img src="images/logo.png" alt="Logo" class="logo-img">
 
         <h3>Welcome to Artchive</h3>
@@ -248,7 +248,7 @@
         <button type="button" class="back-icon" onclick="backToPreviousForm()" aria-label="Back">
             <i class="fa-solid fa-arrow-left"></i>
         </button>
-        <span class="close-icon" onclick="closeSignupForm()">&times;</span>
+        <span class="close-icon" onclick="closeAllForms()">&times;</span>
         <img src="images/logo.png" alt="Logo" class="logo-img">
 
         <h3>Create Your Account</h3>
@@ -285,7 +285,7 @@
         <button type="button" class="back-icon" onclick="backToSignupForm2()" aria-label="Back">
             <i class="fa-solid fa-arrow-left"></i>
         </button>
-        <span class="close-icon" onclick="closeSignupForm()">&times;</span>
+        <span class="close-icon" onclick="closeAllForms()">&times;</span>
         <img src="images/logo.png" alt="Logo" class="logo-img">
 
         <h3>Complete Your Profile</h3>
@@ -304,129 +304,5 @@
     </form>
 </div>
 
-<script>
-function updateBiographyCounter() {
-    const textarea = document.getElementById('biography');
-    const counter = document.getElementById('bioCounter');
-    counter.textContent = `${textarea.value.length} / 90`;
-}
-// Back button functions
-function backToPreviousForm() {
-    closeAllForms();
-    document.getElementById("signupForm").style.display = "block";
-    document.getElementById("formOverlay").style.display = "block";
-}
-
-function backToSignupForm2() {
-    closeAllForms();
-    document.getElementById("signupForm2").style.display = "block";
-    document.getElementById("formOverlay").style.display = "block";
-}
-
-function skipProfileSetup() {
-    // Remove inputs opcionais para garantir que são ignorados
-    document.getElementById('profile_picture').value = '';
-    document.getElementById('biography').value = '';
-
-    // Envia o formulário normalmente
-    document.querySelector('#signupForm3 form').submit();
-}
-
-function closeAllForms() {
-    document.getElementById("loginForm").style.display = "none";
-    document.getElementById("signupForm").style.display = "none";
-    document.getElementById("signupForm2").style.display = "none";
-    document.getElementById("signupForm3").style.display = "none";
-    document.getElementById("formOverlay").style.display = "none";
-}
-
-function openSignupForm2(email = '', name = '', birthdate = '') {
-    // Populate hidden fields with data from step 1
-    if (email) document.getElementById("signup2_email").value = email;
-    if (name) document.getElementById("signup2_name").value = name;
-    if (birthdate) document.getElementById("signup2_birthdate").value = birthdate;
-
-    closeAllForms();
-    document.getElementById("signupForm2").style.display = "block";
-    document.getElementById("formOverlay").style.display = "block";
-
-    console.log("Going to Step 2:", email, name, birthdate);
-}
-
-function openSignupForm3(email = '', name = '', birthdate = '', username = '', password = '') {
-    // Populate hidden field with user ID
-    if (email) document.getElementById("signup3_email").value = email;
-    if (name) document.getElementById("signup3_name").value = name;
-    if (birthdate) document.getElementById("signup3_birthdate").value = birthdate;
-    if (username) document.getElementById("signup3_username").value = username;
-    if (password) document.getElementById("signup3_password").value = password;
-
-
-    closeAllForms();
-    document.getElementById("signupForm2").style.display = "none";
-    document.getElementById("signupForm3").style.display = "block";
-    document.getElementById("formOverlay").style.display = "block";
-}
-// Handle URL parameters for signup steps
-window.addEventListener('DOMContentLoaded', function() {
-    document.getElementById('biography').addEventListener('input', updateBiographyCounter);
-
-
-    const urlParams = new URLSearchParams(window.location.search);
-    const signupStep = urlParams.get('signupStep');
-
-    if (signupStep === '2') {
-        // Populate form with data from URL parameters
-        const email = urlParams.get('email');
-        const name = urlParams.get('name');
-        const birthdate = urlParams.get('birthdate');
-
-        // You would typically store this data and move to step 2
-        openSignupForm2(email, name, birthdate);
-    }
-
-    if (signupStep === '3') {
-        // Populate form with data from URL parameters
-        const email = urlParams.get('email');
-        const name = urlParams.get('name');
-        const birthdate = urlParams.get('birthdate');
-        const username = urlParams.get('username');
-        const password = urlParams.get('password');
-
-        // You would typically store this data and move to step 2
-        openSignupForm3(email, name, birthdate, username, password);
-    }
-
-    // Handle signup errors
-    const signupError = urlParams.get('signupError');
-    if (signupError) {
-        let errorMessage = '';
-        switch (signupError) {
-            case 'EmailInUse':
-                errorMessage = 'This email is already registered. Please use a different email or login.';
-                break;
-            case 'UsernameInUse':
-                errorMessage = 'This username is already taken. Please choose a different username.';
-                break;
-            case 'RegisterError':
-                errorMessage = 'Registration failed. Please try again.';
-                break;
-            case 'InvalidInputs':
-                errorMessage = 'Please fill in all required fields correctly.';
-                break;
-        }
-        if (errorMessage) {
-            alert(errorMessage);
-        }
-    }
-    updateBiographyCounter(); // initial update on load
-
-    // Attach event listener to update counter on input
-    const bioTextarea = document.getElementById('biography');
-    if (bioTextarea) {
-        bioTextarea.addEventListener('input', updateBiographyCounter);
-    }
-});
-</script>
-
+<script src="js/forms.js"></script>
 <script src="https://www.google.com/recaptcha/api.js" async defer></script>

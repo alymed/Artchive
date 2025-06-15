@@ -1,25 +1,3 @@
-function openLoginForm() {
-  document.getElementById("signupForm").style.display = "none";
-  document.getElementById("loginForm").style.display = "block";
-  document.getElementById("formOverlay").style.display = "block";
-}
-
-function closeLoginForm() {
-  document.getElementById("loginForm").style.display = "none";
-  document.getElementById("formOverlay").style.display = "none";
-}
-
-function openSignupForm() {
-    closeAllForms();
-    document.getElementById("signupForm").style.display = "block";
-    document.getElementById("formOverlay").style.display = "block";
-}
-
-
-
-
-
-// Message handling
 function showMessage(message, type = 'info') {
     const messageContainer = document.getElementById("messageContainer");
     const messageText = document.getElementById("messageText");
