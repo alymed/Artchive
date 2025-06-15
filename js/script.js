@@ -100,53 +100,45 @@ function handleUrlParameters() {
     }
 }
 
-
 function openUploadForm() {
-  document.getElementById("upload-file").value=""
-  document.getElementById("upload-title").value=""
-  document.getElementById("upload-category").value=""
-  document.getElementById("upload-description").value=""
+    document.getElementById("upload-file").value = "";
+    document.getElementById("upload-title").value = "";
+    document.getElementById("upload-category").value = "";
+    document.getElementById("upload-description").value = "";
 
-
-  document.getElementById("uploadForm").style.display = "block";
-  document.getElementById("formOverlay").style.display = "block";
+    document.getElementById("uploadForm").style.display = "block";
+    document.getElementById("formOverlay").style.display = "block";
 }
 
 function openSupporterForm() {
-  document.getElementById("supporterForm").style.display = "block";
-  document.getElementById("formOverlay").style.display = "block";
+    document.getElementById("supporterForm").style.display = "block";
+    document.getElementById("formOverlay").style.display = "block";
 }
+
 function closeSupporterForm() {
-  document.getElementById("supporterForm").style.display = "none";
-  document.getElementById("formOverlay").style.display = "none";
+    document.getElementById("supporterForm").style.display = "none";
+    document.getElementById("formOverlay").style.display = "none";
 }
+
 function closeUploadForm() {
-  document.getElementById("uploadForm").style.display = "none";
-  document.getElementById("formOverlay").style.display = "none";
-  document.getElementById("home").checked = true;
+    document.getElementById("uploadForm").style.display = "none";
+    document.getElementById("formOverlay").style.display = "none";
+    document.getElementById("home").checked = true;
 }
 
 function scrollToContact() {
-  document.getElementById("contact").scrollIntoView({ behavior: "smooth" });
+    document.getElementById("contact").scrollIntoView({ behavior: "smooth" });
 }
+
 function openEditProfileForm() {
-  document.getElementById("editProfileForm").style.display = "block";
-  document.getElementById("formOverlay").style.display = "block";
+    document.getElementById("editProfileForm").style.display = "block";
+    document.getElementById("formOverlay").style.display = "block";
 }
 
 function closeEditProfileForm() {
-  document.getElementById("editProfileForm").style.display = "none";
-  document.getElementById("formOverlay").style.display = "none";
+    document.getElementById("editProfileForm").style.display = "none";
+    document.getElementById("formOverlay").style.display = "none";
 }
-  
-
-
-// Funções para o modal de post
-function togglePostMenu() {
-    const menu = document.getElementById('postMenu');
-    menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
-}
-
 
 // Função para fechar o modal
 function closePost() {
@@ -156,17 +148,17 @@ function closePost() {
 }
 
 // Função para abrir o modal
-function openPost(postId) {
+function openPost(postId, userId) {
     const modal = document.getElementById('postModal');
     modal.classList.add('show');
     document.body.style.overflow = 'hidden'; // Previne scroll da página
-    
-    // Aqui você carregaria os dados do post
-    loadPostData(postId);
+
+    // Carregar os dados do post
+    loadPostData(postId, userId);
 }
 
 // Função para carregar dados do post
-async function loadPostData(postId) {
+async function loadPostData(postId, userId) {
     try {
         const postResponse = await fetch(`getPostDataJS.php?query=${encodeURIComponent(postId)}`);
         const postData = await postResponse.json();
@@ -186,20 +178,24 @@ async function loadPostData(postId) {
         const userData = await userRes.json();
         const imageData = await imageRes.json();
 
+        // Store current post ID in modal for later use
+        const modal = document.getElementById("postModal");
+        if (modal) {
+            modal.dataset.currentPostId = postId;
+        }
+
         // Atualizar o modal com os dados carregados
-        updatePostModalFromData(postData, userData, imageData);
+        updatePostModalFromData(postData, userData, imageData, userId);
 
     } catch (error) {
         console.error('Erro ao carregar post:', error);
     }
 }
 
-// Função auxiliar para atualizar o modal (baseada na updatePostModal original)
-function updatePostModalFromData(postData, userData, imageDetails) {
-    if (Object.keys(imageDetails).length != 0) {
+// Função auxiliar para atualizar o modal
+function updatePostModalFromData(postData, userData, imageDetails, userId) {
+    if (imageDetails && Object.keys(imageDetails).length > 0) {
         const mimeFilename = imageDetails.mimeFilename;
-        const filename = imageDetails.filename;
-
         const targetDiv = document.getElementById("modalMediaContainer");
 
         if (targetDiv) {
@@ -231,76 +227,88 @@ function updatePostModalFromData(postData, userData, imageDetails) {
                     `;
                     break;
             }
-
-            // Atualizar botão de like
-            document.getElementById("likeButton").href = "likePost.php?idPost=" + postData.id;
-            
-            // Atualizar dados do usuário
-            document.getElementById("modalUsername").textContent = userData.username;
-            document.getElementById("likeCount").textContent = postData.numLikes;
-
-            console.log('PostData:', postData);
-            console.log('UserData:', userData);
-            console.log('ImageDetails:', imageDetails);
-            // Atualizar foto de perfil
-            const profilePicElement = document.getElementById("modalProfilePic");
-            if (userData.profilePicture) {
-                profilePicElement.src = `showFile.php?id=${userData.profilePicture}`;
-            } else {
-                profilePicElement.src = "images/default-profile.png";
-            }
-            profilePicElement.alt = `${userData.username}'s profile picture`;
-
-            // Atualizar caption com username e descrição
-            const captionUsername = document.getElementById("captionUsername");
-            const captionText = document.getElementById("captionText");
-            
-            if (captionUsername) {
-                captionUsername.textContent = userData.username || 'Unknown User';
-            }
-            
-            if (captionText) {
-                captionText.textContent = postData.description || '';
-            }
-
-            // Atualizar título do post
-            const postTitleElement = document.getElementById("modalPostTitle");
-            if (postTitleElement) {
-                postTitleElement.textContent = postData.title || '';
-            }
         }
     }
-}
 
-// Função para toggle like
-async function toggleLike() {
-    const likeButton = document.getElementById('likeButton');
-    const likeCount = document.getElementById('likeCount');
-    const isLiked = likeButton.classList.contains('liked');
+    // Atualizar botão de like com verificação
+    const likeButton = document.getElementById("likeButton");
+    if (likeButton && postData.id) {
+        likeButton.href = "likePost.php?idPost=" + postData.id;
+    }
     
-    try {
-        const response = await fetch('toggleLike.php', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                postId: getCurrentPostId(),
-                action: isLiked ? 'unlike' : 'like'
-            })
-        });
-        
-        if (response.ok) {
-            const result = await response.json();
-            likeButton.classList.toggle('liked');
-            likeCount.textContent = result.likes;
-        }
-    } catch (error) {
-        console.error('Erro ao curtir post:', error);
+    // Atualizar dados do usuário com verificações
+    const modalUsername = document.getElementById("modalUsername");
+    if (modalUsername) {
+        modalUsername.textContent = userData.username || 'Unknown User';
     }
+
+    const likeCount = document.getElementById("likeCount");
+    if (likeCount) {
+        likeCount.textContent = postData.numLikes || 0;
+    }
+    
+    // Atualizar foto de perfil
+    const profilePicElement = document.getElementById("modalProfilePic");
+    if (profilePicElement) {
+        if (userData.profile_pic) {
+            profilePicElement.src = userData.profile_pic;
+        } else {
+            profilePicElement.src = "images/profilePicHandler.jpg";
+        }
+        profilePicElement.alt = `${userData.username || 'User'}'s profile picture`;
+    }
+
+    // Atualizar caption com verificações
+    const captionUsername = document.getElementById("captionUsername");
+    if (captionUsername) {
+        captionUsername.textContent = userData.username || 'Unknown User';
+    }
+    
+    const captionText = document.getElementById("captionText");
+    if (captionText) {
+        captionText.textContent = postData.description || '';
+    }
+
+    // Atualizar título do post
+    const postTitleElement = document.getElementById("modalPostTitle");
+    if (postTitleElement) {
+        postTitleElement.textContent = postData.title || '';
+    }
+
+    // Atualizar botão de privacidade se o usuário for o dono
+    updatePrivacyButton(postData, userId);
 }
 
+// Função para atualizar o botão de privacidade
+function updatePrivacyButton(postData, userId) {
+    const postMenu = document.getElementById("postMenu");
+    if (!postMenu || !postData) return;
 
+    // Procurar pelo botão de privacidade existente (buscar por qualquer botão que contenha "Make")
+    let privacyButton = postMenu.querySelector('button:nth-child(2)'); // Segundo botão no menu
+    
+    // Se não encontrar, criar o botão
+    if (!privacyButton) {
+        privacyButton = document.createElement('button');
+        postMenu.appendChild(privacyButton);
+    }
+    
+    // Verificar se o usuário é o dono do post
+    if (postData.idUser == userId) {
+        privacyButton.style.display = 'block';
+        
+        // Configurar o botão baseado na privacidade atual
+        if (postData.privacy === 'public') {
+            privacyButton.innerHTML = '<i class="bi bi-lock"></i> Make Private';
+        } else {
+            privacyButton.innerHTML = '<i class="bi bi-unlock"></i> Make Public';
+        }
+    }
+    // Se o usuário não for o dono do post, esconder o botão
+    else {
+        privacyButton.style.display = 'none';
+    }
+}
 
 function handleShare() {
     if (navigator.share) {
@@ -315,33 +323,16 @@ function handleShare() {
     }
 }
 
-
 // Função auxiliar para obter ID do post atual
 function getCurrentPostId() {
-    // Implementar lógica para obter o ID do post atual
-    return document.getElementById('postModal').dataset.currentPostId;
+    const modal = document.getElementById('postModal');
+    return modal ? modal.dataset.currentPostId : null;
 }
 
-// Função auxiliar para formatar tempo
-function formatTime(timestamp) {
-    const date = new Date(timestamp);
-    const now = new Date();
-    const diff = now - date;
-    
-    if (diff < 60000) return 'Just now';
-    if (diff < 3600000) return `${Math.floor(diff / 60000)}m`;
-    if (diff < 86400000) return `${Math.floor(diff / 3600000)}h`;
-    return `${Math.floor(diff / 86400000)}d`;
-}
-
-function togglePostPrivacy(idPost) {
-    isPostPublic = !isPostPublic;
-    const button = document.querySelector('#postMenu button:nth-child(2)');
-    if (isPostPublic) {
-        button.innerHTML = '<i class="bi bi-lock"></i> Make Private';
-        // Aqui você pode chamar uma função para tornar o post público no backend
-    } else {
-        button.innerHTML = '<i class="bi bi-unlock"></i> Make Public';
-        // Aqui você pode chamar uma função para tornar o post privado no backend
+// Função para toggle do menu do post
+function togglePostMenu() {
+    const menu = document.getElementById('postMenu');
+    if (menu) {
+        menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
     }
 }
