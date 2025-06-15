@@ -45,7 +45,7 @@
                 style="position: absolute; top: 100%; left: 0; right: 0; background: white; z-index: 1000;"></div>
         </div>
 
-        <a href="perfil.php" class="user-icon">
+        <a onclick="openSignupForm()" class="user-icon">
             <i class="bi bi-person-circle"></i>
         </a>
     </div>
@@ -211,8 +211,9 @@
                     $postTitle = $post['title'];
                     $fileID = $post['idImage'];
 
+                    echo($fileID);
                     $image = "<img src=\"showFileThumb.php?id=$fileID&size=small\" alt=\"Post\"></img>";
-                    $caption = "<figcaption> aaaaaaaa </figcaption>";
+                    $caption = "<figcaption> $postTitle </figcaption>";
                     echo "<figure class=\"card card_small\" data-post-id=\"$idPost\">$image $caption </figure>";
 
                 }
@@ -229,47 +230,49 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
 
 
-<div id="postModal" class="modal">
-    <div class="modal-content">
-        <span class="close-icon" onclick="closePost()">&times;</span>
-        <div class="post">
-            <div class="post-header">
-                <img id="modalProfilePic" src="" alt="User profile" class="profile-pic">
-                <span id="modalUsername" class="username">Username</span>
-                <div class="post-menu">
-                    <i class="bi bi-three-dots-vertical menu-icon" onclick="togglePostMenu()"></i>
-                    <div class="dropdown-menu" id="postMenu">
-                        <button onclick="alert('Analytics clicked')">Analytics</button>
-                        <button onclick="alert('Share clicked')">Share</button>
+    <div id="postModal" class="post-popup">
+        <div class="post-container">
+            <span class="close-icon" onclick="closePost()">&times;</span>
+            <div class="post">
+                <div class="post-header">
+                    <img id="modalProfilePic" src="images/default-profile.png" alt="User profile" class="profile-pic">
+                    <div class="user-info">
+                        <span id="modalUsername" class="username"></span>
+                        <span id="modalPostTitle" class="post-title"></span>
+                    </div>
+                    <div class="post-menu">
+                        <i class="bi bi-three-dots-vertical menu-icon" onclick="togglePostMenu()"></i>
+                        <div class="dropdown-menu" id="postMenu">
+                            <button onclick="handleShare()">
+                                <i class="bi bi-share"></i> Share
+                            </button>
+                            <button onclick="togglePostPrivacy()">
+                                <i class="bi bi-shield-lock"></i> Toggle Privacy
+                            </button>
+                        </div>
                     </div>
                 </div>
-            </div>
-            <div id="modalMediaContainer"></div>
-            <div class="post-footer">
-                <div class="post-actions">
-                    <a id="likeButton" class="like-button"><i class="bi bi-heart"></i></a>
-                    <span id="likeCount" class="action-count">0</span>
 
-                    <button class="comment-button"><i class="bi bi-chat"></i></button>
-                    <span id="commentCount" class="action-count">0</span>
-
-                    <button class="save-button"><i class="bi bi-bookmark"></i></button>
+                <div id="modalMediaContainer">
+                    <!-- Conteúdo de mídia será inserido aqui dinamicamente -->
                 </div>
-                <p class="caption"><span class="username" id="captionUsername"></span>
-                    <span id="captionText"></span>
-                </p>
-            </div>
-            <div class="comment-section">
-                <h4>Comments</h4>
-                <div class="comment-list" id="commentList"></div>
-                <div class="comment-input">
-                    <input type="text" id="newComment" placeholder="Add a comment..." />
-                    <button onclick="addComment()">Post</button>
+
+                <div class="post-footer">
+                    <div class="post-actions">
+                        <a id="likeButton" class="like-button" onclick="toggleLike()">
+                            <i class="bi bi-heart"></i>
+                        </a>
+                        <span id="likeCount" class="action-count">0</span>
+                    </div>
+                    <div class="caption">
+                        <span class="username" id="captionUsername"></span>
+                        <span id="captionText" class="caption-text"></span>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
+
     <?php 
     include 'auth_forms.php'
   ?>
@@ -277,31 +280,22 @@
 
 </body>
 <script>
-function previewProfilePic(event) {
-    const input = event.target;
-    if (input.files && input.files[0]) {
-        const reader = new FileReader();
-        reader.onload = function(e) {
-            document.getElementById('profilePicPreview').src = e.target.result;
-        }
-        reader.readAsDataURL(input.files[0]);
+document.addEventListener('click', function(event) {
+    const menu = document.getElementById('postMenu');
+    const menuIcon = document.querySelector('.menu-icon');
+    
+    if (!menu.contains(event.target) && !menuIcon.contains(event.target)) {
+        menu.style.display = 'none';
     }
-}
+});
 document.addEventListener('DOMContentLoaded', function() {
-    const cards = document.querySelectorAll('.img_container .card img');
-
-    cards.forEach(img => {
-        img.addEventListener('click', function() {
-            openPost(this.src);
+    document.querySelectorAll('.card').forEach(card => {
+        card.addEventListener('click', async function() {
+            const postId = this.dataset.postId;
+            console.log('Post ID:', postId);
+            await openPost(postId); // now await works here
         });
     });
-});
-
-//close card if clicked out the margins
-document.addEventListener("click", function(e) {
-    if (!e.target.closest(".post-menu")) {
-        document.getElementById("postMenu").style.display = "none";
-    }
 });
 </script>
 

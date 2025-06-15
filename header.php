@@ -1,18 +1,4 @@
-  <?php
-    ini_set('display_errors', 1);
-    ini_set('display_startup_errors', 1);
-    error_reporting(E_ALL);
 
-    require_once( "lib/lib.php" );
-
-    $idUser = $_SESSION['id'];
-
-    $current_user = getUserData($idUser); // Get current user's data
-    $user_type = $current_user['user_type']; // Get user type
-    $supporter = ($user_type !== 'supporter'); // Supporters cannot post
-
-?>
-  
   <div class="form-overlay" id="formOverlay"></div>
 
   <div class="search-container">
@@ -24,18 +10,12 @@
     <div id="autocomplete-results" style="position: absolute; top: 100%; left: 0; right: 0; background: white; z-index: 1000;"></div>
   </div>
 
-    
-
-    <?php if ($supporter): ?>
     <a href="perfil.php" class="user-icon">
       <i class="bi bi-person-circle"></i>
     </a>
-    <?php else: ?>
-    <?php endif; ?>
   </div>
 
   <script>
-
     document.getElementById('search').addEventListener('input', function() {
     const search = this.value;
 

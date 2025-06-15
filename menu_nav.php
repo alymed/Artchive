@@ -10,7 +10,6 @@
     if(isset($username)){
         $idUserProfile = searchUsers($username, $idUser)[0]["id"];
         $owner = false;
-
     }else{
         $idUserProfile = $_SESSION['id'];
         $owner = true;
@@ -42,7 +41,7 @@
 
     $current_user = getUserData($idUser); // Get current user's data
     $user_type = $current_user['user_type']; // Get user type
-    $canPost = ($user_type !== 'supporter'); // Supporters cannot post
+    $canPost = ($user_type !== 'user'); // user cannot post
 
 ?>
 
@@ -107,6 +106,17 @@
             <label for="tag5" class="top_tab">Tag 5</label>
 
         </div>
+        <!-- <input type="radio" name="top_tab" id="all" checked>
+        <?php foreach ($categories as $index => $category): ?>
+        <input type="radio" name="toptab" id="tag<?php echo $category['id']; ?>">
+        <?php endforeach; ?>
+
+        <!-- <div class="top_tabs">
+            <label for="all" class="toptab">All</label>
+            <?php foreach ($categories as $category): ?>
+            <label for="tag<?php echo $category['id']; ?>" class="top_tab"><?php echo htmlspecialchars($category['tagName']); ?></label>
+            <?php endforeach; ?>
+        </div> -->
 
         <div class="img_container">
             <?php
@@ -348,9 +358,10 @@
                     $idPost = $post['id'];
                     $postTitle = $post['title'];
                     $fileID = $post['idImage'];
+                    $description = $post['description'];
 
                     $image = "<img src=\"showFileThumb.php?id=$fileID&size=small\" alt=\"Post\"></img>";
-                    $caption = "<figcaption> aaaaaaaa </figcaption>";
+                    $caption = "<figcaption> $description </figcaption>";
                     echo "<figure class=\"card card_small\" data-post-id=\"$idPost\">$image $caption </figure>";
 
                 }
@@ -379,37 +390,54 @@
                 <div class="social-stats">
                     <div><strong><?php echo count($profile_followers) ?></strong><br />Followers</div>
                     <div><strong><?php echo count($profile_following) ?> </strong><br />Following</div>
-                    <div><strong><?php echo count($profile_posts) ?></strong><br />Posts</div>
+                    
+                    <?php if ($canPost): ?>
+                        <div><strong><?php echo count($profile_posts) ?></strong><br />Posts</div>
+                    <?php else: 
+                     endif; 
+
+                    if (!$owner && !$isfollowing){
+                    ?>
+                            <a href="follow.php?idFollower=<?php echo urlencode($idUser)?>&idFollowed=<?php echo urlencode($idUserProfile)?>"
+                                class="follow-btn">Follow</a>
+                            <?php
+                    } else if (!$owner && $isfollowing){    
+                    ?>
+                            <a href="unfollow.php?idFollower=<?php echo urlencode($idUser)?>&idFollowed=<?php echo urlencode($idUserProfile)?>"
+                                class="follow-btn">Unfollow</a>
+                            <?php
+                    }  
+                    ?>
+
                     <button class="default-btn" onclick="openEditProfileForm()">Edit Profile</button>
+
+                    <?php if ($user_type === 'user') { ?>
+                    <button class="default-btn" onclick="openSupporterForm()">Become Supporter</button>
+                    <?php } ?>
+                    
                     <?php if (!$owner) { ?>
                     <button class="default-btn" onclick="scrollToContact()">Contact Me</button>
                     <?php } ?>
-                    <?php
-            if (!$owner && !$isfollowing){
-            ?>
-                    <a href="follow.php?idFollower=<?php echo urlencode($idUser)?>&idFollowed=<?php echo urlencode($idUserProfile)?>"
-                        class="button-link">Follow</a>
-                    <?php
-            } else if (!$owner && $isfollowing){    
-            ?>
-                    <a href="unfollow.php?idFollower=<?php echo urlencode($idUser)?>&idFollowed=<?php echo urlencode($idUserProfile)?>"
-                        class="button-link">Unfollow</a>
-                    <?php
-            }  
-            ?>
+                    
                 </div>
             </div>
         </div>
 
         <div class="img_container">
             <?php 
-
-        for($idx=0; $idx<count($profile_posts); $idx++){
-          $idFile = $profile_posts[$idx]['idImage'];
-          $idPost = $profile_posts[$idx]['id'];
-          $target = "<img src=\"showFileThumb.php?id=" . $idFile . "&size=small\" alt=\"Post\"></img>";
-          echo "<div class=\"card card_small\" data-post-id=\"$idPost\">$target</div>";
-        }
+            
+            if ($canPost): 
+                for($idx=0; $idx<count($profile_posts); $idx++){
+                    $idFile = $profile_posts[$idx]['idImage'];
+                    $idPost = $profile_posts[$idx]['id'];
+                    $target = "<img src=\"showFileThumb.php?id=" . $idFile . "&size=small\" alt=\"Post\"></img>";
+                    echo "<div class=\"card card_small\" data-post-id=\"$idPost\">$target</div>";
+                    }
+            else: ?>
+            <p>Become supporter to post contents</p>
+            
+            <?php endif; 
+        
         ?>
         </div>
         <?php if (!$owner) { ?>
@@ -440,9 +468,8 @@
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
 
-
-<div id="postModal" class="modal">
-    <div class="modal-content">
+<div id="postModal" class="post-popup">
+    <div class="post-container">
         <span class="close-icon" onclick="closePost()">&times;</span>
         <div class="post">
             <div class="post-header">
@@ -454,38 +481,47 @@
                 <div class="post-menu">
                     <i class="bi bi-three-dots-vertical menu-icon" onclick="togglePostMenu()"></i>
                     <div class="dropdown-menu" id="postMenu">
-                        <button onclick="alert('Analytics clicked')">Analytics</button>
-                        <button onclick="alert('Share clicked')">Share</button>
+                        <button onclick="handleShare()">
+                            <i class="bi bi-share"></i> Share
+                        </button>
+                        <button onclick="togglePostPrivacy()">
+                            <i class="bi bi-shield-lock"></i> Toggle Privacy
+                        </button>
                     </div>
                 </div>
             </div>
-            <div id="modalMediaContainer"></div>
+            
+            <div id="modalMediaContainer">
+                <!-- Conteúdo de mídia será inserido aqui dinamicamente -->
+            </div>
+            
             <div class="post-footer">
                 <div class="post-actions">
-                    <a id="likeButton" class="like-button"><i class="bi bi-heart"></i></a>
+                    <a id="likeButton" class="like-button" onclick="toggleLike()">
+                        <i class="bi bi-heart"></i>
+                    </a>
                     <span id="likeCount" class="action-count">0</span>
-
-                    <button class="comment-button"><i class="bi bi-chat"></i></button>
-                    <span id="commentCount" class="action-count">0</span>
-
-                    <button class="save-button"><i class="bi bi-bookmark"></i></button>
                 </div>
-                <p class="caption">
+                <div class="caption">
                     <span class="username" id="captionUsername"></span>
                     <span id="captionText" class="caption-text"></span>
-                </p>
-            </div>
-            <div class="comment-section">
-                <h4>Comments</h4>
-                <div class="comment-list" id="commentList"></div>
-                <div class="comment-input">
-                    <input type="text" id="newComment" placeholder="Add a comment..." />
-                    <button onclick="addComment()">Post</button>
                 </div>
             </div>
         </div>
     </div>
 </div>
+
+<script>
+    // Fechar menu quando clicar fora
+document.addEventListener('click', function(event) {
+    const menu = document.getElementById('postMenu');
+    const menuIcon = document.querySelector('.menu-icon');
+    
+    if (!menu.contains(event.target) && !menuIcon.contains(event.target)) {
+        menu.style.display = 'none';
+    }
+});
+</script>
 
 <div class="form-popup" id="uploadForm">
     <form method="POST" class="form-container" action="fileUpload.php" enctype="multipart/form-data">

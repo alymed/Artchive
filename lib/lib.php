@@ -2,6 +2,29 @@
 
 require_once( "db.php" );
 
+function accountVerifyDB($idUser){
+
+    dbConnect(ConfigFile);
+
+    $dataBaseName = $GLOBALS['configDataBase']->db;
+    mysqli_select_db($GLOBALS['ligacao'], $dataBaseName);
+
+
+    $query = "UPDATE `$dataBaseName`.`users-auth` SET `status`='2' WHERE `id` = '$idUser'";
+
+    $result = mysqli_query($GLOBALS['ligacao'], $query);
+
+
+    if ($result !== false) {
+        echo 'Account is now verified!';
+    }   else {
+        echo "Error verifying profile: " . dbGetLastError();
+    }
+
+    dbDisconnect();
+
+}
+
 function getBrowser() {
     $userBrowser = '';
     $userAgent = $_SERVER['HTTP_USER_AGENT'];
@@ -262,7 +285,7 @@ function createProfile($idUser, $name, $username, $birthdate, $user_type) {
 
     $query = 
             "INSERT INTO  `$dataBaseName`.`users-profile` (`id`,`user_type`,`name`, `username`, `birthdate`, `biography`) ".
-            "VALUES ('$idUser', $user_type, '$name', '$username', '$birthdate', NULL)";
+            "VALUES ('$idUser', '$user_type', '$name', '$username', '$birthdate', NULL)";
 
     $result = mysqli_query($GLOBALS['ligacao'], $query);
 
