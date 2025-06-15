@@ -339,6 +339,10 @@ function getUsernameById($idUser) {
     return $username;
 }
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> d25c7fe8e8e874a0a9d4d67595bf44b5d01842db
 
 function getUserData($idUser = "") {
 
@@ -1018,43 +1022,4 @@ function updateUserProfile($userId, $profilePicture = null, $biography = '') {
 }
 
 
-function register($name, $username, $password, $email, $birthdate) {
-
-    $userOk = -1;
-
-    dbConnect( ConfigFile);
-    
-    $dataBaseName = $GLOBALS['configDataBase']->db;
-
-    mysqli_select_db($GLOBALS['ligacao'], $dataBaseName );
-
-    $name = mysqli_real_escape_string($GLOBALS['ligacao'], $name);
-    $username    = mysqli_real_escape_string($GLOBALS['ligacao'], $username);
-    $password = mysqli_real_escape_string($GLOBALS['ligacao'], $password);
-    $email    = mysqli_real_escape_string($GLOBALS['ligacao'], $email);
-    $birthdate = mysqli_real_escape_string($GLOBALS['ligacao'], $birthdate);
-    $createdAt = date("Y-m-d H:i:s");
-
-    $query = 
-            "INSERT INTO  `$dataBaseName`.`users-auth` (`email`, `password`, `created_at`,`status`) ".
-            "VALUES ('$email', '$password', '$createdAt', '1')";
-
-    $result = mysqli_query($GLOBALS['ligacao'], $query);
-
-    if ($result !== false) {
-
-        $userOk = mysqli_insert_id($GLOBALS['ligacao']);
-      
-        if (createProfile($userOk, $name, $username, $birthdate)) {
-            createToken($userOk);
-        } else {
-            $query = "DELETE FROM `users-auth` WHERE `id` = '$userOk'";
-            mysqli_query($GLOBALS['ligacao'], $query);
-        }
-    } 
-
-    dbDisconnect();
-
-    return $userOk;
-}
 ?>
