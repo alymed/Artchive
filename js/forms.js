@@ -52,10 +52,11 @@ function openSignupForm2(email = '', name = '', birthdate = '') {
     document.getElementById("formOverlay").style.display = "block";
 }
 
-function openSignupForm3(email = '', name = '', birthdate = '', username = '', password = '') {
+function openSignupForm3(email = '', name = '', birthdate = '', user_type = '', username = '', password = '') {
     if (email) document.getElementById("signup3_email").value = email;
     if (name) document.getElementById("signup3_name").value = name;
     if (birthdate) document.getElementById("signup3_birthdate").value = birthdate;
+    if (user_type) document.getElementById("signup3_user_type").value = user_type;
     if (username) document.getElementById("signup3_username").value = username;
     if (password) document.getElementById("signup3_password").value = password;
 
@@ -86,9 +87,10 @@ window.addEventListener('DOMContentLoaded', function () {
         const email = urlParams.get('email');
         const name = urlParams.get('name');
         const birthdate = urlParams.get('birthdate');
+        const user_type = urlParams.get('user_type');
         const username = urlParams.get('username');
         const password = urlParams.get('password');
-        openSignupForm3(email, name, birthdate, username, password);
+        openSignupForm3(email, name, birthdate, user_type, username, password);
     }
 
     const signupError = urlParams.get('signupError');

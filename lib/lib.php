@@ -2,36 +2,6 @@
 
 require_once( "db.php" );
 
-function getBrowser() {
-    $userBrowser = '';
-    $userAgent = $_SERVER['HTTP_USER_AGENT'];
-
-    if (preg_match('/Trident/i', $userAgent)) {
-        $userBrowser = "Internet Explorer";
-    } elseif (preg_match('/MSIE/i', $userAgent)) {
-        $userBrowser = "Internet Explorer";
-    } elseif (preg_match('/Edg/i', $userAgent)) {
-        $userBrowser = "Microsoft Edge";
-    } elseif (preg_match('/Firefox/i', $userAgent)) {
-        $userBrowser = "Mozilla Firefox";
-    } elseif (preg_match('/Chrome/i', $userAgent)) {
-        $userBrowser = "Google Chrome";
-    } elseif (preg_match('/Safari/i', $userAgent)) {
-        $userBrowser = "Apple Safari";
-    } elseif (preg_match('/Flock/i', $userAgent)) {
-        $userBrowser = "Flock";
-    } elseif (preg_match('/Opera/i', $userAgent)) {
-        $userBrowser = "Opera";
-    } elseif (preg_match('/Netscape/i', $userAgent)) {
-        $userBrowser = "Netscape";
-    }
-
-    if (preg_match('/Mobile/i', $userAgent)) {
-        $userBrowser = "Mobile Device";
-    }
-    return $userBrowser;
-}
-
 function redirectToPage($url, $title, $message, $refreshTime = 5) {
     echo "<html>\n";
     echo "  <head>\n";
@@ -253,7 +223,7 @@ function getTokenFromUser($idUser){
 
 
 
-function createProfile($idUser, $name, $username, $birthdate) {
+function createProfile($idUser, $name, $username, $birthdate, $user_type) {
     
     $dataBaseName = $GLOBALS['configDataBase']->db;
 
@@ -261,8 +231,8 @@ function createProfile($idUser, $name, $username, $birthdate) {
 
 
     $query = 
-            "INSERT INTO  `$dataBaseName`.`users-profile` (`id`,`name`, `username`, `birthdate`, `biography`) ".
-            "VALUES ('$idUser', '$name', '$username', '$birthdate', NULL)";
+            "INSERT INTO  `$dataBaseName`.`users-profile` (`id`,`user_type`, `name`, `username`, `birthdate`, `biography`) ".
+            "VALUES ('$idUser', '$user_type', '$name', '$username', '$birthdate', NULL)";
 
     $result = mysqli_query($GLOBALS['ligacao'], $query);
 
@@ -1039,4 +1009,68 @@ function getAllCategories() {
 
 
 
+
+function register($name, $username, $password, $email, $birthdate, $user_type) {
+
+    $userOk = -1;
+
+    dbConnect( ConfigFile);
+    
+    $dataBaseName = $GLOBALS['configDataBase']->db;
+
+    mysqli_select_db($GLOBALS['ligacao'], $dataBaseName );
+
+    $name = mysqli_real_escape_string($GLOBALS['ligacao'], $name);
+    $username    = mysqli_real_escape_string($GLOBALS['ligacao'], $username);
+    $password = mysqli_real_escape_string($GLOBALS['ligacao'], $password);
+    $email    = mysqli_real_escape_string($GLOBALS['ligacao'], $email);
+    $birthdate = mysqli_real_escape_string($GLOBALS['ligacao'], $birthdate);
+    $user_type = mysqli_real_escape_string($GLOBALS['ligacao'], $user_type);
+    $createdAt = date("Y-m-d H:i:s");
+
+    $query = 
+            "INSERT INTO  `$dataBaseName`.`users-auth` (`user_type`, `email`, `password`, `created_at`,`status`) ".
+            "VALUES ('$user_type', '$email', '$password', '$createdAt', '1')";
+
+    $result = mysqli_query($GLOBALS['ligacao'], $query);
+
+    if ($result !== false) {
+
+        $userOk = mysqli_insert_id($GLOBALS['ligacao']);
+      
+        if (createProfile($userOk, $name, $username, $birthdate, $user_type)) {
+            createToken($userOk);
+        } else {
+            $query = "DELETE FROM `users-auth` WHERE `id` = '$userOk'";
+            mysqli_query($GLOBALS['ligacao'], $query);
+        }
+    } 
+
+    dbDisconnect();
+
+    return $userOk;
+}
+
+function accountVerifyDB($idUser){
+
+    dbConnect(ConfigFile);
+
+    $dataBaseName = $GLOBALS['configDataBase']->db;
+    mysqli_select_db($GLOBALS['ligacao'], $dataBaseName);
+
+
+    $query = "UPDATE `$dataBaseName`.`users-auth` SET `status`='2' WHERE `id` = '$idUser'";
+
+    $result = mysqli_query($GLOBALS['ligacao'], $query);
+
+
+    if ($result !== false) {
+        echo 'Account is now verified!';
+    }   else {
+        echo "Error verifying profile: " . dbGetLastError();
+    }
+
+    dbDisconnect();
+
+}
 ?>

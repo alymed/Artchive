@@ -1,11 +1,11 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-<link rel="stylesheet" href="form-styles.css">
+<link rel="stylesheet" href="css/form-styles.css">
 
 
 <!-- The form -->
 <div class="form-popup" id="loginForm">
     <form method="POST" class="form-container" action="login.php">
-        <span class="close-icon" onclick="closeLoginForm()">&times;</span>
+        <span class="close-icon" onclick="closeAllForms()">&times;</span>
         <img src="images/logo.png" alt="Logo" class="logo-img">
 
         <h3>Login to see more</h3>
@@ -17,7 +17,7 @@
             <a href="#" class="action" id="password">Forgot your password?</a>
             <div class="g-recaptcha" data-sitekey="6LcQV10rAAAAAB-XprIAz5u2HPQ6aZu4QRY6UyYw" required></div>
             <button type="submit" class="default-btn" name="login" id="login_button">Log in</button>
-            <a class="action" id="signup" onclick="closeAllForms()">Not on Artchive yet? Sign up</a>
+            <a class="action" id="signup" onclick="openSignupForm()">Not on Artchive yet? Sign up</a>
         </div>
 
     </form>
@@ -60,6 +60,13 @@
         <h3>Create Your Account</h3>
         <div class="info">
 
+            <label for="user_type"><b>User Type</b></label>
+            <select name="user_type" id="user_type" required>
+                <option value="" disabled selected>Select user type</option>
+                <option value="supporter">Supporter</option>
+                <option value="user">User</option>
+            </select>
+            
             <label for="username"><b>Username</b></label>
             <input type="text" placeholder="Username" name="username" id="register_username" required minlength="3"
                 maxlength="30" pattern="[a-zA-Z0-9_]+"
@@ -85,6 +92,7 @@
         <input type="hidden" name="name" id="signup3_name" value="">
         <input type="hidden" name="email" id="signup3_email" value="">
         <input type="hidden" name="birthdate" id="signup3_birthdate" value="">
+        <input type="hidden" name="user_type" id="signup3_user_type" value="">
         <input type="hidden" name="username" id="signup3_username" value="">
         <input type="hidden" name="password" id="signup3_password" value="">
 

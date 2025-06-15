@@ -24,6 +24,7 @@ $birthdate = filter_input(INPUT_GET, 'birthdate', FILTER_UNSAFE_RAW, $flags) ??
 // Get current step data
 $username = filter_input(INPUT_POST, 'username', FILTER_UNSAFE_RAW, $flags);
 $password = filter_input(INPUT_POST, 'password', FILTER_UNSAFE_RAW, $flags);
+$user_type = filter_input(INPUT_POST, 'user_type', FILTER_UNSAFE_RAW, $flags);
 
 $serverName = filter_input(INPUT_SERVER, 'SERVER_NAME', FILTER_UNSAFE_RAW, $flags);
 $serverPort = filter_input(INPUT_SERVER, 'SERVER_PORT', FILTER_VALIDATE_INT, $flags) ?? 80;
@@ -35,6 +36,7 @@ $baseNextUrl = $baseUrl . $appname;
 if (!filter_var($email, FILTER_VALIDATE_EMAIL) || 
     empty($password) || 
     empty($name) || 
+    empty($user_type) ||
     empty($username) || 
     empty($birthdate)) {
     
@@ -63,6 +65,7 @@ if (!$userExists) {
     $redirectUrl = "index.php?signupStep=3&name=" . urlencode($name) . 
                "&email=" . urlencode($email) . 
                "&birthdate=" . urlencode($birthdate) . 
+               "&user_type=" . urlencode($user_type) . 
                "&username=" . urlencode($username) . 
                "&password=" . urlencode($password);
     header("Location: $redirectUrl");

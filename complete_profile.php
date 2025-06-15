@@ -17,6 +17,7 @@ if ($method != 'POST') {
 $name = filter_input(INPUT_POST, 'name', FILTER_UNSAFE_RAW, $flags);
 $email = filter_input(INPUT_POST, 'email', FILTER_VALIDATE_EMAIL, $flags);
 $birthdate = filter_input(INPUT_POST, 'birthdate', FILTER_UNSAFE_RAW, $flags);
+$user_type = filter_input(INPUT_POST, 'user_type', FILTER_UNSAFE_RAW, $flags);
 $username = filter_input(INPUT_POST, 'username', FILTER_UNSAFE_RAW, $flags);
 $password = filter_input(INPUT_POST, 'password', FILTER_UNSAFE_RAW, $flags);
 $biography = filter_input(INPUT_POST, 'biography', FILTER_UNSAFE_RAW, $flags);
@@ -28,7 +29,7 @@ $appname = webAppName();
 $baseUrl = "http://" . $serverName . ":" . $serverPort;
 $baseNextUrl = $baseUrl . $appname;
 
-if (!$name || !$email || !$birthdate || !$username || !$password) {
+if (!$name || !$email || !$birthdate || !$user_type || !$username || !$password) {
     header("Location: index.php?error=MissingDataname");
     exit();
 }
@@ -39,7 +40,7 @@ if (strlen($biography) > 90) {
 }
 
 // Chama função register para criar usuário e obter ID
-$idUser = register($name, $username, $password, $email, $birthdate);
+$idUser = register($name, $username, $password, $email, $birthdate, $user_type);
 
 if ($idUser <= 0) {
     header("Location: signupForm2.php?error=RegisterError");

@@ -25,11 +25,13 @@
 .form-container input[type="password"],
 .form-container input[type="date"],
 .form-container input[type="file"],
-.form-container textarea {
+.form-container textarea,
+.form-container select {
     width: 60%;
     padding: 12px;
     margin: 5px 0 3px 0;
     border: 1px solid gray;
+    color: gray;
     background: #fff;
     border-radius: 16px;
 }
@@ -40,10 +42,12 @@
 .form-container input[type="password"]:focus,
 .form-container input[type="date"]:focus,
 .form-container input[type="file"]:focus,
-.form-container textarea:focus {
+.form-container textarea:focus,
+.form-container select:focus {
     background-color: #ddd;
     outline: none;
 }
+
 
 /* Set a style for the submit/login button */
 .default-btn {
