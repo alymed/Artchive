@@ -195,6 +195,14 @@ input#photos:checked ~ .tab-content #photoContent {
   box-sizing: border-box;
 }
 
+.center-wrapper {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  max-width: 500px;
+}
+
 .search-container img {
   padding-left: 30px;
   height: 40px;

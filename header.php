@@ -1,17 +1,37 @@
+  <?php
+    ini_set('display_errors', 1);
+    ini_set('display_startup_errors', 1);
+    error_reporting(E_ALL);
+
+    require_once( "lib/lib.php" );
+
+    $idUser = $_SESSION['id'];
+
+    $current_user = getUserData($idUser); // Get current user's data
+    $user_type = $current_user['user_type']; // Get user type
+    $supporter = ($user_type !== 'supporter'); // Supporters cannot post
+
+?>
+  
   <div class="form-overlay" id="formOverlay"></div>
 
   <div class="search-container">
     <a href="app.php" class="nav-logo">
       <img src="images/logo.png" alt="Logo" class="logo-img">
     </a>
-    <div style="position: relative;">
-        <input type="text" class="search-box" id="search" placeholder="Search..." autocomplete="off">
-        <div id="autocomplete-results" style="position: absolute; top: 100%; left: 0; right: 0; background: white; z-index: 1000;"></div>
-    </div>  
+    <div class="center-wrapper">
+    <input type="text" class="search-box" id="search" placeholder="Search..." autocomplete="off">
+    <div id="autocomplete-results" style="position: absolute; top: 100%; left: 0; right: 0; background: white; z-index: 1000;"></div>
+  </div>
 
+    
+
+    <?php if ($supporter): ?>
     <a href="perfil.php" class="user-icon">
       <i class="bi bi-person-circle"></i>
     </a>
+    <?php else: ?>
+    <?php endif; ?>
   </div>
 
   <script>

@@ -40,6 +40,10 @@
     // Buscar categorias da base de dados
     $categories = getAllCategories();
 
+    $current_user = getUserData($idUser); // Get current user's data
+    $user_type = $current_user['user_type']; // Get user type
+    $canPost = ($user_type !== 'supporter'); // Supporters cannot post
+
 ?>
 
 <input hidden type="radio" name="tab" id="profile">
@@ -57,10 +61,13 @@
         <i class="bi bi-house-door default-icon"></i>
         <i class="bi bi-house-door-fill active-icon"></i>
     </label>
+    <?php if ($canPost): ?>
     <label for="create" class="tab" onclick="openUploadForm()">
         <i class="bi bi-plus-square default-icon"></i>
         <i class="bi bi-plus-square-fill active-icon"></i>
     </label>
+    <?php else: ?>
+    <?php endif; ?>
     <label for="notification" class="tab">
         <i class="bi bi-bell default-icon"></i>
         <i class="bi bi-bell-fill active-icon"></i>
@@ -439,8 +446,11 @@
         <span class="close-icon" onclick="closePost()">&times;</span>
         <div class="post">
             <div class="post-header">
-                <img id="modalProfilePic" src="" alt="User profile" class="profile-pic">
-                <span id="modalUsername" class="username">Username</span>
+                <img id="modalProfilePic" src="images/default-profile.png" alt="User profile" class="profile-pic">
+                <div class="user-info">
+                    <span id="modalUsername" class="username"></span>
+                    <span id="modalPostTitle" class="post-title"></span>
+                </div>
                 <div class="post-menu">
                     <i class="bi bi-three-dots-vertical menu-icon" onclick="togglePostMenu()"></i>
                     <div class="dropdown-menu" id="postMenu">
@@ -460,8 +470,9 @@
 
                     <button class="save-button"><i class="bi bi-bookmark"></i></button>
                 </div>
-                <p class="caption"><span class="username" id="captionUsername"></span>
-                    <span id="captionText"></span>
+                <p class="caption">
+                    <span class="username" id="captionUsername"></span>
+                    <span id="captionText" class="caption-text"></span>
                 </p>
             </div>
             <div class="comment-section">

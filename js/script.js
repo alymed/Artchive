@@ -221,28 +221,44 @@ function updatePostModal(postData, userData, imageDetails){
 
       }
 
-      
       document.getElementById("likeButton").href = "likePost.php?idPost=" + postData.id;
       document.getElementById("modalUsername").textContent = userData.username
       document.getElementById("likeCount").textContent = postData.numLikes;
       document.getElementById("commentCount").textContent = postData.numComments;
 
+      // Update profile picture
+      const profilePicElement = document.getElementById("modalProfilePic");
+      if (userData.profilePicture) {
+        profilePicElement.src = `showFile.php?id=${userData.profilePicture}`;
+      } else {
+        // Default profile picture or placeholder
+        profilePicElement.src = "images/default-profile.png"; // or use a default image
+      }
+      profilePicElement.alt = `${userData.username}'s profile picture`;
+
+      // Update caption with username and description
+      const captionUsername = document.getElementById("captionUsername");
+      const captionText = document.getElementById("captionText");
+      
+      if (captionUsername) {
+        captionUsername.textContent = userData.username || 'Unknown User';
+      }
+      
+      if (captionText) {
+        captionText.textContent = postData.description || '';
+      }
+
+      // Update post title if you have an element for it
+      const postTitleElement = document.getElementById("modalPostTitle");
+      if (postTitleElement) {
+        postTitleElement.textContent = postData.title || '';
+      }
+
+      // Show the modal
       const modal = document.getElementById('postModal');
       modal.style.display = "block";
-
-
     }
-
-
-    
-
-
-
-
   }
-
-
-
 }
 
 
@@ -259,20 +275,6 @@ function togglePostMenu() {
   const menu = document.getElementById("postMenu");
   menu.style.display = menu.style.display === "block" ? "none" : "block";
 }
-
-// function addComment() {
-//   const input = document.getElementById("newComment");
-//   const commentList = document.getElementById("commentList");
-
-//   if (input.value.trim() !== "") {
-//     const newComment = document.createElement("div");
-//     newComment.classList.add("comment");
-//     newComment.innerHTML = `<strong>@you</strong> ${input.value}`;
-//     commentList.appendChild(newComment);
-//     input.value = "";
-//   }
-// }
-
 
 function addComment() {
   const commentInput = document.getElementById('newComment');
