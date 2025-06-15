@@ -484,12 +484,24 @@
                         <button onclick="handleShare()">
                             <i class="bi bi-share"></i> Share
                         </button>
-                        <?php if (!$owner && !$isfollowing){?>
-                            <button onclick="togglePostPrivacy()">
-                                <i class="bi bi-shield-lock"></i> Toggle Privacy
-                            </button>
-                        <?php } ?>
-                        
+                        <?php if ($owner): ?>
+                        <?php
+                            if (isset($_GET['postId'])) {
+                                $postId = $_GET['postId'];
+                                $postData = getPostData($postId);
+
+                                if ($postData['privacy'] === 'public') {
+                                    echo '<button onclick="togglePostPrivacy()">
+                                            <i class="bi bi-lock"></i> Make Private
+                                        </button>';
+                                } else {
+                                    echo '<button onclick="togglePostPrivacy()">
+                                            <i class="bi bi-unlock"></i> Make Public
+                                        </button>';
+                                }
+                            }
+                        ?>
+                    <?php endif; ?>                        
                     </div>
                 </div>
             </div>

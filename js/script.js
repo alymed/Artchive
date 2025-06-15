@@ -238,8 +238,10 @@ function updatePostModalFromData(postData, userData, imageDetails) {
             // Atualizar dados do usuário
             document.getElementById("modalUsername").textContent = userData.username;
             document.getElementById("likeCount").textContent = postData.numLikes;
-            document.getElementById("commentCount").textContent = postData.numComments;
 
+            console.log('PostData:', postData);
+            console.log('UserData:', userData);
+            console.log('ImageDetails:', imageDetails);
             // Atualizar foto de perfil
             const profilePicElement = document.getElementById("modalProfilePic");
             if (userData.profilePicture) {
@@ -332,7 +334,7 @@ function formatTime(timestamp) {
     return `${Math.floor(diff / 86400000)}d`;
 }
 
-function togglePostPrivacy() {
+function togglePostPrivacy(idPost) {
     isPostPublic = !isPostPublic;
     const button = document.querySelector('#postMenu button:nth-child(2)');
     if (isPostPublic) {
