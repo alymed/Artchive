@@ -19,6 +19,14 @@
     $username = $_GET["username"];
   }
 
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['become_supporter'])) {
+    $userId = $_SESSION['id'];
+    switchSupporter($userId);
+
+    // Opcional: Redirecionar para evitar resubmissão do formulário ao recarregar
+    header("Location: perfil.php" . urlencode($username));
+    exit();
+}
 
 ?>
 
@@ -76,7 +84,7 @@
     </div>
 
     <div class="form-popup" id="supporterForm">
-        <form method="post" class="form-container" action="switchSupporter.php">
+        <form method="post" class="form-container">
             <span class="close-icon" onclick="closeSupporterForm()">&times;</span>
             <h3>Become Supporter</h3>
             <div class="info">
@@ -88,6 +96,7 @@
                 &bull; Set content visibility<br>
                 &bull; Manage your own submissions
             </p>
+            <input type="hidden" name="become_supporter" value="1">
             <button type="submit" class="default-btn">Become Supporter</button>
             </div>
         </form>

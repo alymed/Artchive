@@ -484,9 +484,12 @@
                         <button onclick="handleShare()">
                             <i class="bi bi-share"></i> Share
                         </button>
-                        <button onclick="togglePostPrivacy()">
-                            <i class="bi bi-shield-lock"></i> Toggle Privacy
-                        </button>
+                        <?php if (!$owner && !$isfollowing){?>
+                            <button onclick="togglePostPrivacy()">
+                                <i class="bi bi-shield-lock"></i> Toggle Privacy
+                            </button>
+                        <?php } ?>
+                        
                     </div>
                 </div>
             </div>

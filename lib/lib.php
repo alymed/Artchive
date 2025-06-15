@@ -1103,4 +1103,43 @@ function register($name, $username, $password, $email, $birthdate, $user_type) {
 
     return $userOk;
 }
+
+function switchSupporter($idUser) {
+    dbConnect(ConfigFile);
+
+    $dataBaseName = $GLOBALS['configDataBase']->db;
+    mysqli_select_db($GLOBALS['ligacao'], $dataBaseName);
+
+    // Use prepared statements for safety
+    $query = "UPDATE `$dataBaseName`.`users-profile` 
+              SET user_type = CASE 
+                  WHEN user_type = 'user' THEN 'supporter' 
+                  ELSE user_type 
+              END
+              WHERE id = ?";
+
+    $stmt = mysqli_prepare($GLOBALS['ligacao'], $query);
+
+    $query2 = "UPDATE `$dataBaseName`.`users-auth` 
+              SET user_type = CASE 
+                  WHEN user_type = 'user' THEN 'supporter' 
+                  ELSE user_type 
+              END
+              WHERE id = ?";
+
+    $stmt2 = mysqli_prepare($GLOBALS['ligacao'], $query2);
+    if ($stmt && $stmt2) {
+        mysqli_stmt_bind_param($stmt, "i", $idUser);
+        mysqli_stmt_bind_param($stmt2, "i", $idUser);
+        mysqli_stmt_execute($stmt);
+        mysqli_stmt_execute($stmt2);
+        mysqli_stmt_close($stmt);
+        mysqli_stmt_close($stmt2);
+    } else {
+        error_log("Failed to prepare statement in switchSupporter.");
+    }
+
+    dbDisconnect();
+}
+
 ?>
