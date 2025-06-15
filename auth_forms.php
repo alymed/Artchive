@@ -2,7 +2,12 @@
 <link rel="stylesheet" href="css/form-styles.css">
 
 
-<!-- The form -->
+<?php session_start(); ?>
+<?php if (!empty($_SESSION['login_error'])): ?>
+    <div class="error-message">
+        <?= $_SESSION['login_error']; unset($_SESSION['login_error']); ?>
+    </div>
+<?php endif; ?>
 <div class="form-popup" id="loginForm">
     <form method="POST" class="form-container" action="login.php">
         <span class="close-icon" onclick="closeAllForms()">&times;</span>

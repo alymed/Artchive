@@ -193,3 +193,13 @@
 .skip-btn:hover {
     color: #071e3e;
 }
+
+.error-message {
+    color: #b10000;
+    background-color: #ffeaea;
+    padding: 10px;
+    border-radius: 6px;
+    text-align: center;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
