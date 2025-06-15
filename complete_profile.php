@@ -29,8 +29,7 @@ $baseUrl = "http://" . $serverName . ":" . $serverPort;
 $baseNextUrl = $baseUrl . $appname;
 
 if (!$name || !$email || !$birthdate || !$username || !$password) {
-    echo("nome:$name || !email: $email || !birthday:$birthdate || !username $username || !password $password");
-    //header("Location: index.php?error=MissingDataname");
+    header("Location: index.php?error=MissingDataname");
     exit();
 }
 

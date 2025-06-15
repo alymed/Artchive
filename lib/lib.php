@@ -339,10 +339,6 @@ function getUsernameById($idUser) {
     return $username;
 }
 
-<<<<<<< HEAD
-=======
-
->>>>>>> d25c7fe8e8e874a0a9d4d67595bf44b5d01842db
 
 function getUserData($idUser = "") {
 
@@ -1020,6 +1016,27 @@ function updateUserProfile($userId, $profilePicture = null, $biography = '') {
     dbDisconnect();
 
 }
+
+function getAllCategories() {
+    dbConnect(ConfigFile);
+    
+    $dataBaseName = $GLOBALS['configDataBase']->db;
+    mysqli_select_db($GLOBALS['ligacao'], $dataBaseName);
+
+    $query = "SELECT id, name FROM `$dataBaseName`.`tags` ORDER BY name ASC";
+    $result = mysqli_query($GLOBALS['ligacao'], $query);
+
+    $categories = [];
+    while ($row = mysqli_fetch_assoc($result)) {
+        $categories[] = $row; // cada $row contém ['id' => ..., 'name' => ...]
+    }
+
+    mysqli_free_result($result);
+    dbDisconnect();
+
+    return $categories;
+}
+
 
 
 ?>

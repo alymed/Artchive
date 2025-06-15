@@ -126,10 +126,10 @@ input#notification:checked ~ .tabs a[for="notification"] .default-icon {
 input#notification:checked ~ .tabs a[for="notification"] .active-icon {
   display: inline;
 }
-input#settings:checked ~ .tabs label[for="settings"] .default-icon {
+input#logout:checked ~ .tabs a[for="logout"] .default-icon {
   display: none;
 }
-input#settings:checked ~ .tabs label[for="settings"] .active-icon {
+input#logout:checked ~ .tabs a[for="logout"] .active-icon {
   display: inline;
 }
 input#film:checked ~ .tabs label[for="film"] .default-icon {
@@ -159,8 +159,8 @@ input#music:checked ~ .tabs label[for="music"] .active-icon {
 input#home:checked ~ .tabs label[for="home"],
 input#create:checked ~ .tabs label[for="create"],
 input#notification:checked ~ .tabs label[for="notification"],
+input#logout:checked ~ .tabs label[for="logout"],
 input#film:checked ~ .tabs label[for="film"],
-input#settings:checked ~ .tabs label[for="settings"],
 input#music:checked ~ .tabs label[for="music"],
 input#photos:checked ~ .tabs label[for="photos"] {
   background-color: white;
@@ -171,7 +171,6 @@ input#profile:checked ~ .tab-content #profileContent,
 input#home:checked ~ .tab-content #homeContent,
 input#create:checked ~ .tab-content #createContent,
 input#notification:checked ~ .tab-content #notification,
-input#settings:checked ~ .tab-content #settingsContent,
 input#film:checked ~ .tab-content #filmContent,
 input#music:checked ~ .tab-content #musicContent,
 input#photos:checked ~ .tab-content #photoContent {
@@ -473,28 +472,30 @@ input#tag5:checked ~ .tag5-content {
 }
 
 /* When the inputs get focus, do something */
-.form-container input[type="text"]:focus,
-.form-container input[type="file"]:focus,
-.form-container input[type="date"]:focus,
-.form-container input[type="password"]:focus,
-.form-container textarea[type="text"]:focus {
-  background-color: #ddd;
-  outline: none;
-}
-
-
-.form-container input[type="file"],
-.form-container input[type="date"],
+.form-container input[type="text"],
+.form-container input[type="email"],
 .form-container input[type="password"],
-.form-container textarea[type="text"] {
-  width: 60%;
-  padding: 12px;
-  margin: 5px 0 3px 0;
-  border: 1px solid gray;
-  background: #fff;
-  border-radius: 16px;
+.form-container input[type="date"],
+.form-container input[type="file"],
+.form-container textarea {
+    width: 60%;
+    padding: 12px;
+    margin: 5px 0 3px 0;
+    border: 1px solid gray;
+    background: #fff;
+    border-radius: 16px;
 }
 
+/* When the inputs get focus, do something */
+.form-container input[type="text"]:focus,
+.form-container input[type="email"]:focus,
+.form-container input[type="password"]:focus,
+.form-container input[type="date"]:focus,
+.form-container input[type="file"]:focus,
+.form-container textarea:focus {
+    background-color: #ddd;
+    outline: none;
+}
 
 /* Set a style for the submit/login button */
 .default-btn {

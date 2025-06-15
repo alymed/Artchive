@@ -47,7 +47,7 @@
 <input type="radio" name="tab" id="film">
 <input type="radio" name="tab" id="photos">
 <input type="radio" name="tab" id="music">
-<input type="radio" name="tab" id="settings">
+<input type="radio" name="tab" id="logout">
 
 
 <div class="tabs">
@@ -75,10 +75,10 @@
         <i class="bi bi-file-music default-icon"></i>
         <i class="bi bi-file-music-fill active-icon"></i>
     </label>
-    <label for="settings" class="tab">
-        <i class="bi bi-gear default-icon"></i>
-        <i class="bi bi-gear-fill active-icon"></i>
-    </label>
+   <a href="logout.php" class="tab" style="color:#212529">
+        <i class="bi bi-box-arrow-right default-icon"></i>
+        <i class="bi bi-box-arrow-right active-icon"></i>
+    </a>
 </div>
 
 <div class="tab-content">
@@ -338,7 +338,7 @@
         </div>
     </div>
 
-    <div id="settingsContent" class="content">
+    <div id="logoutContent" class="content">
         <h2>Content 3</h2>
         <p><a href="logout.php">Logout</a></p>
     </div>
@@ -458,65 +458,81 @@
             </div>
         </div>
     </div>
-<<<<<<< HEAD
-=======
 </div>
+
+<?php include 'lib/lib.php'; 
+
+function getCategoriesOptions() {
+    $categories = getAllCategories();
+    
+    $options = '<option value="" disabled selected>Select a category</option>';
+    foreach ($categories as $category) {
+        $id = htmlspecialchars($category['id']);
+        $name = htmlspecialchars($category['name']);
+        $options .= "<option value=\"$id\">$name</option>";
+    }
+
+    return $options;
+}
+?>
+<div class="form-popup" id="uploadForm">
+    <form method="POST" class="form-container" action="fileUpload.php" enctype="multipart/form-data">
+        <span class="close-icon" onclick="closeUploadForm()">&times;</span>
+        <img src="images/logo.png" alt="Logo" class="logo-img">
+
+        <h3>Upload New Content</h3>
+        <div class="info">
+
+            <input type="file" id="upload-file" name="userFile" size="64" required>
+
+            <input type="text" id="upload-title" name="title" placeholder="Enter a title" required>
+            <textarea type="text" id="upload-description" name="description" placeholder="Write a short description..."
+                rows="6"></textarea>
+
+            <select name="category" id="upload-category" required>
+                <?php echo getCategoriesOptions(); ?>
+            </select>
+
+
+            <button type="button" id="privacyToggle" class="privacy-btn" name="privacy" aria-pressed="false"
+                title="Definir como público ou privado">
+                <i class="fa-solid fa-lock-open"></i>
+            </button>
+            <input type="hidden" name="privacy" id="privacyInput" value="public">
+
+            <button type="submit" class="default-btn">Upload</button>
+        </div>
+    </form>
 </div>
->>>>>>> d25c7fe8e8e874a0a9d4d67595bf44b5d01842db
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+<script>
+const privacyToggle = document.getElementById('privacyToggle');
+const privacyInput = document.getElementById('privacyInput');
 
-    <div class="form-popup" id="uploadForm">
-        <form method="POST" class="form-container" action="fileUpload.php" enctype="multipart/form-data">
-            <span class="close-icon" onclick="closeUploadForm()">&times;</span>
-            <img src="images/logo.png" alt="Logo" class="logo-img">
+privacyToggle.addEventListener('click', () => {
+    const icon = privacyToggle.querySelector('i');
+    if (privacyInput.value === 'public') {
+        privacyInput.value = 'private';
+        privacyToggle.setAttribute('aria-pressed', 'true');
+        icon.classList.remove('fa-lock-open');
+        icon.classList.add('fa-lock');
+        privacyToggle.title = "Definido como privado";
+    } else {
+        privacyInput.value = 'public';
+        privacyToggle.setAttribute('aria-pressed', 'false');
+        icon.classList.remove('fa-lock');
+        icon.classList.add('fa-lock-open');
+        privacyToggle.title = "Definido como público";
+    }
+});
 
-            <h3>Upload New Content</h3>
-            <div class="info">
-
-                <input type="file" id="upload-file" name="userFile" size="64" required>
-
-                <input type="text" id="upload-title" name="title" placeholder="Enter a title" required>
-                <textarea type="text" id="upload-description" name="description"
-                    placeholder="Write a short description..." rows="6"></textarea>
-
-                <button type="button" id="privacyToggle" class="privacy-btn" name="privacy" aria-pressed="false"
-                    title="Definir como público ou privado">
-                    <i class="fa-solid fa-lock-open"></i>
-                </button>
-                <input type="hidden" name="privacy" id="privacyInput" value="public">
-
-                <button type="submit" class="default-btn">Upload</button>
-            </div>
-        </form>
-    </div>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
-    <script>
-    const privacyToggle = document.getElementById('privacyToggle');
-    const privacyInput = document.getElementById('privacyInput');
-
-    privacyToggle.addEventListener('click', () => {
-        const icon = privacyToggle.querySelector('i');
-        if (privacyInput.value === 'public') {
-            privacyInput.value = 'private';
-            privacyToggle.setAttribute('aria-pressed', 'true');
-            icon.classList.remove('fa-lock-open');
-            icon.classList.add('fa-lock');
-            privacyToggle.title = "Definido como privado";
-        } else {
-            privacyInput.value = 'public';
-            privacyToggle.setAttribute('aria-pressed', 'false');
-            icon.classList.remove('fa-lock');
-            icon.classList.add('fa-lock-open');
-            privacyToggle.title = "Definido como público";
-        }
-    });
-
-    document.addEventListener('DOMContentLoaded', function() {
-        document.querySelectorAll('.card').forEach(card => {
-            card.addEventListener('click', async function() {
-                const postId = this.dataset.postId;
-                console.log('Post ID:', postId);
-                await openPost(postId); // now await works here
-            });
+document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('.card').forEach(card => {
+        card.addEventListener('click', async function() {
+            const postId = this.dataset.postId;
+            console.log('Post ID:', postId);
+            await openPost(postId); // now await works here
         });
     });
-    </script>
+});
+</script>
