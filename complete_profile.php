@@ -60,4 +60,3 @@ try {
 header("Location: email.php?id=" . urlencode($idUser));
 exit();
 ?>
-

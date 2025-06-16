@@ -60,11 +60,8 @@ if ($name != null && $name != "" && $username != null && $username != "" && $bio
             exit;
         }
     }
-
-
 } else {
     redirectToLastPage("Failed", "Invalid Inputs", 3);
     exit;
 }
-
-
+?>

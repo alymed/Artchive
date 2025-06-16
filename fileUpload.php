@@ -20,20 +20,15 @@ if (!isset($_SESSION['id'])) {
 
     <body>
 <?php
-
-
-    
     ini_set('display_errors', 1);
     ini_set('display_startup_errors', 1);
     error_reporting(E_ALL);
-
 
     require_once( "Lib/lib.php" );
     require_once( "Lib/ImageResize.php" );
 
     $ffmpegBinary = "/usr/local/bin/ffmpeg";
 
-    
     if ( $_FILES['userFile']['error']!=0 ) {
         $msg = showUploadFileError( $_FILES['userFile']['error'] );
         echo "\t\t<p>$msg</p>\n";
@@ -43,9 +38,6 @@ if (!isset($_SESSION['id'])) {
         die();
     }
 
-
-
-
     $srcName = $_FILES['userFile']['name'];
 
     // Read configurations from data base
@@ -54,7 +46,6 @@ if (!isset($_SESSION['id'])) {
 
     // Destination for the uploaded file
     $src = $_FILES['userFile']['tmp_name'];
-
 
     $idUser = $_SESSION['id'];
 
@@ -141,6 +132,12 @@ if (!isset($_SESSION['id'])) {
     $privacy = addslashes($_POST['privacy']);
     } else {
         $privacy = 'public';
+    }
+
+    if (isset($_POST['category']) && is_numeric($_POST['category'])) {
+    $category = intval($_POST['category']);
+    } else {
+        $category = null;
     }
 
 
@@ -292,7 +289,7 @@ if (!isset($_SESSION['id'])) {
 
     if ( $idFile > 0 ) {
 
-        $idPost = uploadPost($title, $description, $privacy, $idUser, $idFile);
+        $idPost = uploadPost($title, $description, $privacy, $idUser, $idFile, $category);
         if($idPost > 0){
                 echo "Success!";
                 //header("Location: index.php");

@@ -609,7 +609,7 @@ function uploadFile(
     return $fileOk;
 }
 
-function uploadPost($title, $description, $privacy, $idUser, $idImage){
+function uploadPost($title, $description, $privacy, $idUser, $idImage, $category){
 
     $postOk = -1;
 
@@ -622,8 +622,8 @@ function uploadPost($title, $description, $privacy, $idUser, $idImage){
     
     $query = 
             "INSERT INTO `$dataBaseName`.`users-posts`" .
-            "(`title`, `description`, `numLikes`, `numComments`, `privacy`,`createdAt`, `idUser`, `idImage`) values " .
-            "('$title', '$description', '0', '0', '$privacy','$createdAt', '$idUser', '$idImage')";
+            "(`title`, `description`, `numLikes`, `numComments`, `privacy`,`createdAt`, `idUser`, `idImage`, `category`) values " .
+            "('$title', '$description', '0', '0', '$privacy','$createdAt', '$idUser', '$idImage', '$category')";
 
     $result =  mysqli_query( $GLOBALS['ligacao'], $query );
 
@@ -656,6 +656,27 @@ function getFileDetails($idImage) {
     dbDisconnect();
 
     return $fileData;
+}
+
+function getPostsByCategory($categoryId) {
+    dbConnect(ConfigFile);
+
+    $dataBaseName = $GLOBALS['configDataBase']->db;
+    mysqli_select_db($GLOBALS['ligacao'], $dataBaseName );
+
+    $query = "SELECT * FROM `$dataBaseName`.`users-posts` WHERE `category`='$categoryId'";
+
+    $result = mysqli_query($GLOBALS['ligacao'], $query);
+    $posts = array();
+
+    while (($postData = mysqli_fetch_array($result)) != false) {
+        $posts[] = $postData;
+    }
+
+    mysqli_free_result($result);
+    dbDisconnect();
+
+    return $posts;
 }
 
 function getPostData($idPost){
@@ -1264,51 +1285,74 @@ function switchSupporter($idUser) {
     dbDisconnect();
 }
 
-
-function changePostPrivacy($idPost) {
-    // Connect to DB
+function addCategory($tagName) {
     dbConnect(ConfigFile);
 
     $dataBaseName = $GLOBALS['configDataBase']->db;
-    mysqli_select_db($GLOBALS['ligacao'], $dataBaseName );
+    mysqli_select_db($GLOBALS['ligacao'], $dataBaseName);
 
-    // Obter a privacidade atual do post
-    $query = "SELECT `privacy` FROM `$dataBaseName`.`users-posts` WHERE `id` = ?";
-    $stmt = mysqli_prepare($GLOBALS['ligacao'], $query);
-    if (!$stmt) {
+    // Sanitizar o nome da tag
+    $tagName = mysqli_real_escape_string($GLOBALS['ligacao'], $tagName);
+
+    // Verificar se a tag já existe
+    $checkQuery = "SELECT id FROM `$dataBaseName`.`tags` WHERE `tagName` = ?";
+    $checkStmt = mysqli_prepare($GLOBALS['ligacao'], $checkQuery);
+    mysqli_stmt_bind_param($checkStmt, "s", $tagName);
+    mysqli_stmt_execute($checkStmt);
+    mysqli_stmt_store_result($checkStmt);
+
+    if (mysqli_stmt_num_rows($checkStmt) > 0) {
+        mysqli_stmt_close($checkStmt);
+        dbDisconnect();
+        return false; // tag já existe
+    }
+    mysqli_stmt_close($checkStmt);
+
+    // Inserir nova tag
+    $insertQuery = "INSERT INTO `$dataBaseName`.`tags` (`tagName`) VALUES (?)";
+    $insertStmt = mysqli_prepare($GLOBALS['ligacao'], $insertQuery);
+    if (!$insertStmt) {
         dbDisconnect();
         return false;
     }
 
-    mysqli_stmt_bind_param($stmt, "i", $idPost);
-    mysqli_stmt_execute($stmt);
-    mysqli_stmt_bind_result($stmt, $currentPrivacy);
-    mysqli_stmt_fetch($stmt);
-    mysqli_stmt_close($stmt);
-
-    // Validar a privacidade atual
-    if ($currentPrivacy !== 'public' && $currentPrivacy !== 'private') {
-        dbDisconnect();
-        return false; // valor inesperado
-    }
-
-    // Determinar o novo valor
-    $newPrivacy = ($currentPrivacy === 'private') ? 'public' : 'private';
-
-    // Atualizar a privacidade
-    $updateQuery = "UPDATE `$dataBaseName`.`users-posts` SET `privacy` = ? WHERE `id` = ?";
-    $updateStmt = mysqli_prepare($GLOBALS['ligacao'], $updateQuery);
-    if (!$updateStmt) {
-        dbDisconnect();
-        return false;
-    }
-
-    mysqli_stmt_bind_param($updateStmt, "si", $newPrivacy, $idPost);
-    $success = mysqli_stmt_execute($updateStmt);
-    mysqli_stmt_close($updateStmt);
+    mysqli_stmt_bind_param($insertStmt, "s", $tagName);
+    $success = mysqli_stmt_execute($insertStmt);
+    mysqli_stmt_close($insertStmt);
 
     dbDisconnect();
     return $success;
+}
+
+function togglePostPrivacy($idPost) {
+    dbConnect(ConfigFile);
+
+    $dataBaseName = $GLOBALS['configDataBase']->db;
+    mysqli_select_db($GLOBALS['ligacao'], $dataBaseName);
+
+    // Obter valor atual da privacidade
+    $querySelect = "SELECT `privacy` FROM `$dataBaseName`.`users-posts` WHERE `id` = '$idPost'";
+    $result = mysqli_query($GLOBALS['ligacao'], $querySelect);
+
+    if (!$result || mysqli_num_rows($result) === 0) {
+        dbDisconnect();
+        return false; // Post não encontrado
+    }
+
+    $row = mysqli_fetch_assoc($result);
+    $currentPrivacy = $row['privacy'];
+
+    // Alternar o valor
+    $newPrivacy = ($currentPrivacy === 'public') ? 'private' : 'public';
+
+    // Atualizar na base de dados
+    $queryUpdate = "UPDATE `$dataBaseName`.`users-posts` SET `privacy` = '$newPrivacy' WHERE `id` = '$idPost'";
+    $success = mysqli_query($GLOBALS['ligacao'], $queryUpdate);
+
+    mysqli_free_result($result);
+    dbDisconnect();
+
+    return $success ? $newPrivacy : false;
 }
 
 ?>

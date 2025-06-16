@@ -1,21 +1,21 @@
 <?php
-  session_start();
 
-  ini_set('display_errors', 1);
-  ini_set('display_startup_errors', 1);
-  error_reporting(E_ALL);
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
 
-  require_once( "lib/lib.php" );
-  
-  $idUser = $_SESSION['id'] ?? null;
+require_once("lib/lib.php");
+include 'auth_forms.php';
 
-  if (isset($idUser)) {
+$idUser = $_SESSION['id'] ?? null;
+
+if (isset($idUser)) {
     header('Location: app.php');
     exit();
-  }
+}
 
-  $owner = false;
-  
+$owner = false;
+
 ?>
 
 <!DOCTYPE html>
@@ -50,17 +50,12 @@
         </a>
     </div>
 
-    <input type="radio" name="tab" id="home" checked>
     <input type="radio" name="tab" id="film">
-    <input type="radio" name="tab" id="photos">
+    <input type="radio" name="tab" id="photos" checked>
     <input type="radio" name="tab" id="music">
 
 
     <div class="tabs">
-        <label for="home" class="tab">
-            <i class="bi bi-house-door default-icon"></i>
-            <i class="bi bi-house-door-fill active-icon"></i>
-        </label>
         <label for="film" class="tab">
             <i class="bi bi-camera-reels default-icon"></i>
             <i class="bi bi-camera-reels-fill active-icon"></i>
@@ -76,146 +71,143 @@
     </div>
 
     <div class="tab-content">
-        <div id="homeContent" class="content">
-
-        </div>
         <div id="filmContent" class="content">
             <div class="img_container">
                 <?php
-                  $posts = array();
+                $posts = array();
 
-                  $allUsers = getAllUsersData();
+                $allUsers = getAllUsersData();
 
-                  for( $i= 0;$i<count($allUsers);$i++){
-                      $allUsersPosts = getPosts($allUsers[$i]['id'], $owner);
-                      for($j= 0;$j<count($allUsersPosts);$j++){
-                          $idFile = $allUsersPosts[$j]['idImage'];
-                          $fileData = getFileDetails($idFile);
-                          if($fileData['mimeFilename'] == 'video'){
-                              $posts[] = $allUsersPosts[$j];
-                          }
-                      }
-                  }
+                for ($i = 0; $i < count($allUsers); $i++) {
+                    $allUsersPosts = getPosts($allUsers[$i]['id'], $owner);
+                    for ($j = 0; $j < count($allUsersPosts); $j++) {
+                        $idFile = $allUsersPosts[$j]['idImage'];
+                        $fileData = getFileDetails($idFile);
+                        if ($fileData['mimeFilename'] == 'video') {
+                            $posts[] = $allUsersPosts[$j];
+                        }
+                    }
+                }
 
-                  if(count($posts) > 0){
+                if (count($posts) > 0) {
                     $randomKeys = array_rand($posts, count($posts));
 
-                      if(count($posts) == 1){
-                          $randomKeys = [$randomKeys];
-                      }
+                    if (count($posts) == 1) {
+                        $randomKeys = [$randomKeys];
+                    }
 
-                      for( $k= 0;$k<count($posts);$k++){
+                    for ($k = 0; $k < count($posts); $k++) {
 
-                          $post = $posts[$randomKeys[$k]];
-                          $idPost = $post['id'];
-                          $postTitle = $post['title'];
-                          $fileID = $post['idImage'];
-                          $user = getUsernameById($post['idUser']);
-                          $description = $post['description'];
-                          $date = $post['createdAt'];
+                        $post = $posts[$randomKeys[$k]];
+                        $idPost = $post['id'];
+                        $postTitle = $post['title'];
+                        $fileID = $post['idImage'];
+                        $user = getUsernameById($post['idUser']);
+                        $description = $post['description'];
+                        $date = $post['createdAt'];
 
-                          echo "<figure class=\"card card_large\" 
+                        echo "<figure class=\"card card_large\" 
                                   data-post-id=\"$idPost\" 
-                                  data-description=\"".htmlspecialchars($description)."\" 
+                                  data-description=\"" . htmlspecialchars($description) . "\" 
                                   data-date=\"$date\">";
-                          echo "<img src=\"showFileThumb.php?id=$fileID&size=Large\" alt=\"Post\"></img>";
-                          echo "<figcaption>$postTitle</figcaption>";
-                          echo "</figure>";
-                      }
+                        echo "<img src=\"showFileThumb.php?id=$fileID&size=Large\" alt=\"Post\"></img>";
+                        echo "<figcaption>$postTitle</figcaption>";
+                        echo "</figure>";
+                    }
 
-                  }
-              ?>
+                }
+                ?>
             </div>
         </div>
 
         <div id="musicContent" class="content">
             <div class="img_container">
                 <?php
-            $posts = array();
+                $posts = array();
 
-            $allUsers = getAllUsersData();
+                $allUsers = getAllUsersData();
 
-            for( $i= 0;$i<count($allUsers);$i++){
-                $allUsersPosts = getPosts($allUsers[$i]['id'], $owner);
-                for($j= 0;$j<count($allUsersPosts);$j++){
-                    $idFile = $allUsersPosts[$j]['idImage'];
-                    $fileData = getFileDetails($idFile);
-                    if($fileData['mimeFilename'] == 'audio'){
-                        $posts[] = $allUsersPosts[$j];
+                for ($i = 0; $i < count($allUsers); $i++) {
+                    $allUsersPosts = getPosts($allUsers[$i]['id'], $owner);
+                    for ($j = 0; $j < count($allUsersPosts); $j++) {
+                        $idFile = $allUsersPosts[$j]['idImage'];
+                        $fileData = getFileDetails($idFile);
+                        if ($fileData['mimeFilename'] == 'audio') {
+                            $posts[] = $allUsersPosts[$j];
+                        }
                     }
                 }
-            }
 
-            if(count($posts) > 0){
+                if (count($posts) > 0) {
 
 
-                $randomKeys = array_rand($posts, count($posts));
+                    $randomKeys = array_rand($posts, count($posts));
 
-                if(count($posts) == 1){
-                    $randomKeys = [$randomKeys];
+                    if (count($posts) == 1) {
+                        $randomKeys = [$randomKeys];
+                    }
+
+                    for ($k = 0; $k < count($posts); $k++) {
+
+                        $post = $posts[$randomKeys[$k]];
+
+                        $idPost = $post['id'];
+                        $postTitle = $post['title'];
+                        $fileID = $post['idImage'];
+
+                        $image = "<img src=\"showFileThumb.php?id=$fileID&size=small\" alt=\"Post\"></img>";
+                        $caption = "<figcaption> aaaaaaaa </figcaption>";
+                        echo "<figure class=\"card card_small\" data-post-id=\"$idPost\">$image $caption </figure>";
+
+                    }
+
                 }
 
-                for( $k= 0;$k<count($posts);$k++){
 
-                    $post = $posts[$randomKeys[$k]];
-
-                    $idPost = $post['id'];
-                    $postTitle = $post['title'];
-                    $fileID = $post['idImage'];
-
-                    $image = "<img src=\"showFileThumb.php?id=$fileID&size=small\" alt=\"Post\"></img>";
-                    $caption = "<figcaption> aaaaaaaa </figcaption>";
-                    echo "<figure class=\"card card_small\" data-post-id=\"$idPost\">$image $caption </figure>";
-
-                }
-
-            }
-
-
-        ?>
+                ?>
             </div>
         </div>
 
         <div id="photoContent" class="content">
             <div class="img_container">
                 <?php
-            $posts = array();
+                $posts = array();
 
-            $allUsers = getAllUsersData();
+                $allUsers = getAllUsersData();
 
-            for( $i= 0;$i<count($allUsers);$i++){
-                $allUsersPosts = getPosts($allUsers[$i]['id'], $owner);
-                for($j= 0;$j<count($allUsersPosts);$j++){
-                    $idFile = $allUsersPosts[$j]['idImage'];
-                    $fileData = getFileDetails($idFile);
-                    if($fileData['mimeFilename'] == 'image'){
-                        $posts[] = $allUsersPosts[$j];
+                for ($i = 0; $i < count($allUsers); $i++) {
+                    $allUsersPosts = getPosts($allUsers[$i]['id'], $owner);
+                    for ($j = 0; $j < count($allUsersPosts); $j++) {
+                        $idFile = $allUsersPosts[$j]['idImage'];
+                        $fileData = getFileDetails($idFile);
+                        if ($fileData['mimeFilename'] == 'image') {
+                            $posts[] = $allUsersPosts[$j];
+                        }
                     }
                 }
-            }
 
-            if(count($posts) > 0){
+                if (count($posts) > 0) {
 
 
-                $randomKeys = array_rand($posts, count($posts));
+                    $randomKeys = array_rand($posts, count($posts));
 
-                if(count($posts) == 1){
-                    $randomKeys = [$randomKeys];
+                    if (count($posts) == 1) {
+                        $randomKeys = [$randomKeys];
+                    }
+
+                    for ($k = 0; $k < count($posts); $k++) {
+                        $post = $posts[$randomKeys[$k]];
+
+                        $idPost = $post['id'];
+                        $postTitle = $post['title'];
+                        $fileID = $post['idImage'];
+
+                        $image = "<img src=\"showFileThumb.php?id=$fileID&size=small\" alt=\"Post\"></img>";
+                        $caption = "<figcaption> $postTitle </figcaption>";
+                        echo "<figure class=\"card card_small\" data-post-id=\"$idPost\">$image $caption </figure>";
+                    }
                 }
-
-                for( $k= 0;$k<count($posts);$k++){
-                    $post = $posts[$randomKeys[$k]];
-
-                    $idPost = $post['id'];
-                    $postTitle = $post['title'];
-                    $fileID = $post['idImage'];
-
-                    $image = "<img src=\"showFileThumb.php?id=$fileID&size=small\" alt=\"Post\"></img>";
-                    $caption = "<figcaption> $postTitle </figcaption>";
-                    echo "<figure class=\"card card_small\" data-post-id=\"$idPost\">$image $caption </figure>";
-                }
-            }
-        ?>
+                ?>
             </div>
         </div>
     </div>
@@ -241,9 +233,6 @@
                             <button onclick="handleShare()">
                                 <i class="bi bi-share"></i> Share
                             </button>
-                            <button onclick="togglePostPrivacy()">
-                                <i class="bi bi-shield-lock"></i> Toggle Privacy
-                            </button>
                         </div>
                     </div>
                 </div>
@@ -251,13 +240,10 @@
                 <div id="modalMediaContainer">
                     <!-- Conteúdo de mídia será inserido aqui dinamicamente -->
                 </div>
-
                 <div class="post-footer">
                     <div class="post-actions">
-                        <a id="likeButton" class="like-button" onclick="toggleLike()">
-                            <i class="bi bi-heart"></i>
-                        </a>
-                        <span id="likeCount" class="action-count">0</span>
+                        
+                        <span id="commentCount" class="action-count"></span>
                     </div>
                     <div class="caption">
                         <span class="username" id="captionUsername"></span>
@@ -268,30 +254,27 @@
         </div>
     </div>
 
-    <?php 
-    include 'auth_forms.php'
-  ?>
-
+    <script src="js/script.js"></script>
 
 </body>
 <script>
-document.addEventListener('click', function(event) {
-    const menu = document.getElementById('postMenu');
-    const menuIcon = document.querySelector('.menu-icon');
-    
-    if (!menu.contains(event.target) && !menuIcon.contains(event.target)) {
-        menu.style.display = 'none';
-    }
-});
-document.addEventListener('DOMContentLoaded', function() {
-    document.querySelectorAll('.card').forEach(card => {
-        card.addEventListener('click', async function() {
-            const postId = this.dataset.postId;
-            console.log('Post ID:', postId);
-            await openPost(postId, $idUser); // now await works here
+    document.addEventListener('DOMContentLoaded', function () {
+        document.querySelectorAll('.card').forEach(card => {
+            card.addEventListener('click', async function () {
+                const idPost = this.dataset.postId;
+                await openPostGuest(idPost); // now await works here
+            });
         });
     });
-});
+    document.addEventListener('click', function (event) {
+        const menu = document.getElementById('postMenu');
+        const menuIcon = document.querySelector('.menu-icon');
+
+        if (!menu.contains(event.target) && !menuIcon.contains(event.target)) {
+            menu.style.display = 'none';
+        }
+    });
+
 </script>
 
 </html>
