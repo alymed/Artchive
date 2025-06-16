@@ -40,64 +40,8 @@ function handleUrlParameters() {
                 break;
         }
     }
-    
-    // Handle errors
-    if (signupError) {
-        let errorMessage = '';
-        switch (signupError) {
-            case 'EmailInUse':
-                errorMessage = 'This email is already registered. Please use a different email or try logging in.';
-                break;
-            case 'UsernameInUse':
-                errorMessage = 'This username is already taken. Please choose a different username.';
-                break;
-            case 'MissingFields':
-                errorMessage = 'Please fill in all required fields.';
-                break;
-            case 'InvalidName':
-                errorMessage = 'Please enter a valid name using only letters, spaces, hyphens, apostrophes, and periods.';
-                break;
-            case 'InvalidBirthdate':
-                errorMessage = 'Please enter a valid birthdate.';
-                break;
-            case 'FutureBirthdate':
-                errorMessage = 'Birthdate cannot be in the future.';
-                break;
-            case 'AgeTooYoung':
-                errorMessage = 'You must be at least 13 years old to register.';
-                break;
-            case 'WeakPassword':
-                errorMessage = 'Password must be at least 8 characters long and contain at least one letter and one number.';
-                break;
-            case 'RegisterError':
-                errorMessage = 'Registration failed. Please try again.';
-                break;
-            case 'InvalidSession':
-                errorMessage = 'Invalid session. Please start the registration process again.';
-                break;
-            case 'BiographyTooLong':
-                errorMessage = 'Biography must be 90 characters or less.';
-                break;
-            case 'FileTooLarge':
-                errorMessage = 'Profile picture must be less than 5MB.';
-                break;
-            case 'InvalidFileType':
-                errorMessage = 'Please upload a valid image file (JPG, PNG, or GIF).';
-                break;
-            case 'FilePathTooLong':
-                errorMessage = 'File name is too long. Please rename your file.';
-                break;
-            case 'FileUploadError':
-                errorMessage = 'Failed to upload profile picture. Please try again.';
-                break;
-            case 'ProfileUpdateError':
-                errorMessage = 'Failed to update profile. Please try again.';
-                break;
-            default:
-                errorMessage = 'An error occurred. Please try again.';
-        }
-        showMessage(errorMessage, 'error');
-    }
+
+        
 }
 
 function openUploadForm() {
@@ -130,13 +74,14 @@ function scrollToContact() {
     document.getElementById("contact").scrollIntoView({ behavior: "smooth" });
 }
 
-function openEditProfileForm(idUser) {
+async function openEditProfileForm(idUser) {
     document.getElementById("editProfileForm").style.display = "block";
     document.getElementById("formOverlay").style.display = "block";
     document.getElementById("name").value = "";
     document.getElementById("username").value = "";
     document.getElementById("bio").value = "";
 
+    
 }
 
 function closeEditProfileForm() {
