@@ -130,9 +130,13 @@ function scrollToContact() {
     document.getElementById("contact").scrollIntoView({ behavior: "smooth" });
 }
 
-function openEditProfileForm() {
+function openEditProfileForm(idUser) {
     document.getElementById("editProfileForm").style.display = "block";
     document.getElementById("formOverlay").style.display = "block";
+    document.getElementById("name").value = "";
+    document.getElementById("username").value = "";
+    document.getElementById("bio").value = "";
+
 }
 
 function closeEditProfileForm() {
@@ -270,7 +274,7 @@ async function updatePostModalFromData(idPost, idUser,  targetDiv) {
             }
         }
     }
-
+}
 
 function getMultimediaFileHTML(mimeFilename, imageDetails){
 

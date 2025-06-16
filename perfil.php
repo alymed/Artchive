@@ -57,26 +57,26 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['become_supporter'])) 
   ?>
 
     <div class="form-popup" id="editProfileForm">
-        <form method="post" class="form-container">
+        <form method="post" class="form-container" action="editProfile.php">
             <span class="close-icon" onclick="closeEditProfileForm()">&times;</span>
             <h3>Edit Profile</h3>
             <div class="info">
 
                 <div class="profile-pic">
-                    <img id="profilePreview" src="images/profilePic.PNG" alt="Preview">
+                    <img id="profilePreview" src="<?php echo $currentProfilePic ? 'showFile.php?id=' . $currentProfilePic : 'images/profilePic.PNG'; ?>" alt="Preview">
                 </div>
 
                 <input type="file" id="profile-pic-input" name="profile_pic" accept="image/*" style="display:none;"
                     onchange="previewProfilePic(this)">
 
                 <label for="name">Name</label>
-                <input type="text" id="name" name="name" placeholder="Your name" required>
+                <input type="text" id="name" name="name" placeholder="Your name" value="<?php echo htmlspecialchars($currentName); ?>">
 
                 <label for="username">Username</label>
-                <input type="text" id="username" name="username" placeholder="Your username" required>
+                <input type="text" id="username" name="username" placeholder="Your username" value="<?php echo $username; ?>">
 
                 <label for="bio">Bio</label>
-                <textarea type="text" id="bio" name="bio" placeholder="Tell us about you..." rows="4"></textarea>
+                <textarea type="text" id="bio" name="bio" placeholder="Tell us about you..." rows="4" <?php echo htmlspecialchars($currentBio); ?>></textarea>
 
                 <button type="submit" class="default-btn">Save Changes</button>
             </div>

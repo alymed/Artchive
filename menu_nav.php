@@ -438,7 +438,7 @@
                     }  
                     ?>
 
-                    <button class="default-btn" onclick="openEditProfileForm()">Edit Profile</button>
+                    <button class="default-btn" onclick="openEditProfileForm(<?php echo json_encode($idUser); ?>)">Edit Profile</button>
 
                     <?php if ($user_type === 'user') { ?>
                     <button class="default-btn" onclick="openSupporterForm()">Become Supporter</button>
@@ -455,17 +455,17 @@
         <div class="img_container">
             <?php 
             
-            if ($canPost): 
+            if ($owner && $canPost){
                 for($idx=0; $idx<count($profile_posts); $idx++){
                     $idFile = $profile_posts[$idx]['idImage'];
                     $idPost = $profile_posts[$idx]['id'];
                     $target = "<img src=\"showFileThumb.php?id=" . $idFile . "&size=small\" alt=\"Post\"></img>";
                     echo "<div class=\"card card_small\" data-post-id=\"$idPost\">$target</div>";
                     }
-            else: ?>
+                }else if (!$canPost){ ?>
             <p>Become supporter to post contents</p>
             
-            <?php endif; 
+            <?php }
         
         ?>
         </div>
@@ -551,7 +551,6 @@
 <div class="form-popup" id="uploadForm">
     <form method="POST" class="form-container" action="fileUpload.php" enctype="multipart/form-data">
         <span class="close-icon" onclick="closeUploadForm()">&times;</span>
-        <img src="images/logo.png" alt="Logo" class="logo-img">
 
         <h3>Upload New Content</h3>
         <div class="info">
@@ -587,6 +586,7 @@
     </form>
 </div>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+<script src="js/script.js"></script>
 <script>
 const privacyToggle = document.getElementById('privacyToggle');
 const privacyInput = document.getElementById('privacyInput');
