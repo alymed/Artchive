@@ -1,5 +1,10 @@
 <?php
 
+   ini_set('display_errors', 1);
+    ini_set('display_startup_errors', 1);
+    error_reporting(E_ALL);
+
+
 require_once( "db.php" );
 
 function accountVerifyDB($idUser){
@@ -1144,7 +1149,7 @@ function updateUserProfile($userId, $profilePicture = null, $biography = '') {
 
     // Remover parêntesis extra no final da query
     $query = "UPDATE `$dataBaseName`.`users-profile` SET
-            profile_pic = '$profilePicture', biography = '$biography' WHERE id = '$userId'";
+            `profile_pic` = '$profilePicture', `biography` = '$biography' WHERE id = '$userId'";
 
     $result = mysqli_query($GLOBALS['ligacao'], $query);
     

@@ -439,7 +439,7 @@
                     ?>
 
                     <?php if ($owner) { ?>
-                    <button class="default-btn" onclick="openEditProfileForm(<?php echo json_encode($idUser); ?>)">Edit Profile</button>
+                    <button class="default-btn" onclick="openEditProfileForm()">Edit Profile</button>
                     <?php } ?>
 
                     <?php if ($user_type === 'user') { ?>

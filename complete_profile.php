@@ -47,44 +47,13 @@ if ($idUser <= 0) {
     exit();
 }
 
-// Faz upload da foto de perfil (se houver)
-$profilePicturePath = null;
-if (isset($_FILES['profile_picture']) && $_FILES['profile_picture']['error'] === UPLOAD_ERR_OK) {
-    $uploadDir = 'uploads/profile_pictures/';
-    
-    if (!is_dir($uploadDir)) {
-        mkdir($uploadDir, 0755, true);
-    }
-    
-    $fileInfo = pathinfo($_FILES['profile_picture']['name']);
-    $extension = strtolower($fileInfo['extension']);
-    
-    $allowedTypes = ['jpg', 'jpeg', 'png', 'gif'];
-    if (in_array($extension, $allowedTypes)) {
-        $filename = 'profile_' . $idUser . '_' . time() . '.' . $extension;
-        $uploadPath = $uploadDir . $filename;
-        
-        if (strlen($uploadPath) <= 255 && move_uploaded_file($_FILES['profile_picture']['tmp_name'], $uploadPath)) {
-            $profilePicturePath = $uploadPath;
-        } else {
-            header("Location: signupForm3.php?error=FileUploadError");
-            exit();
-        }
-    } else {
-        header("Location: signupForm3.php?error=InvalidFileType");
-        exit();
-    }
-}
+
 
 // Atualiza perfil com foto e biografia
 try {
-    updateUserProfile($idUser, $profilePicturePath, $biography);
+    updateUserProfile($idUser, 1, $biography);
 } catch (Exception $e) {
-    if ($profilePicturePath && file_exists($profilePicturePath)) {
-        unlink($profilePicturePath);
-    }
-    header("Location: signupForm3.php?error=ProfileUpdateError");
-    exit();
+    echo $e->getMessage();
 }
 
 // Redireciona para página de verificação de email

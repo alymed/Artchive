@@ -49,34 +49,38 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['become_supporter'])) 
 <body>
 
     <?php
-    include('header.php');
-  ?>
+        include('header.php');
+    ?>
 
     <?php
-    include('menu_nav.php');
-  ?>
+        include('menu_nav.php');
+    ?>
+
 
     <div class="form-popup" id="editProfileForm">
-        <form method="post" class="form-container" action="editProfile.php">
+        <div id="newProfilePicContainer" class="profile-pic">
+            
+        </div>
+        
+        <label for="userFile">Change profile picture</label>
+        <input type="file" id="uploadProfilePic" name="userFile" size="64" accept="image/*" /*onchange="previewProfilePic(this)"*/>
+        
+        <button id="uploadProfilePicButton" class="default-btn">Apply</button>
+
+        <form method="post" class="form-container" action="editProfile.php" enctype="multipart/form-data">
             <span class="close-icon" onclick="closeEditProfileForm()">&times;</span>
             <h3>Edit Profile</h3>
             <div class="info">
 
-                <div class="profile-pic">
-                    <img id="profilePreview" src="<?php echo $currentProfilePic ? 'showFile.php?id=' . $currentProfilePic : 'images/profilePic.PNG'; ?>" alt="Preview">
-                </div>
-
-                <input type="file" id="profile-pic-input" name="profile_pic" accept="image/*" style="display:none;"
-                    onchange="previewProfilePic(this)">
 
                 <label for="name">Name</label>
-                <input type="text" id="name" name="name" placeholder="Your name" value="<?php echo htmlspecialchars($currentName); ?>">
+                <input type="text" id="name" name="name" placeholder="Your name" value="<?php echo htmlspecialchars($profile_userData['name']); ?>">
 
                 <label for="username">Username</label>
-                <input type="text" id="username" name="username" placeholder="Your username" value="<?php echo $username; ?>">
+                <input type="text" id="username" name="username" placeholder="Your username" value="<?php echo htmlspecialchars($profile_userData['username']); ?>">
 
                 <label for="bio">Bio</label>
-                <textarea type="text" id="bio" name="bio" placeholder="Tell us about you..." rows="4" <?php echo htmlspecialchars($currentBio); ?>></textarea>
+                <textarea id="bio" name="bio" placeholder="Tell us about you..." rows="4"><?php echo htmlspecialchars($profile_userData['biography']); ?></textarea>
 
                 <button type="submit" class="default-btn">Save Changes</button>
             </div>
@@ -104,7 +108,50 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['become_supporter'])) 
 </body>
 
 
+<script type="module">
+
+
+document.getElementById('uploadProfilePicButton').addEventListener('click', async () => {
+    const input = document.getElementById('uploadProfilePic');
+    const file = input.files[0];
+
+    if (!file) {
+        alert("Please select an image.");
+        return;
+    }
+
+    // Optional: check it's an image
+    if (!file.type.startsWith("image/")) {
+        alert("Only image files are allowed.");
+        return;
+    }
+
+    const formData = new FormData();
+    formData.append("userFile", file);
+
+    const response = await fetch("getNewProfilePicJS.php", {
+        method: "POST",
+        body: formData
+    });
+
+    const result = await response.json(); 
+    
+    if(Object.keys(result).length){
+
+        console.log("id: " + result.id);
+        console.log("filename: " + result.filename);
+        const newProfilePicContainer = document.getElementById('newProfilePicContainer');
+        newProfilePicContainer.innerHTML = `<img id="profilePreview" src="showFile.php?id=${result.id}" alt="Preview"></img>`;
+
+
+
+    }
+});
+
+</script>
+
 <script>
+
 document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('profile').checked = true;
 
@@ -152,4 +199,5 @@ function previewProfilePic(input) {
         reader.readAsDataURL(input.files[0]);
     }
 }
+
 </script>
