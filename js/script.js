@@ -1,23 +1,3 @@
-function showMessage(message, type = 'info') {
-    const messageContainer = document.getElementById("messageContainer");
-    const messageText = document.getElementById("messageText");
-    const messageContent = document.getElementById("messageContent");
-
-    messageText.textContent = message;
-    messageContent.className = `message-content ${type}`;
-    messageContainer.style.display = "block";
-
-    // Auto-hide after 5 seconds
-    setTimeout(() => {
-        closeMessage();
-    }, 5000);
-}
-
-function closeMessage() {
-    document.getElementById("messageContainer").style.display = "none";
-}
-
-// URL parameter handling for multi-step signup
 function handleUrlParameters() {
     const urlParams = new URLSearchParams(window.location.search);
     const signupStep = urlParams.get('signupStep');
@@ -25,7 +5,6 @@ function handleUrlParameters() {
     const username = urlParams.get('username');
     const password = urlParams.get('password');
 
-    // Handle signup steps
     if (signupStep) {
         const email = urlParams.get('email') || '';
         const name = urlParams.get('name') || '';
@@ -104,11 +83,10 @@ function closeEditProfileForm() {
     document.getElementById("formOverlay").style.display = "none";
 }
 
-// Função para fechar o modal
 function closePost() {
     const modal = document.getElementById('postModal');
     modal.classList.remove('show');
-    document.body.style.overflow = 'auto'; // Restaura scroll da página
+    document.body.style.overflow = 'auto';
 }
 
 // Função para abrir o modal
@@ -137,18 +115,13 @@ function openPostGuest(idPost) {
 // Função para carregar dados do post
 async function loadPostData(idPost, idLiker) {
     try {
-
-
         const [postRes, likeRes] = await Promise.all([
             fetch(`getPostDataJS.php?query=${encodeURIComponent(idPost)}`),
             fetch(`checkIfPostLikedJS.php?query1=${encodeURIComponent(idLiker)}&query2=${encodeURIComponent(idPost)}`)
         ]);
 
-
         const postData = await postRes.json();
         const isLiked = await likeRes.json();
-
-
 
         if (Object.keys(postData).length === 0) {
             console.log("No post data found.");
@@ -156,9 +129,7 @@ async function loadPostData(idPost, idLiker) {
         }
 
 
-
         const { idUser, idImage, title, description, numLikes, numComments } = postData;
-
         const [userRes, imageRes] = await Promise.all([
             fetch(`getUserDataJS.php?query=${encodeURIComponent(idUser)}`),
             fetch(`getImageDetailsJS.php?query=${encodeURIComponent(idImage)}`)
@@ -167,15 +138,11 @@ async function loadPostData(idPost, idLiker) {
         const userData = await userRes.json();
         const imageDetails = await imageRes.json();
 
-
-
-        // Store current post ID in modal for later use
         const modal = document.getElementById("postModal");
         if (modal) {
             modal.dataset.currentPostId = idPost;
         }
 
-        // Atualizar o modal com os dados carregados
         return { postData, userData, imageDetails, isLiked };
 
     } catch (error) {
@@ -204,13 +171,11 @@ async function loadPostDataGuest(idPost) {
         const userData = await userRes.json();
         const imageDetails = await imageRes.json();
 
-        // Store current post ID in modal for later use
         const modal = document.getElementById("postModal");
         if (modal) {
             modal.dataset.currentPostId = idPost;
         }
 
-        // Atualizar o modal com os dados carregados
         return { postData, userData, imageDetails };
 
     } catch (error) {
@@ -218,7 +183,6 @@ async function loadPostDataGuest(idPost) {
     }
 }
 
-// Função auxiliar para atualizar o modal (baseada na updatePostModal original)
 async function updatePostModalFromData(idPost, idUser, targetDiv) {
 
     const { postData, userData, imageDetails, isLiked } = await loadPostData(idPost, idUser);
@@ -227,17 +191,13 @@ async function updatePostModalFromData(idPost, idUser, targetDiv) {
 
         const mimeFilename = imageDetails.mimeFilename;
 
-
         if (targetDiv) {
 
             targetDiv.innerHTML = getMultimediaFileHTML(mimeFilename, imageDetails);
 
-
-            // Atualizar dados do usuário
             document.getElementById("modalUsername").textContent = userData.username;
             document.getElementById("likeCount").textContent = postData.numLikes;
 
-            // Atualizar foto de perfil
             const profilePicElement = document.getElementById("modalProfilePic");
             if (userData.profile_pic) {
                 profilePicElement.src = userData.profile_pic;
@@ -247,7 +207,6 @@ async function updatePostModalFromData(idPost, idUser, targetDiv) {
             }
             profilePicElement.alt = `${userData.username}'s profile picture`;
 
-            // Atualizar caption com username e descrição
             const captionUsername = document.getElementById("captionUsername");
             const captionText = document.getElementById("captionText");
 
@@ -259,7 +218,6 @@ async function updatePostModalFromData(idPost, idUser, targetDiv) {
                 captionText.textContent = postData.description || '';
             }
 
-
             const currentUsernamePHP = document.getElementById('userData')?.dataset.username?.trim();
             const privacyToggle = document.getElementById('privacyToggle');
             if (userData.id === currentUsernamePHP) {
@@ -268,7 +226,6 @@ async function updatePostModalFromData(idPost, idUser, targetDiv) {
                 if (privacyToggle) privacyToggle.style.display = 'none';
             }
 
-            // Atualizar título do post
             const postTitleElement = document.getElementById("modalPostTitle");
             if (postTitleElement) {
                 postTitleElement.textContent = postData.title || '';
@@ -288,20 +245,15 @@ async function updatePostModalFromData(idPost, idUser, targetDiv) {
 }
 
 async function updatePostModalFromDataGuest(idPost, targetDiv) {
-
     const { postData, userData, imageDetails } = await loadPostDataGuest(idPost);
     console.log(userData);
     if (Object.keys(imageDetails).length != 0) {
 
         const mimeFilename = imageDetails.mimeFilename;
 
-
         if (targetDiv) {
 
             targetDiv.innerHTML = getMultimediaFileHTML(mimeFilename, imageDetails);
-
-
-            // Atualizar dados do usuário
             document.getElementById("modalUsername").textContent = userData.username;
 
             // Atualizar foto de perfil
@@ -336,7 +288,6 @@ async function updatePostModalFromDataGuest(idPost, targetDiv) {
 }
 
 function getMultimediaFileHTML(mimeFilename, imageDetails) {
-
     let innerHTML = "";
 
     switch (mimeFilename) {
@@ -374,9 +325,7 @@ function getMultimediaFileHTML(mimeFilename, imageDetails) {
 
 // Função para toggle like
 async function toggleLike(idUser) {
-
     const idPost = document.getElementById("modalMediaContainer").dataset.postId;
-
     const currentIsLikedRes = await fetch(`checkIfPostLikedJS.php?query1=${encodeURIComponent(idUser)}&query2=${encodeURIComponent(idPost)}`)
     const currentIsLiked = await currentIsLikedRes.json();
 
@@ -391,11 +340,8 @@ async function toggleLike(idUser) {
 
     if (toggleLike) {
 
-
-
         const likeButton = document.getElementById("likeButton");
         if (likeButton) {
-
             if (currentIsLiked) {
                 likeButton.classList.remove('liked');
             } else {
@@ -404,23 +350,11 @@ async function toggleLike(idUser) {
         }
 
         const { postData, userData, imageDetails, isLiked } = await loadPostData(idPost, idUser);
-
         document.getElementById("likeCount").textContent = postData.numLikes;
-
-
-
 
     } else {
         console.log("Something was wrong with the like/dislike process");
     }
-
-
-
-
-
-
-
-
 }
 
 function handleShare() {

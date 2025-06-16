@@ -34,15 +34,7 @@
     $token = getTokenFromUser($id)['token'];
 
     $VerificationURL = "http://" . $serverName . ":" . $serverPort . $appname . "accountVerification.php?token=" . urlencode($token);
-
-    /*
-    * Create the mail object.
-    */
     $mail = new HtmlMimeMail();
-
-    /*
-    * HTML component of the e-mail
-    */
     $MessageHTML = <<<EOD
             <html>
                 <body style="background: url('background.gif') repeat; padding: 20px; font-family: Verdana, Arial;">
@@ -66,21 +58,9 @@
                 </body>
             </html>
 EOD;
-    /*
-    * Add the text, html and embedded images.
-    */
+
     $mail->add_html($MessageHTML, $Message);
-
-
-
-    /*
-    * Builds the message.
-    */
     $mail->build_message();
-
-    /*
-    * Sends the message.
-    */
     $result = $mail->send(
         $smtpServer,
         $useSSL,

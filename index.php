@@ -162,7 +162,6 @@ window.addEventListener("DOMContentLoaded", () => {
             });
         }
 
-        // Password strength indicator
         const passwordInput = document.getElementById('register_password');
         if (passwordInput) {
             passwordInput.addEventListener('input', function() {

@@ -25,7 +25,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_category'])) {
         $success = addCategory($tagName);
     }
 
-    // Opcional: Redirecionar para evitar resubmissão do formulário ao recarregar
     header("Location: perfil.php" . urlencode($username));
     exit();
 }
@@ -137,7 +136,6 @@ document.getElementById('uploadProfilePicButton').addEventListener('click', asyn
         return;
     }
 
-    // Optional: check it's an image
     if (!file.type.startsWith("image/")) {
         alert("Only image files are allowed.");
         return;
@@ -172,7 +170,6 @@ document.getElementById('uploadProfilePicButton').addEventListener('click', asyn
 document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('profile').checked = true;
 
-    // 2. Like button toggle
     const likeButton = document.querySelector('.like-button');
     if (likeButton) {
         likeButton.addEventListener('click', function() {
@@ -180,14 +177,12 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // 3. Fecha dropdown de post se clicar fora
     document.addEventListener("click", function(e) {
         if (!e.target.closest(".post-menu")) {
             document.getElementById("postMenu").style.display = "none";
         }
     });
 
-    // 4. Botão "Edit Profile" (identifica botão específico)
     const editProfileBtn = document.querySelector(".profile-info .default-btn");
     if (editProfileBtn) {
         editProfileBtn.addEventListener("click", function(e) {
@@ -196,7 +191,6 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // 5. Fechar forms ao clicar no overlay
     const overlay = document.getElementById("formOverlay");
     overlay.addEventListener('click', function() {
         closeEditProfileForm();
@@ -205,8 +199,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
 });
 
-
-// Preview da imagem
 function previewProfilePic(input) {
     if (input.files && input.files[0]) {
         const reader = new FileReader();
