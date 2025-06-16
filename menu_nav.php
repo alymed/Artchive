@@ -93,6 +93,10 @@ require_once("lib/lib.php");
 
 $idUser = $_SESSION['id'];
 
+$isNew = getUserAuthData($idUser)['status'] == 2;
+
+
+
 if (isset($username)) {
     $idUserProfile = searchUsers($username, $idUser)[0]["id"];
     $owner = false;
@@ -123,7 +127,7 @@ if (!$owner) {
 }
 
 // Buscar categorias da base de dados
-$categories = getAllCategories();
+$categories = getUserCategories($idUser);
 
 $current_user = getUserData($idUser); 
 $user_type = $current_user['user_type'];
@@ -180,6 +184,8 @@ $isAdministrator = ($user_type === 'administrator');
 
     <div id="homeContent" class="content">
 
+        
+
         <!-- TOP TABS INPUTS -->
         <input type="radio" name="top_tab" id="all" checked>
         <?php foreach ($categories as $index => $cat): ?>
@@ -198,6 +204,7 @@ $isAdministrator = ($user_type === 'administrator');
 
             <div class="img_container">
                 <?php
+                
                 $posts = array();
                 for ($i = 0; $i < count($following); $i++) {
                     $followingUserPosts = getPosts($following[$i]['idFollowed'], $owner);
@@ -246,6 +253,7 @@ $isAdministrator = ($user_type === 'administrator');
                 ?>
             </div>
         </div>
+<<<<<<< HEAD
         <?php foreach ($categories as $cat): ?>
             <div class="tag<?= $cat['id'] ?>-content content-section" id="tag<?= $cat['id'] ?>-content">
                 <div class="img_container">
@@ -286,6 +294,9 @@ $isAdministrator = ($user_type === 'administrator');
             </div>
         <?php endforeach; ?>
 
+=======
+        
+>>>>>>> 1a44ed4b612f4587320823e2cbebabe7a5bcdabb
 
     </div>
 
@@ -652,7 +663,7 @@ $isAdministrator = ($user_type === 'administrator');
 
             <label for="upload-category">Category:</label>
             <select id="upload-category" name="category" required>
-                <option value="">Select a category...</option>
+                <option value="">Select a category (At least 3) ...</option>
                 <?php
                 if (isset($categories) && count($categories) > 0) {
                     for ($i = 0; $i < count($categories); $i++) {
@@ -674,6 +685,29 @@ $isAdministrator = ($user_type === 'administrator');
         </div>
     </form>
 </div>
+
+<div class="form-popup" id="tagSelector">
+    <form method="post" class="form-container" action="saveTags.php">
+        <div class="info">
+            <label><b>Choose Your Interests</b> <span class="optional-text">(Optional)</span></label>
+            <div class="category-container" id="categoryContainer">
+                <?php
+                    $categories = getAllCategories();
+                    foreach ($categories as $category) {
+                ?>
+                <div class="category" data-value="<?php echo $category['id'] ?>"><?php echo $category['tagName'] ?></div>
+               <?php
+                    }
+               ?>
+            </div>
+    
+            <input type="hidden" name="selected_categories" id="selectedCategories">
+            <button type="submit" class="default-btn" id="tagsSubmitButton">Finish</button>
+        </div>
+    </form>
+</div>
+
+
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
 <script src="js/script.js"></script>
 <script>
@@ -699,7 +733,48 @@ $isAdministrator = ($user_type === 'administrator');
 
     const idUser = <?php echo json_encode($idUser); ?>
 
+ 
+
+
+
     document.addEventListener('DOMContentLoaded', function () {
+<<<<<<< HEAD
+=======
+
+        const isNew = <?php echo json_encode($isNew); ?>
+
+        if(isNew){
+            showTagSelect();
+        }
+
+        const categories = document.querySelectorAll(".category");
+        const selectedInput = document.getElementById("selectedCategories");
+        const continueBtn = document.getElementById("tagsSubmitButton");
+
+
+        categories.forEach(category => {
+            category.addEventListener("click", () => {
+                category.classList.toggle("selected");
+
+                const selected = Array.from(categories)
+                    .filter(cat => cat.classList.contains("selected"))
+                    .map(cat => cat.dataset.value);
+
+                selectedInput.value = selected.join(",");
+
+                 if (selected.length >= 3) {
+                    continueBtn.style.display = "inline-block";
+                } else {
+                    continueBtn.style.display = "none";
+                }
+            });
+        });
+
+        
+
+
+        // Handle post clicks
+>>>>>>> 1a44ed4b612f4587320823e2cbebabe7a5bcdabb
         document.querySelectorAll('.card').forEach(card => {
             card.addEventListener('click', async function () {
                 const idPost = this.dataset.postId;

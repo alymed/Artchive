@@ -21,6 +21,18 @@ function handleUrlParameters() {
     }
 }
 
+function showTagSelect() {
+    document.getElementById("tagSelector").style.display = "block";
+    document.getElementById("formOverlay").style.display = "block";
+    document.getElementById("tagsSubmitButton").style.display = "none";
+}
+
+
+function closeTagSelect() {
+    document.getElementById("tagSelector").style.display = "none";
+    document.getElementById("formOverlay").style.display = "none";
+}
+
 function openUploadForm() {
     document.getElementById("upload-file").value = "";
     document.getElementById("upload-title").value = "";
