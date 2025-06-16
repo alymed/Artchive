@@ -240,6 +240,8 @@ $isAdministrator = ($user_type === 'administrator');
                         echo "</figure>";
 
                     }
+                } else {
+                    
                 }
                 ?>
             </div>
