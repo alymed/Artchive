@@ -15,6 +15,10 @@
         $owner = true;
     }
 
+    if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['changePrivacy'])) {
+    changePostPrivacy($userId);
+    }
+
     $followers = getUserFollowers( $idUser);
     $following = getUserFollowing($idUser);
     
@@ -498,7 +502,7 @@
         <span class="close-icon" onclick="closePost()">&times;</span>
         <div class="post">
             <div class="post-header">
-                <img id="modalProfilePic" src="images/default-profile.png" alt="User profile" class="profile-pic">
+                <img id="modalProfilePic" src="images/profilePicHandler.jpg" alt="User profile" class="profile-pic">
                 <div class="user-info">
                     <span id="modalUsername" class="username"></span>
                     <span id="modalPostTitle" class="post-title"></span>
@@ -509,12 +513,13 @@
                         <button onclick="handleShare()">
                             <i class="bi bi-share"></i> Share
                         </button>
-                        <?php if (!$owner && !$isfollowing){?>
-                            <button onclick="togglePostPrivacy()">
-                                <i class="bi bi-shield-lock"></i> Toggle Privacy
+                        <?php if ($owner) { ?>
+                            <input type="hidden" name="changePrivacy" value="1">
+                            <!-- O botão de privacidade será atualizado dinamicamente pelo JavaScript -->
+                            <button>
+                                <i class="bi bi-lock"></i> Make Private
                             </button>
-                        <?php } ?>
-                        
+                        <?php } ?>                     
                     </div>
                 </div>
             </div>
@@ -542,18 +547,6 @@
         </div>
     </div>
 </div>
-
-<script>
-    // Fechar menu quando clicar fora
-document.addEventListener('click', function(event) {
-    const menu = document.getElementById('postMenu');
-    const menuIcon = document.querySelector('.menu-icon');
-    
-    if (!menu.contains(event.target) && !menuIcon.contains(event.target)) {
-        menu.style.display = 'none';
-    }
-});
-</script>
 
 <div class="form-popup" id="uploadForm">
     <form method="POST" class="form-container" action="fileUpload.php" enctype="multipart/form-data">

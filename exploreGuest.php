@@ -230,7 +230,7 @@
             <span class="close-icon" onclick="closePost()">&times;</span>
             <div class="post">
                 <div class="post-header">
-                    <img id="modalProfilePic" src="images/default-profile.png" alt="User profile" class="profile-pic">
+                    <img id="modalProfilePic" src="images/profilePicHandler.jpg" alt="User profile" class="profile-pic">
                     <div class="user-info">
                         <span id="modalUsername" class="username"></span>
                         <span id="modalPostTitle" class="post-title"></span>
@@ -288,7 +288,7 @@ document.addEventListener('DOMContentLoaded', function() {
         card.addEventListener('click', async function() {
             const postId = this.dataset.postId;
             console.log('Post ID:', postId);
-            await openPost(postId); // now await works here
+            await openPost(postId, $idUser); // now await works here
         });
     });
 });

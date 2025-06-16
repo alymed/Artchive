@@ -100,53 +100,45 @@ function handleUrlParameters() {
     }
 }
 
-
 function openUploadForm() {
-  document.getElementById("upload-file").value=""
-  document.getElementById("upload-title").value=""
-  document.getElementById("upload-category").value=""
-  document.getElementById("upload-description").value=""
+    document.getElementById("upload-file").value = "";
+    document.getElementById("upload-title").value = "";
+    document.getElementById("upload-category").value = "";
+    document.getElementById("upload-description").value = "";
 
-
-  document.getElementById("uploadForm").style.display = "block";
-  document.getElementById("formOverlay").style.display = "block";
+    document.getElementById("uploadForm").style.display = "block";
+    document.getElementById("formOverlay").style.display = "block";
 }
 
 function openSupporterForm() {
-  document.getElementById("supporterForm").style.display = "block";
-  document.getElementById("formOverlay").style.display = "block";
+    document.getElementById("supporterForm").style.display = "block";
+    document.getElementById("formOverlay").style.display = "block";
 }
+
 function closeSupporterForm() {
-  document.getElementById("supporterForm").style.display = "none";
-  document.getElementById("formOverlay").style.display = "none";
+    document.getElementById("supporterForm").style.display = "none";
+    document.getElementById("formOverlay").style.display = "none";
 }
+
 function closeUploadForm() {
-  document.getElementById("uploadForm").style.display = "none";
-  document.getElementById("formOverlay").style.display = "none";
-  document.getElementById("home").checked = true;
+    document.getElementById("uploadForm").style.display = "none";
+    document.getElementById("formOverlay").style.display = "none";
+    document.getElementById("home").checked = true;
 }
 
 function scrollToContact() {
-  document.getElementById("contact").scrollIntoView({ behavior: "smooth" });
+    document.getElementById("contact").scrollIntoView({ behavior: "smooth" });
 }
+
 function openEditProfileForm() {
-  document.getElementById("editProfileForm").style.display = "block";
-  document.getElementById("formOverlay").style.display = "block";
+    document.getElementById("editProfileForm").style.display = "block";
+    document.getElementById("formOverlay").style.display = "block";
 }
 
 function closeEditProfileForm() {
-  document.getElementById("editProfileForm").style.display = "none";
-  document.getElementById("formOverlay").style.display = "none";
+    document.getElementById("editProfileForm").style.display = "none";
+    document.getElementById("formOverlay").style.display = "none";
 }
-  
-
-
-// Funções para o modal de post
-function togglePostMenu() {
-    const menu = document.getElementById('postMenu');
-    menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
-}
-
 
 // Função para fechar o modal
 function closePost() {
@@ -205,6 +197,12 @@ async function loadPostData(idPost, idLiker) {
         const imageDetails = await imageRes.json();
 
 
+
+        // Store current post ID in modal for later use
+        const modal = document.getElementById("postModal");
+        if (modal) {
+            modal.dataset.currentPostId = postId;
+        }
 
         // Atualizar o modal com os dados carregados
         return {postData, userData, imageDetails, isLiked};
@@ -272,7 +270,6 @@ async function updatePostModalFromData(idPost, idUser,  targetDiv) {
             }
         }
     }
-}
 
 
 function getMultimediaFileHTML(mimeFilename, imageDetails){
@@ -367,7 +364,36 @@ async function toggleLike(idUser) {
     
 }
 
+// Função para atualizar o botão de privacidade
+function updatePrivacyButton(postData, userId) {
+    const postMenu = document.getElementById("postMenu");
+    if (!postMenu || !postData) return;
 
+    // Procurar pelo botão de privacidade existente (buscar por qualquer botão que contenha "Make")
+    let privacyButton = postMenu.querySelector('button:nth-child(2)'); // Segundo botão no menu
+    
+    // Se não encontrar, criar o botão
+    if (!privacyButton) {
+        privacyButton = document.createElement('button');
+        postMenu.appendChild(privacyButton);
+    }
+    
+    // Verificar se o usuário é o dono do post
+    if (postData.idUser == userId) {
+        privacyButton.style.display = 'block';
+        
+        // Configurar o botão baseado na privacidade atual
+        if (postData.privacy === 'public') {
+            privacyButton.innerHTML = '<i class="bi bi-lock"></i> Make Private';
+        } else {
+            privacyButton.innerHTML = '<i class="bi bi-unlock"></i> Make Public';
+        }
+    }
+    // Se o usuário não for o dono do post, esconder o botão
+    else {
+        privacyButton.style.display = 'none';
+    }
+}
 
 function handleShare() {
     if (navigator.share) {
@@ -382,33 +408,16 @@ function handleShare() {
     }
 }
 
-
 // Função auxiliar para obter ID do post atual
 function getCurrentPostId() {
-    // Implementar lógica para obter o ID do post atual
-    return document.getElementById('postModal').dataset.currentPostId;
+    const modal = document.getElementById('postModal');
+    return modal ? modal.dataset.currentPostId : null;
 }
 
-// Função auxiliar para formatar tempo
-function formatTime(timestamp) {
-    const date = new Date(timestamp);
-    const now = new Date();
-    const diff = now - date;
-    
-    if (diff < 60000) return 'Just now';
-    if (diff < 3600000) return `${Math.floor(diff / 60000)}m`;
-    if (diff < 86400000) return `${Math.floor(diff / 3600000)}h`;
-    return `${Math.floor(diff / 86400000)}d`;
-}
-
-function togglePostPrivacy() {
-    isPostPublic = !isPostPublic;
-    const button = document.querySelector('#postMenu button:nth-child(2)');
-    if (isPostPublic) {
-        button.innerHTML = '<i class="bi bi-lock"></i> Make Private';
-        // Aqui você pode chamar uma função para tornar o post público no backend
-    } else {
-        button.innerHTML = '<i class="bi bi-unlock"></i> Make Public';
-        // Aqui você pode chamar uma função para tornar o post privado no backend
+// Função para toggle do menu do post
+function togglePostMenu() {
+    const menu = document.getElementById('postMenu');
+    if (menu) {
+        menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
     }
 }

@@ -1259,4 +1259,51 @@ function switchSupporter($idUser) {
     dbDisconnect();
 }
 
+
+function changePostPrivacy($idPost) {
+    // Connect to DB
+    dbConnect(ConfigFile);
+
+    $dataBaseName = $GLOBALS['configDataBase']->db;
+    mysqli_select_db($GLOBALS['ligacao'], $dataBaseName );
+
+    // Obter a privacidade atual do post
+    $query = "SELECT `privacy` FROM `$dataBaseName`.`users-posts` WHERE `id` = ?";
+    $stmt = mysqli_prepare($GLOBALS['ligacao'], $query);
+    if (!$stmt) {
+        dbDisconnect();
+        return false;
+    }
+
+    mysqli_stmt_bind_param($stmt, "i", $idPost);
+    mysqli_stmt_execute($stmt);
+    mysqli_stmt_bind_result($stmt, $currentPrivacy);
+    mysqli_stmt_fetch($stmt);
+    mysqli_stmt_close($stmt);
+
+    // Validar a privacidade atual
+    if ($currentPrivacy !== 'public' && $currentPrivacy !== 'private') {
+        dbDisconnect();
+        return false; // valor inesperado
+    }
+
+    // Determinar o novo valor
+    $newPrivacy = ($currentPrivacy === 'private') ? 'public' : 'private';
+
+    // Atualizar a privacidade
+    $updateQuery = "UPDATE `$dataBaseName`.`users-posts` SET `privacy` = ? WHERE `id` = ?";
+    $updateStmt = mysqli_prepare($GLOBALS['ligacao'], $updateQuery);
+    if (!$updateStmt) {
+        dbDisconnect();
+        return false;
+    }
+
+    mysqli_stmt_bind_param($updateStmt, "si", $newPrivacy, $idPost);
+    $success = mysqli_stmt_execute($updateStmt);
+    mysqli_stmt_close($updateStmt);
+
+    dbDisconnect();
+    return $success;
+}
+
 ?>
