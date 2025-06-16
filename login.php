@@ -78,7 +78,7 @@ $baseNextUrl = "http://" . $serverName . ":" . $serverPort . $name;
 if ($idUser > 0) {
     $isVerified = intval(getUserAuthData($idUser)['status']);
 
-    if ($isVerified === 2) {
+    if ($isVerified === 2 || $isVerified === 3) {
         $_SESSION['id'] = $idUser;
         $nextUrl = $_SESSION['locationAfterAuth'] ?? "app.php";
         header("Location: " . $baseNextUrl . $nextUrl);

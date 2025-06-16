@@ -132,6 +132,8 @@ if (!$owner) {
     }
 }
 
+$allCategories = getAllCategories();
+
 // Buscar categorias da base de dados
 $categories = getUserCategories($idUser);
 
@@ -642,12 +644,12 @@ $isAdministrator = ($user_type === 'administrator'); // user cannot post
 
             <label for="upload-category">Category:</label>
             <select id="upload-category" name="category" required>
-                <option value="">Select a category (At least 3) ...</option>
+                <option value="">Select a category ...</option>
                 <?php
-                if (isset($categories) && count($categories) > 0) {
-                    for ($i = 0; $i < count($categories); $i++) {
-                        $categoryId = htmlspecialchars($categories[$i]['id']);
-                        $categoryName = htmlspecialchars($categories[$i]['tagName']);
+                if (isset($allCategories) && count($allCategories) > 0) {
+                    for ($i = 0; $i < count($allCategories); $i++) {
+                        $categoryId = htmlspecialchars($allCategories[$i]['id']);
+                        $categoryName = htmlspecialchars($allCategories[$i]['tagName']);
                         echo "<option value=\"$categoryId\">$categoryName</option>";
                     }
                 }
@@ -668,7 +670,7 @@ $isAdministrator = ($user_type === 'administrator'); // user cannot post
 <div class="form-popup" id="tagSelector">
     <form method="post" class="form-container" action="saveTags.php">
         <div class="info">
-            <label><b>Choose Your Interests</b> <span class="optional-text">(Optional)</span></label>
+            <label><b>Choose Your Interests (At least 3) </b> <span class="optional-text">(Optional)</span></label>
             <div class="category-container" id="categoryContainer">
                 <?php
                     $categories = getAllCategories();

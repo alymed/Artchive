@@ -296,16 +296,16 @@ if (!isset($_SESSION['id'])) {
         $idPost = uploadPost($title, $description, $privacy, $idUser, $idFile, $category);
         if($idPost > 0){
                 echo "Success!";
-                //header("Location: index.php");
+                header("Location: index.php");
 
         }else{
             echo "Information about file could not be inserted into the data base. Details : " . dbGetLastError() ;
-            //header("Location: index.php");
+            header("Location: index.php");
         }
     }
     else {
         echo "Information about file could not be inserted into the data base. Details : " . dbGetLastError() ;
-        //header("Location: index.php");
+        header("Location: index.php");
     }
 ?>
 
