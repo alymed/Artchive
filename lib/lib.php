@@ -1225,6 +1225,34 @@ function getAllCategories() {
 }
 
 
+function getUserCategories($userId) {
+    dbConnect(ConfigFile);
+
+    $dataBaseName = $GLOBALS['configDataBase']->db;
+    mysqli_select_db($GLOBALS['ligacao'], $dataBaseName);
+
+    $query = "
+        SELECT t.id, t.tagName
+        FROM `$dataBaseName`.`tags` t
+        INNER JOIN `$dataBaseName`.`users-tags` ut ON t.id = ut.idTag
+        WHERE ut.idUser = $userId
+        ORDER BY t.tagName ASC
+    ";
+
+    $result = mysqli_query($GLOBALS['ligacao'], $query);
+
+    $categories = [];
+    while ($row = mysqli_fetch_assoc($result)) {
+        $categories[] = $row;
+    }
+
+    mysqli_free_result($result);
+    dbDisconnect();
+
+    return $categories;
+}
+
+
 
 
 function register($name, $username, $password, $email, $birthdate, $user_type) {

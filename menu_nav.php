@@ -133,7 +133,7 @@ if (!$owner) {
 }
 
 // Buscar categorias da base de dados
-$categories = getAllCategories();
+$categories = getUserCategories($idUser);
 
 $current_user = getUserData($idUser); // Get current user's data
 $user_type = $current_user['user_type']; // Get user type
