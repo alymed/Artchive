@@ -13,7 +13,6 @@ if ($method != 'POST') {
     exit();
 }
 
-// Recebe os dados do formulário do passo anterior
 $name = filter_input(INPUT_POST, 'name', FILTER_UNSAFE_RAW, $flags);
 $email = filter_input(INPUT_POST, 'email', FILTER_VALIDATE_EMAIL, $flags);
 $birthdate = filter_input(INPUT_POST, 'birthdate', FILTER_UNSAFE_RAW, $flags);
@@ -39,7 +38,6 @@ if (strlen($biography) > 90) {
     exit();
 }
 
-// Chama função register para criar usuário e obter ID
 $idUser = register($name, $username, $password, $email, $birthdate, $user_type);
 
 if ($idUser <= 0) {
@@ -47,16 +45,12 @@ if ($idUser <= 0) {
     exit();
 }
 
-
-
-// Atualiza perfil com foto e biografia
 try {
     updateUserProfile($idUser, 1, $biography);
 } catch (Exception $e) {
     echo $e->getMessage();
 }
 
-// Redireciona para página de verificação de email
 header("Location: email.php?id=" . urlencode($idUser));
 exit();
 ?>

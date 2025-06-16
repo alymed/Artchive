@@ -89,7 +89,6 @@
             <button type="submit" class="default-btn" name="signup" id="register_button2">Register</button>
 
         </div>
-
     </form>
 </div>
 

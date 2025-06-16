@@ -3,12 +3,11 @@
 session_start();
 
 if (!isset($_SESSION['id'])) {
-    
-    header('Location: index.php');
-    exit();
+
+  header('Location: index.php');
+  exit();
 }
 ?>
-
 
 <!DOCTYPE html>
 <html>
@@ -27,42 +26,23 @@ if (!isset($_SESSION['id'])) {
 <body>
 
   <?php
-    include('header.php');
+  include('header.php');
   ?>
 
-
   <?php
-    include('menu_nav.php');
+  include('menu_nav.php');
   ?>
 
 </body>
 <script>
-
   document.addEventListener('DOMContentLoaded', function () {
     document.getElementById('home').checked = true;
   });
 
-
-  // document.querySelectorAll('.card').forEach(card => {
-  //   card.addEventListener('click', function () {
-  //     const postId = this.dataset.postId;
-  //     openPost(postId)
-  //     console.log('Post ID:', postId);
-  //   });
-  // });
-
-  //make liked button red
   document.querySelector('.like-button').addEventListener('click', function () {
     this.classList.toggle('liked');
   });
 
-
-  //close card if clicked out the margins
-  document.addEventListener("click", function (e) {
-    if (!e.target.closest(".post-menu")) {
-      document.getElementById("postMenu").style.display = "none";
-    }
-  });
-
 </script>
+
 </html>

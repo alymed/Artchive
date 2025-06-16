@@ -114,7 +114,6 @@ $owner = false;
                         echo "<figcaption>$postTitle</figcaption>";
                         echo "</figure>";
                     }
-
                 }
                 ?>
             </div>
@@ -139,14 +138,10 @@ $owner = false;
                 }
 
                 if (count($posts) > 0) {
-
-
                     $randomKeys = array_rand($posts, count($posts));
-
                     if (count($posts) == 1) {
                         $randomKeys = [$randomKeys];
                     }
-
                     for ($k = 0; $k < count($posts); $k++) {
 
                         $post = $posts[$randomKeys[$k]];
@@ -158,12 +153,9 @@ $owner = false;
                         $image = "<img src=\"showFileThumb.php?id=$fileID&size=small\" alt=\"Post\"></img>";
                         $caption = "<figcaption> aaaaaaaa </figcaption>";
                         echo "<figure class=\"card card_small\" data-post-id=\"$idPost\">$image $caption </figure>";
-
                     }
 
                 }
-
-
                 ?>
             </div>
         </div>
@@ -187,8 +179,6 @@ $owner = false;
                 }
 
                 if (count($posts) > 0) {
-
-
                     $randomKeys = array_rand($posts, count($posts));
 
                     if (count($posts) == 1) {
@@ -197,11 +187,9 @@ $owner = false;
 
                     for ($k = 0; $k < count($posts); $k++) {
                         $post = $posts[$randomKeys[$k]];
-
                         $idPost = $post['id'];
                         $postTitle = $post['title'];
                         $fileID = $post['idImage'];
-
                         $image = "<img src=\"showFileThumb.php?id=$fileID&size=small\" alt=\"Post\"></img>";
                         $caption = "<figcaption> $postTitle </figcaption>";
                         echo "<figure class=\"card card_small\" data-post-id=\"$idPost\">$image $caption </figure>";
@@ -238,7 +226,6 @@ $owner = false;
                 </div>
 
                 <div id="modalMediaContainer">
-                    <!-- Conteúdo de mídia será inserido aqui dinamicamente -->
                 </div>
                 <div class="post-footer">
                     <div class="post-actions">

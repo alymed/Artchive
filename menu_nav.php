@@ -1,5 +1,4 @@
 <style>
-    /* Hide all radio buttons */
     input[name="top_tab"] {
         display: none;
     }
@@ -12,18 +11,14 @@
         padding: 10px 0;
         gap: 10px;
         margin-bottom: 20px;
-
         scrollbar-width: thin;
         scrollbar-color: #888 transparent;
         white-space: nowrap;
         border-bottom: 1px solid #ddd;
-
-        /* Ensure only horizontal scrolling */
         height: auto;
         max-height: none;
     }
 
-    /* Webkit scrollbar styling */
     .top_tabs::-webkit-scrollbar {
         height: 6px;
     }
@@ -60,7 +55,6 @@
         color: #333;
     }
 
-    /* Active tab styling */
     .top_tab.active {
         border-bottom: 3px solid #0a2c5a;
         color: #0a2c5a;
@@ -131,10 +125,10 @@ if (!$owner) {
 // Buscar categorias da base de dados
 $categories = getAllCategories();
 
-$current_user = getUserData($idUser); // Get current user's data
-$user_type = $current_user['user_type']; // Get user type
-$canPost = ($user_type !== 'user'); // user cannot post
-$isAdministrator = ($user_type === 'administrator'); // user cannot post
+$current_user = getUserData($idUser); 
+$user_type = $current_user['user_type'];
+$canPost = ($user_type !== 'user');
+$isAdministrator = ($user_type === 'administrator');
 ?>
 
 <input hidden type="radio" name="tab" id="profile">
@@ -236,8 +230,6 @@ $isAdministrator = ($user_type === 'administrator'); // user cannot post
                             $size = 'small';
                         }
 
-
-
                         echo "<figure class=\"card card_$size\" 
                         data-post-id=\"$postID\" 
                         data-username=\"$user\" 
@@ -267,7 +259,6 @@ $isAdministrator = ($user_type === 'administrator'); // user cannot post
                             $fileID = $post['idImage'];
                             $fileDetails = getFileDetails($fileID);
 
-                            // Determine card size based on file type
                             $sizes = ['small', 'medium', 'large'];
                             if ($fileDetails['mimeFilename'] == 'image') {
                                 $size = $sizes[array_rand($sizes)];
@@ -440,12 +431,8 @@ $isAdministrator = ($user_type === 'administrator'); // user cannot post
                     $image = "<img src=\"showFileThumb.php?id=$fileID&size=small\" alt=\"Post\"></img>";
                     $caption = "<figcaption> aaaaaaaa </figcaption>";
                     echo "<figure class=\"card card_small\" data-post-id=\"$idPost\">$image $caption </figure>";
-
                 }
-
             }
-
-
             ?>
         </div>
     </div>
@@ -469,16 +456,12 @@ $isAdministrator = ($user_type === 'administrator'); // user cannot post
             }
 
             if (count($posts) > 0) {
-
-
                 $randomKeys = array_rand($posts, count($posts));
-
                 if (count($posts) == 1) {
                     $randomKeys = [$randomKeys];
                 }
 
                 for ($k = 0; $k < count($posts); $k++) {
-
                     $post = $posts[$randomKeys[$k]];
 
                     $idPost = $post['id'];
@@ -494,12 +477,8 @@ $isAdministrator = ($user_type === 'administrator'); // user cannot post
                     $image = "<img src=\"showFileThumb.php?id=$fileID&size=$randomSize\" alt=\"Post\"></img>";
                     $caption = "<figcaption> $description </figcaption>";
                     echo "<figure class=\"card card_$randomSize\" data-post-id=\"$idPost\">$image $caption </figure>";
-
                 }
-
             }
-
-
             ?>
         </div>
     </div>
@@ -511,11 +490,8 @@ $isAdministrator = ($user_type === 'administrator'); // user cannot post
 
     <div id="resultsContent" class="content">
         <div id="resultsContainer" class="img_container">
-
         </div>
     </div>
-
-
 
     <div id="profileContent" class="content">
         <div class="profile-header">
@@ -641,7 +617,6 @@ $isAdministrator = ($user_type === 'administrator'); // user cannot post
             </div>
 
             <div id="modalMediaContainer">
-                <!-- Conteúdo de mídia será inserido aqui dinamicamente -->
             </div>
 
             <div class="post-footer">
@@ -723,7 +698,6 @@ $isAdministrator = ($user_type === 'administrator'); // user cannot post
     const idUser = <?php echo json_encode($idUser); ?>
 
     document.addEventListener('DOMContentLoaded', function () {
-        // Handle post clicks
         document.querySelectorAll('.card').forEach(card => {
             card.addEventListener('click', async function () {
                 const idPost = this.dataset.postId;
@@ -731,25 +705,20 @@ $isAdministrator = ($user_type === 'administrator'); // user cannot post
             });
         });
 
-        // Handle top tabs (category tabs)
         const topTabInputs = document.querySelectorAll('input[name="top_tab"]');
         const contentSections = document.querySelectorAll('.content-section');
 
-        // Function to show content based on selected tab
         function showTabContent(selectedTabId) {
-            // Hide all content sections
             contentSections.forEach(section => {
                 section.classList.remove('active');
             });
 
-            // Show the corresponding content section
             if (selectedTabId === 'all') {
                 const allContent = document.querySelector('.all-content');
                 if (allContent) {
                     allContent.classList.add('active');
                 }
             } else {
-                // For category tabs (tag1, tag2, etc.)
                 const categoryId = selectedTabId.replace('tag', '');
                 const categoryContent = document.querySelector(`.tag${categoryId}-content`);
                 if (categoryContent) {
@@ -758,7 +727,6 @@ $isAdministrator = ($user_type === 'administrator'); // user cannot post
             }
         }
 
-        // Add event listeners to radio buttons
         topTabInputs.forEach(input => {
             input.addEventListener('change', function () {
                 if (this.checked) {
@@ -767,10 +735,8 @@ $isAdministrator = ($user_type === 'administrator'); // user cannot post
             });
         });
 
-        // Initialize - show "All" content by default
         showTabContent('all');
 
-        // Handle label clicks to ensure proper tab switching
         const topTabLabels = document.querySelectorAll('.top_tab');
         topTabLabels.forEach(label => {
             label.addEventListener('click', function () {

@@ -1,58 +1,46 @@
 <?php
+require_once("Lib/lib.php");
+require_once("Lib/db.php");
 
+$id = $_GET['id'];
 
+$fileDetails = getFileDetails($id);
 
-    require_once( "Lib/lib.php" );
-    require_once( "Lib/db.php" );
+$size = $_GET['size'];
 
-    // TODO validate input data
-    $id = $_GET['id'];
+switch ($fileDetails['mimeFilename']) {
 
-    // Read from the data base details about the file
-    $fileDetails = getFileDetails( $id );
+    case 'image':
+        switch ($size) {
+            case 'small':
+                $thumbFilename = $fileDetails['thumbFilenameS'];
+                break;
+            case 'medium':
+                $thumbFilename = $fileDetails['thumbFilenameM'];
+                break;
+            case 'large':
+                $thumbFilename = $fileDetails['thumbFilenameL'];
+                break;
+        }
+        break;
 
-    $size = $_GET['size'];
+    case 'video':
+        $thumbFilename = $fileDetails['thumbFilenameL'];
+        break;
 
-    switch ($fileDetails['mimeFilename']) {
+    case 'audio':
+        $thumbFilename = $fileDetails['thumbFilenameS'];
+        break;
+}
 
-        case 'image':  
+$thumbMimeFilename = $fileDetails['thumbMimeFilename'];
+$thumbTypeFilename = $fileDetails['thumbTypeFilename'];
 
-            switch ($size) {
-                case 'small':
-                    $thumbFilename = $fileDetails[ 'thumbFilenameS' ];
-                    break;
-                case 'medium':
-                    $thumbFilename = $fileDetails[ 'thumbFilenameM' ];
-                    break;
-                case 'large':
-                    $thumbFilename = $fileDetails[ 'thumbFilenameL' ];
-                    break;
-            }
-            break;
+header("Content-type: $thumbMimeFilename/$thumbTypeFilename");
+header("Content-Length: " . filesize($thumbFilename));
 
-        case 'video':
+$thumbFileHandler = fopen($thumbFilename, 'rb');
+fpassthru($thumbFileHandler);
 
-            $thumbFilename = $fileDetails[ 'thumbFilenameL' ];
-            break;
-        
-        case 'audio':
-            
-            $thumbFilename = $fileDetails[ 'thumbFilenameS' ];
-            break;
-
-
-    }
-
-    $thumbMimeFilename = $fileDetails[ 'thumbMimeFilename' ];
-    $thumbTypeFilename = $fileDetails[ 'thumbTypeFilename' ];
-
-
-
-    header( "Content-type: $thumbMimeFilename/$thumbTypeFilename");
-    header( "Content-Length: " . filesize($thumbFilename) );
-
-    $thumbFileHandler = fopen( $thumbFilename, 'rb' );
-    fpassthru( $thumbFileHandler );
-
-    fclose( $thumbFileHandler );
+fclose($thumbFileHandler);
 ?>

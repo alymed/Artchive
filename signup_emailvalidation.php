@@ -1,11 +1,9 @@
 <?php
-
     ini_set('display_errors', 1);
     ini_set('display_startup_errors', 1);
     error_reporting(E_ALL);
 
     require_once( "lib/lib.php" );
-
     
     $flags[] = FILTER_NULL_ON_FAILURE;
     $method = filter_input( INPUT_SERVER, 'REQUEST_METHOD', FILTER_UNSAFE_RAW, $flags);
@@ -29,38 +27,32 @@
         $birthdate != null && $birthdate != ""
     ){
     
-        // Validate name (no special characters, reasonable length)
         if (strlen($name) < 2 || strlen($name) > 50 || !preg_match('/^[\p{L}\s\-\'\.]+$/u', $name)) {
             header("Location: " . $baseNextUrl . "index.php?signupError=InvalidName");
             exit();
         }
 
-        // Validate birthdate format and reasonable date
         $birthDateObj = DateTime::createFromFormat('Y-m-d', $birthdate);
         if (!$birthDateObj || $birthDateObj->format('Y-m-d') !== $birthdate) {
             header("Location: " . $baseNextUrl . "index.php?signupError=InvalidBirthdate");
             exit();
         }
 
-        // Check if birthdate is not in the future
         $today = new DateTime();
         if ($birthDateObj > $today) {
             header("Location: " . $baseNextUrl . "index.php?signupError=FutureBirthdate");
             exit();
         }
 
-        // Check if user is at least 13 years old (COPPA compliance)
         $age = $today->diff($birthDateObj)->y;
         if ($age < 13) {
             header("Location: " . $baseNextUrl . "index.php?signupError=AgeTooYoung");
             exit();
         }
 
-        // Check if email already exists
         $emailExists = existUserField("email", $email, "users-auth");
 
         if (!$emailExists) {
-            // Proceed to step 2
             header("Location: " . $baseNextUrl . "index.php?signupStep=2&email=" . urlencode($email) . 
                 "&name=" . urlencode($name) . "&birthdate=" . urlencode($birthdate));
             exit();

@@ -1,6 +1,4 @@
 <?php
-
-
     require_once( 'lib/lib.php');
 
     ini_set('display_errors', 1);
@@ -11,10 +9,7 @@
     $idPost = $_GET['query2'];
 
     $isLiked = checkIfLiked($idUser, $idPost);
-
     $isLiked_encoded =  json_encode( $isLiked );
 
     echo $isLiked_encoded;
-
-
 ?>
