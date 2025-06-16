@@ -213,7 +213,7 @@ $isAdministrator = ($user_type === 'administrator');
                     }
                 }
 
-                if (count($posts) > 0) {
+                if (count($posts) > 0) :
                     $randomKeys = array_rand($posts, count($posts));
 
                     $sizes = ['small', 'medium', 'large'];
@@ -247,13 +247,12 @@ $isAdministrator = ($user_type === 'administrator');
                         echo "</figure>";
 
                     }
-                } else {
-                    
-                }
+                else :?>
+                    There's no content yet
+                <?php endif;
                 ?>
             </div>
         </div>
-<<<<<<< HEAD
         <?php foreach ($categories as $cat): ?>
             <div class="tag<?= $cat['id'] ?>-content content-section" id="tag<?= $cat['id'] ?>-content">
                 <div class="img_container">
@@ -294,9 +293,6 @@ $isAdministrator = ($user_type === 'administrator');
             </div>
         <?php endforeach; ?>
 
-=======
-        
->>>>>>> 1a44ed4b612f4587320823e2cbebabe7a5bcdabb
 
     </div>
 

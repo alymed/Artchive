@@ -42,15 +42,12 @@ if (!isset($_SESSION['id'])) {
     $srcName = $_FILES['userFile']['name'];
     $configuration = getConfiguration();
     $dstDir = trim($configuration['destination']);
-<<<<<<< HEAD
-=======
 
     if (!is_dir($dstDir)) {
         mkdir($dstDir, 0777, true);
     }
 
     // Destination for the uploaded file
->>>>>>> 1a44ed4b612f4587320823e2cbebabe7a5bcdabb
     $src = $_FILES['userFile']['tmp_name'];
     $idUser = $_SESSION['id'];
     $dstUser = $dstDir . DIRECTORY_SEPARATOR . $idUser;
