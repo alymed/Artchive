@@ -99,6 +99,10 @@ require_once("lib/lib.php");
 
 $idUser = $_SESSION['id'];
 
+$isNew = getUserAuthData($idUser)['status'] == 2;
+
+
+
 if (isset($username)) {
     $idUserProfile = searchUsers($username, $idUser)[0]["id"];
     $owner = false;
@@ -186,6 +190,8 @@ $isAdministrator = ($user_type === 'administrator'); // user cannot post
 
     <div id="homeContent" class="content">
 
+        
+
         <!-- TOP TABS INPUTS -->
         <input type="radio" name="top_tab" id="all" checked>
         <?php foreach ($categories as $index => $cat): ?>
@@ -204,6 +210,7 @@ $isAdministrator = ($user_type === 'administrator'); // user cannot post
 
             <div class="img_container">
                 <?php
+                
                 $posts = array();
                 for ($i = 0; $i < count($following); $i++) {
                     $followingUserPosts = getPosts($following[$i]['idFollowed'], $owner);
@@ -252,47 +259,7 @@ $isAdministrator = ($user_type === 'administrator'); // user cannot post
                 ?>
             </div>
         </div>
-        <?php foreach ($categories as $cat): ?>
-            <div class="tag<?= $cat['id'] ?>-content content-section" id="tag<?= $cat['id'] ?>-content">
-                <div class="img_container">
-                    <?php
-                    $categoryPosts = getPostsByCategory($cat['id']);
-                    if (count($categoryPosts) > 0):
-                        foreach ($categoryPosts as $post):
-                            $postID = $post['id'];
-                            $postTitle = htmlspecialchars($post['title']);
-                            $user = getUserData($post['idUser'])['username'];
-                            $description = htmlspecialchars($post['description']);
-                            $date = $post['createdAt'];
-                            $fileID = $post['idImage'];
-                            $fileDetails = getFileDetails($fileID);
-
-                            // Determine card size based on file type
-                            $sizes = ['small', 'medium', 'large'];
-                            if ($fileDetails['mimeFilename'] == 'image') {
-                                $size = $sizes[array_rand($sizes)];
-                            } else if ($fileDetails['mimeFilename'] == 'video') {
-                                $size = 'large';
-                            } else {
-                                $size = 'small';
-                            }
-                            ?>
-
-                            <figure class="card card_<?= $size ?>" data-post-id="<?= $postID ?>"
-                                data-username="<?= htmlspecialchars($user) ?>" data-description="<?= $description ?>"
-                                data-date="<?= $date ?>">
-                                <img src="showFileThumb.php?id=<?= $fileID ?>&size=<?= $size ?>" alt="<?= $postTitle ?>">
-                                <figcaption><?= $postTitle ?></figcaption>
-                            </figure>
-
-                        <?php endforeach; ?>
-                    <?php else: ?>
-                        <p>No posts found in this category.</p>
-                    <?php endif; ?>
-                </div>
-            </div>
-        <?php endforeach; ?>
-
+        
 
     </div>
 
@@ -675,7 +642,7 @@ $isAdministrator = ($user_type === 'administrator'); // user cannot post
 
             <label for="upload-category">Category:</label>
             <select id="upload-category" name="category" required>
-                <option value="">Select a category...</option>
+                <option value="">Select a category (At least 3) ...</option>
                 <?php
                 if (isset($categories) && count($categories) > 0) {
                     for ($i = 0; $i < count($categories); $i++) {
@@ -697,6 +664,29 @@ $isAdministrator = ($user_type === 'administrator'); // user cannot post
         </div>
     </form>
 </div>
+
+<div class="form-popup" id="tagSelector">
+    <form method="post" class="form-container" action="saveTags.php">
+        <div class="info">
+            <label><b>Choose Your Interests</b> <span class="optional-text">(Optional)</span></label>
+            <div class="category-container" id="categoryContainer">
+                <?php
+                    $categories = getAllCategories();
+                    foreach ($categories as $category) {
+                ?>
+                <div class="category" data-value="<?php echo $category['id'] ?>"><?php echo $category['tagName'] ?></div>
+               <?php
+                    }
+               ?>
+            </div>
+    
+            <input type="hidden" name="selected_categories" id="selectedCategories">
+            <button type="submit" class="default-btn" id="tagsSubmitButton">Finish</button>
+        </div>
+    </form>
+</div>
+
+
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
 <script src="js/script.js"></script>
 <script>
@@ -722,7 +712,44 @@ $isAdministrator = ($user_type === 'administrator'); // user cannot post
 
     const idUser = <?php echo json_encode($idUser); ?>
 
+ 
+
+
+
     document.addEventListener('DOMContentLoaded', function () {
+
+        const isNew = <?php echo json_encode($isNew); ?>
+
+        if(isNew){
+            showTagSelect();
+        }
+
+        const categories = document.querySelectorAll(".category");
+        const selectedInput = document.getElementById("selectedCategories");
+        const continueBtn = document.getElementById("tagsSubmitButton");
+
+
+        categories.forEach(category => {
+            category.addEventListener("click", () => {
+                category.classList.toggle("selected");
+
+                const selected = Array.from(categories)
+                    .filter(cat => cat.classList.contains("selected"))
+                    .map(cat => cat.dataset.value);
+
+                selectedInput.value = selected.join(",");
+
+                 if (selected.length >= 3) {
+                    continueBtn.style.display = "inline-block";
+                } else {
+                    continueBtn.style.display = "none";
+                }
+            });
+        });
+
+        
+
+
         // Handle post clicks
         document.querySelectorAll('.card').forEach(card => {
             card.addEventListener('click', async function () {

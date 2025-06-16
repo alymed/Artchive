@@ -44,6 +44,10 @@ if (!isset($_SESSION['id'])) {
     $configuration = getConfiguration();
     $dstDir = trim($configuration['destination']);
 
+    if (!is_dir($dstDir)) {
+        mkdir($dstDir, 0777, true);
+    }
+
     // Destination for the uploaded file
     $src = $_FILES['userFile']['tmp_name'];
 
