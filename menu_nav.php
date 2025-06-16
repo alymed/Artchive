@@ -46,7 +46,7 @@
     $current_user = getUserData($idUser); // Get current user's data
     $user_type = $current_user['user_type']; // Get user type
     $canPost = ($user_type !== 'user'); // user cannot post
-
+    $isAdministrator = ($user_type !== 'administrator'); // user cannot post
 ?>
 
 <input hidden type="radio" name="tab" id="profile">
@@ -438,10 +438,16 @@
                     }  
                     ?>
 
+                    <?php if ($owner) { ?>
                     <button class="default-btn" onclick="openEditProfileForm(<?php echo json_encode($idUser); ?>)">Edit Profile</button>
+                    <?php } ?>
 
                     <?php if ($user_type === 'user') { ?>
                     <button class="default-btn" onclick="openSupporterForm()">Become Supporter</button>
+                    <?php } ?>
+
+                    <?php if ($isAdministrator) { ?>
+                    <button class="default-btn" onclick="scrollToContact()">Add Category</button>
                     <?php } ?>
                     
                     <?php if (!$owner) { ?>

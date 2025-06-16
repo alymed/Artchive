@@ -33,12 +33,12 @@
         dbDisconnect();
         header("Location: profile.php?message=Already a supporter");
         exit;
-    }
+    } else if ($currentType !== 'supporter'){
 
     // Update user_type
     $updateQuery = "UPDATE `$dataBaseName`.`users-profile` SET `user_type` = 'supporter' WHERE `id` = '$idUser'";
     $success = mysqli_query($GLOBALS['ligacao'], $updateQuery);
-
+    }
     dbDisconnect();
 
     if ($success) {

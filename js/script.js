@@ -40,8 +40,6 @@ function handleUrlParameters() {
                 break;
         }
     }
-
-        
 }
 
 function openUploadForm() {
@@ -77,11 +75,29 @@ function scrollToContact() {
 async function openEditProfileForm(idUser) {
     document.getElementById("editProfileForm").style.display = "block";
     document.getElementById("formOverlay").style.display = "block";
-    document.getElementById("name").value = "";
-    document.getElementById("username").value = "";
-    document.getElementById("bio").value = "";
+    console.log("oi");
 
+    try {
+        const [userRes] = await Promise.all([fetch(`getUserDataJS.php?query=${encodeURIComponent(idUser)}`)]);
+        const userData = await userRes.json();
+        // Buscar dados do usuário
     
+        if (!userRes.ok) {
+            throw new Error(`HTTP error! Status: ${userRes.status}`);
+        }
+        console.log(userRes);
+
+        // Preencher campos do formulário com os dados do usuário
+        document.getElementById("name").value = userData.name || "";
+        document.getElementById("username").value = userData.username || "";
+        document.getElementById("bio").value = userData.biography || "";
+
+        // Exibir o formulário
+        
+    } catch (error) {
+        console.error("Erro ao carregar dados do usuário:", error);
+        showMessage("Erro ao carregar dados do perfil. Tente novamente.", "error");
+    }
 }
 
 function closeEditProfileForm() {
@@ -150,7 +166,7 @@ async function loadPostData(idPost, idLiker) {
         // Store current post ID in modal for later use
         const modal = document.getElementById("postModal");
         if (modal) {
-            modal.dataset.currentPostId = postId;
+            modal.dataset.currentPostId = idPost;
         }
 
         // Atualizar o modal com os dados carregados
