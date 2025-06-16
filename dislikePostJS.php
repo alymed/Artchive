@@ -16,15 +16,10 @@
     
     if($dislikeOk){
 
-        if(removeActivity($idUser, 'like', $idPost)) {
-            echo 'Activity Remove Success!';
-        }else{
-            echo "Error at removing activity";
+        if(!removeActivity($idUser, 'like', $idPost)) {
+            $dislikeOk = false;
         }
-        
-    }else{
-        echo "Error at liking";
-
+         
     }
 
     $dislikeOk_encoded =  json_encode( $dislikeOk );

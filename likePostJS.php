@@ -18,15 +18,10 @@
         $postData = getPostData($idPost);
         $sendTo = $postData['idUser'];
 
-        if(addActivity($idUser, 'like', $idPost, $sendTo)) {
-            echo 'Activity Add Success!';
-        }else{
-            echo "Error at adding activity";
+        if(!addActivity($idUser, 'like', $idPost, $sendTo)) {
+            $likeOk = false;
         }
         
-    }else{
-        echo "Error at liking";
-
     }
 
     $likeOk_encoded =  json_encode( $likeOk );
