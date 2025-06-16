@@ -150,7 +150,7 @@ async function loadPostData(idPost, idLiker) {
         // Store current post ID in modal for later use
         const modal = document.getElementById("postModal");
         if (modal) {
-            modal.dataset.currentPostId = postId;
+            modal.dataset.currentPostId = idPost;
         }
 
         // Atualizar o modal com os dados carregados
