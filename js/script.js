@@ -156,25 +156,43 @@ function closePost() {
 }
 
 // Função para abrir o modal
-function openPost(postId) {
+function openPost(idPost, idUser) {
     const modal = document.getElementById('postModal');
     modal.classList.add('show');
     document.body.style.overflow = 'hidden'; // Previne scroll da página
+
+    const mediaContainer = document.getElementById("modalMediaContainer");
+    if (likeButton) {
+        mediaContainer.setAttribute('data-post-id', idPost);
+    }
     
+    const targetDiv = document.getElementById("modalMediaContainer");
     // Aqui você carregaria os dados do post
-    loadPostData(postId);
+    updatePostModalFromData(idPost, idUser, targetDiv);
 }
 
 // Função para carregar dados do post
-async function loadPostData(postId) {
+async function loadPostData(idPost, idLiker) {
     try {
-        const postResponse = await fetch(`getPostDataJS.php?query=${encodeURIComponent(postId)}`);
-        const postData = await postResponse.json();
+
+
+        const [postRes, likeRes] = await Promise.all([
+            fetch(`getPostDataJS.php?query=${encodeURIComponent(idPost)}`),
+            fetch(`checkIfPostLikedJS.php?query1=${encodeURIComponent(idLiker)}&query2=${encodeURIComponent(idPost)}`)
+        ]);
+
+
+        const postData = await postRes.json();
+        const isLiked = await likeRes.json();
+
+     
 
         if (Object.keys(postData).length === 0) {
             console.log("No post data found.");
             return;
         }
+
+        
 
         const { idUser, idImage, title, description, numLikes, numComments } = postData;
 
@@ -184,10 +202,12 @@ async function loadPostData(postId) {
         ]);
 
         const userData = await userRes.json();
-        const imageData = await imageRes.json();
+        const imageDetails = await imageRes.json();
+
+
 
         // Atualizar o modal com os dados carregados
-        updatePostModalFromData(postData, userData, imageData);
+        return {postData, userData, imageDetails, isLiked};
 
     } catch (error) {
         console.error('Erro ao carregar post:', error);
@@ -195,46 +215,20 @@ async function loadPostData(postId) {
 }
 
 // Função auxiliar para atualizar o modal (baseada na updatePostModal original)
-function updatePostModalFromData(postData, userData, imageDetails) {
-    if (Object.keys(imageDetails).length != 0) {
-        const mimeFilename = imageDetails.mimeFilename;
-        const filename = imageDetails.filename;
+async function updatePostModalFromData(idPost, idUser,  targetDiv) {
 
-        const targetDiv = document.getElementById("modalMediaContainer");
+    const { postData, userData, imageDetails, isLiked} = await loadPostData(idPost, idUser);
+
+    if (Object.keys(imageDetails).length != 0) {
+
+        const mimeFilename = imageDetails.mimeFilename;
+  
 
         if (targetDiv) {
-            switch (mimeFilename) {
-                case 'image':
-                    targetDiv.innerHTML = `<img src="showFile.php?id=${imageDetails.id}" alt="Post">`;
-                    break;
-                
-                case 'video':
-                    targetDiv.innerHTML = `
-                    <div class="DBGVideoContainer MyVideoContainer">
-                        <div class="DBGVideoPlayer MyVideoPlayer">
-                            <video id="TheVideo" width="640" height="480" poster="showFileImage.php?id=${imageDetails.id}" controls >
-                                <source src="showFile.php?id=${imageDetails.id}" />
-                            </video>
-                        </div>
-                    </div>
-                    `;
-                    break;
 
-                case 'audio':
-                    targetDiv.innerHTML = `
-                    <div class="audio-post">
-                        <audio controls>
-                            <source src="showFile.php?id=${imageDetails.id}" type="audio/mpeg">
-                            Your browser does not support the audio element.
-                        </audio>
-                    </div>
-                    `;
-                    break;
-            }
-
-            // Atualizar botão de like
-            document.getElementById("likeButton").href = "likePost.php?idPost=" + postData.id;
+            targetDiv.innerHTML = getMultimediaFileHTML(mimeFilename, imageDetails);
             
+
             // Atualizar dados do usuário
             document.getElementById("modalUsername").textContent = userData.username;
             document.getElementById("likeCount").textContent = postData.numLikes;
@@ -266,36 +260,111 @@ function updatePostModalFromData(postData, userData, imageDetails) {
             if (postTitleElement) {
                 postTitleElement.textContent = postData.title || '';
             }
+
+            const likeButton = document.getElementById("likeButton");
+            if(likeButton){
+
+                if(isLiked){
+                    likeButton.classList.add('liked');
+                }else{
+                    likeButton.classList.remove('liked');
+                }
+            }
         }
     }
 }
 
-// Função para toggle like
-async function toggleLike() {
-    const likeButton = document.getElementById('likeButton');
-    const likeCount = document.getElementById('likeCount');
-    const isLiked = likeButton.classList.contains('liked');
-    
-    try {
-        const response = await fetch('toggleLike.php', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                postId: getCurrentPostId(),
-                action: isLiked ? 'unlike' : 'like'
-            })
-        });
-        
-        if (response.ok) {
-            const result = await response.json();
-            likeButton.classList.toggle('liked');
-            likeCount.textContent = result.likes;
-        }
-    } catch (error) {
-        console.error('Erro ao curtir post:', error);
+
+function getMultimediaFileHTML(mimeFilename, imageDetails){
+
+    let innerHTML = "";
+
+    switch (mimeFilename) {
+        case 'image':
+            innerHTML = `<img src="showFile.php?id=${imageDetails.id}" alt="Post">`;
+            break;
+
+        case 'video':
+            innerHTML = `
+                    <div class="DBGVideoContainer MyVideoContainer">
+                        <div class="DBGVideoPlayer MyVideoPlayer">
+                            <video id="TheVideo" width="640" height="480" poster="showFileImage.php?id=${imageDetails.id}" controls >
+                                <source src="showFile.php?id=${imageDetails.id}" />
+                            </video>
+                        </div>
+                    </div>
+                    `;
+            break;
+
+        case 'audio':
+            innerHTML = `
+                    <div class="audio-post">
+                        <audio controls>
+                            <source src="showFile.php?id=${imageDetails.id}" type="audio/mpeg">
+                            Your browser does not support the audio element.
+                        </audio>
+                    </div>
+                    `;
+            break;
     }
+
+    return innerHTML;
+
+}
+
+
+
+
+
+// Função para toggle like
+async function toggleLike(idUser) {
+
+    const idPost = document.getElementById("modalMediaContainer").dataset.postId;
+
+    const currentIsLikedRes = await fetch(`checkIfPostLikedJS.php?query1=${encodeURIComponent(idUser)}&query2=${encodeURIComponent(idPost)}`)
+    const currentIsLiked = await currentIsLikedRes.json();
+    
+    let toggleLikeRes;
+    if(currentIsLiked){
+        toggleLikeRes = await fetch(`dislikePostJS.php?query1=${encodeURIComponent(idUser)}&query2=${encodeURIComponent(idPost)}`);
+    }else{
+        toggleLikeRes = await fetch(`likePostJS.php?query1=${encodeURIComponent(idUser)}&query2=${encodeURIComponent(idPost)}`);
+    }
+
+    const toggleLike = await toggleLikeRes.json();
+
+    if (toggleLike) {
+
+        
+
+        const likeButton = document.getElementById("likeButton");
+        if (likeButton) {
+
+            if (currentIsLiked) {
+                likeButton.classList.remove('liked');
+            } else {
+                likeButton.classList.add('liked');
+            }
+        }
+
+        const { postData, userData, imageDetails, isLiked} = await loadPostData(idPost, idUser);
+
+        document.getElementById("likeCount").textContent = postData.numLikes;
+
+
+        
+
+    } else {
+        console.log("Something was wrong with the like/dislike process");
+    }
+
+
+
+
+
+   
+    
+    
 }
 
 

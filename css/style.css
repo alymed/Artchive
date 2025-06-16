@@ -167,13 +167,15 @@ input#photos:checked ~ .tabs label[for="photos"] {
   font-weight: bold;
 }
 
-input#profile:checked ~ .tab-content #profileContent,
+
 input#home:checked ~ .tab-content #homeContent,
 input#create:checked ~ .tab-content #createContent,
 input#notification:checked ~ .tab-content #notification,
 input#film:checked ~ .tab-content #filmContent,
 input#music:checked ~ .tab-content #musicContent,
-input#photos:checked ~ .tab-content #photoContent {
+input#photos:checked ~ .tab-content #photoContent,
+input#profile:checked ~ .tab-content #profileContent,
+input#results:checked ~ .tab-content #resultsContent{
   display: block;
 }
 

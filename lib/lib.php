@@ -442,7 +442,7 @@ function searchUsers($search, $idUser) {
     $search = mysqli_real_escape_string($GLOBALS['ligacao'], $search);
 
     $query = "SELECT * FROM `$dataBaseName`.`users-profile` " .
-            "WHERE `username` LIKE '%$search%' AND `id` != '$idUser'";
+            "WHERE `username` LIKE '$search%' AND `id` != '$idUser'";
 
     $result = mysqli_query($GLOBALS['ligacao'], $query);
 
@@ -512,6 +512,8 @@ function getUserFollowing($idUser) {
 
 function follow($idFollower, $idFollowed) {
 
+    $followOk = true;
+
     dbConnect( ConfigFile );
     
     $dataBaseName = $GLOBALS['configDataBase']->db;
@@ -534,13 +536,15 @@ function follow($idFollower, $idFollowed) {
     if ($result === false) {
         
         echo "Error inserting profile: " . mysqli_error($GLOBALS['ligacao']);
-        return false;
+        $followOk = false;
     }
 
-    return true;
+    return $followOk;
 }
 
 function unfollow($idFollower, $idFollowed) {
+
+    $followOk = true;
 
     dbConnect( ConfigFile );
     
@@ -557,10 +561,14 @@ function unfollow($idFollower, $idFollowed) {
     if ($result === false) {
         
         echo "Error inserting profile: " . mysqli_error($GLOBALS['ligacao']);
-        return false;
+        $followOk = false;
     }
 
-    return true;
+    dbDisconnect();
+
+    
+
+    return $followOk;
 }
 
 
@@ -682,23 +690,75 @@ function getPosts($idUser, $owner) {
     }
 
     $result = mysqli_query($GLOBALS['ligacao'], $query);
-    $filesID = array();
+    $posts = array();
 
-    while (($fileDataRecord = mysqli_fetch_array($result)) != false) {
-        $filesID[] = $fileDataRecord;
+    while (($postData = mysqli_fetch_array($result)) != false) {
+        $posts[] = $postData;
     }
 
     mysqli_free_result($result);
     dbDisconnect();
 
-    return $filesID;
+    return $posts;
+}
+
+
+
+function searchPosts($search) {
+    dbConnect(ConfigFile);
+
+    $dataBaseName = $GLOBALS['configDataBase']->db;
+    mysqli_select_db($GLOBALS['ligacao'], $dataBaseName );
+
+
+    $query ="SELECT * FROM `$dataBaseName`.`users-posts` WHERE `title` LIKE '%$search%' OR `description` LIKE '%$search%'";
+    
+
+    $result = mysqli_query($GLOBALS['ligacao'], $query);
+    $posts = array();
+
+    while (($postData = mysqli_fetch_array($result)) != false) {
+        $posts[] = $postData;
+    }
+
+    mysqli_free_result($result);
+    dbDisconnect();
+
+    return $posts;
 }
 
 function deletePost($idUser, $idPost) {}
 
+function checkIfLiked($idUser, $idPost) {
+
+    $isLiked = false;
+
+    dbConnect( ConfigFile );
+    
+    $dataBaseName = $GLOBALS['configDataBase']->db;
+
+    mysqli_select_db($GLOBALS['ligacao'], $dataBaseName );
+
+    $query = "SELECT * FROM `$dataBaseName`.`users-likes` " .
+            "WHERE `idLiker`='$idUser' AND `idPost`='$idPost'";
+
+    $result = mysqli_query($GLOBALS['ligacao'], $query);
+
+    if ($result && mysqli_num_rows($result) > 0) {
+        $isLiked = true;
+    }
+    
+    mysqli_free_result($result);
+
+    dbDisconnect();
+
+    return $isLiked;
+
+}
+
 function likePost($idLiker, $idPost){
 
-    $likeOk = -1;
+    $likeOk=false;
 
     dbConnect( ConfigFile );
     $dataBaseName = $GLOBALS['configDataBase']->db;
@@ -715,14 +775,40 @@ function likePost($idLiker, $idPost){
 
     if ( $result !== false ) {
 
-        $likeOk = mysqli_insert_id($GLOBALS['ligacao']);
         updatePostNumLikes($idPost);
+        $likeOk = true;
     }
 
    
     dbDisconnect();
 
     return $likeOk;
+
+}
+
+function dislikePost($idLiker, $idPost){
+
+    $dislikeOk = false;
+
+    dbConnect( ConfigFile );
+    $dataBaseName = $GLOBALS['configDataBase']->db;
+
+    mysqli_select_db( $GLOBALS['ligacao'], $dataBaseName );
+    
+    $query = 
+            "DELETE FROM  `$dataBaseName`.`users-likes` WHERE `idLiker` = '$idLiker' AND `idPost` = '$idPost'";
+
+    $result = mysqli_query($GLOBALS['ligacao'], $query);
+
+    if ($result !== false) {
+
+        updatePostNumLikes($idPost);
+        $dislikeOk = true;
+    }
+
+    dbDisconnect();
+
+    return $dislikeOk;
 
 }
 
@@ -747,6 +833,8 @@ function updatePostNumLikes($idPost) {
         
         mysqli_query($GLOBALS['ligacao'], $queryUpdate);
     }
+
+    mysqli_free_result($result);
 
 }
 
@@ -799,6 +887,8 @@ function updatePostNumComments($idPost) {
         
         mysqli_query($GLOBALS['ligacao'], $queryUpdate);
     }
+
+    mysqli_free_result($result);
 
 }
 
@@ -861,6 +951,8 @@ function addActivity($idAactor, $idAction, $idTarget, $sendTo) {
     return $postOk;
 }
 
+
+
 function getActivities($idUser) {
 
     dbConnect( ConfigFile );
@@ -883,6 +975,31 @@ function getActivities($idUser) {
     dbDisconnect();
     
     return $activies;
+}
+
+function removeActivity($idAactor, $action, $idTarget) {
+
+    $activityOK = false;
+
+    dbConnect( ConfigFile );
+    $dataBaseName = $GLOBALS['configDataBase']->db;
+
+    mysqli_select_db( $GLOBALS['ligacao'], $dataBaseName );
+
+    $query = 
+            "DELETE FROM  `$dataBaseName`.`users-activity` WHERE `idActor` = '$idAactor' AND `action` = '$action' AND `idTarget` = '$idTarget'";
+
+    $result = mysqli_query($GLOBALS['ligacao'], $query);
+
+    if ($result !== false) {
+
+        $activityOK = true;
+    }
+
+    dbDisconnect();
+
+    return $activityOK;
+
 }
 
 /*

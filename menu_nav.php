@@ -46,6 +46,7 @@
 ?>
 
 <input hidden type="radio" name="tab" id="profile">
+<input hidden type="radio" name="tab" id="results">
 <input type="radio" name="tab" id="home">
 <input type="radio" name="tab" id="create">
 <input type="radio" name="tab" id="notification">
@@ -135,20 +136,31 @@
 
             foreach ($randomKeys as $k) {
                 $post = $posts[$k];
-                $randomSize = $sizes[array_rand($sizes)];
-                $postTitle = htmlspecialchars($post['title']);
-                $fileID = $post['idImage'];
                 $postID = $post['id'];
-                $user = getUsernameById($post['idUser']);
+                $postTitle = htmlspecialchars($post['title']);
+                $user = getUserData($post['idUser'])['username'];
                 $description = $post['description'];
                 $date = $post['createdAt'];
 
-                echo "<figure class=\"card card_$randomSize\" 
+                $fileID = $post['idImage'];
+                $fileDetails = getFileDetails($fileID);
+
+                if ($fileDetails['mimeFilename']=='image') {
+                    $size = $sizes[array_rand($sizes)];
+                } else if ($fileDetails['mimeFilename']== 'video') {
+                    $size = 'large';
+                } else {
+                    $size = 'small';
+                }
+
+                
+
+                echo "<figure class=\"card card_$size\" 
                         data-post-id=\"$postID\" 
                         data-username=\"$user\" 
                         data-description=\"".htmlspecialchars($description)."\" 
                         data-date=\"$date\">";
-                echo "<img src=\"showFileThumb.php?id=$fileID&size=$randomSize\" alt=\"".htmlspecialchars($postTitle)."\">";
+                echo "<img src=\"showFileThumb.php?id=$fileID&size=$size\" alt=\"".htmlspecialchars($postTitle)."\">";
                 echo "<figcaption>$postTitle</figcaption>";
                 echo "</figure>";
 
@@ -193,13 +205,13 @@
                             break;
                         
                         case  'comment':
-                            $target = getPostData($notifications[$i]["idTarget"]);
-                            $text = $target["username"] . " commented on your post!";
+                            $target = getPostData($notifications[$i]['idTarget']);
+                            $text = $actor['username'] . " commented on your post!";
                             break;
 
-                        case  'liked':
-                            $target = getPostData($notifications[$i]["idTarget"]);
-                            $text = $target["username"] . " liked your post!";
+                        case  'like':
+                            $target = getPostData($notifications[$i]['idTarget']);
+                            $text = $actor['username'] . " liked your post!";
                             break;
                     }
             ?>
@@ -357,12 +369,17 @@
 
                     $idPost = $post['id'];
                     $postTitle = $post['title'];
-                    $fileID = $post['idImage'];
                     $description = $post['description'];
 
-                    $image = "<img src=\"showFileThumb.php?id=$fileID&size=small\" alt=\"Post\"></img>";
+                    $fileID = $post['idImage'];
+
+                    $sizes = ['small', 'medium', 'large'];
+                    $randomSize = $sizes[array_rand($sizes)];
+   
+
+                    $image = "<img src=\"showFileThumb.php?id=$fileID&size=$randomSize\" alt=\"Post\"></img>";
                     $caption = "<figcaption> $description </figcaption>";
-                    echo "<figure class=\"card card_small\" data-post-id=\"$idPost\">$image $caption </figure>";
+                    echo "<figure class=\"card card_$randomSize\" data-post-id=\"$idPost\">$image $caption </figure>";
 
                 }
 
@@ -377,6 +394,14 @@
         <h2>Content 3</h2>
         <p><a href="logout.php">Logout</a></p>
     </div>
+
+    <div id="resultsContent" class="content">
+        <div id="resultsContainer" class="img_container">
+                
+        </div>
+    </div>
+
+    
 
     <div id="profileContent" class="content">
         <div class="profile-header">
@@ -500,10 +525,14 @@
             
             <div class="post-footer">
                 <div class="post-actions">
-                    <a id="likeButton" class="like-button" onclick="toggleLike()">
+                    <a id="likeButton" class="like-button" onclick="toggleLike(<?php echo $idUser?>)">
                         <i class="bi bi-heart"></i>
                     </a>
-                    <span id="likeCount" class="action-count">0</span>
+                    <span id="likeCount" class="action-count">-1</span>
+                    <a id="commentButton" class="like-button" onclick="toggleLike(<?php echo $idUser?>)">
+                        <i class="bi bi-heart"></i>
+                    </a>
+                    <span id="commentCount" class="action-count">-1</span>
                 </div>
                 <div class="caption">
                     <span class="username" id="captionUsername"></span>
@@ -586,12 +615,14 @@ privacyToggle.addEventListener('click', () => {
     }
 });
 
+const idUser = <?php echo json_encode($idUser); ?>
+
 document.addEventListener('DOMContentLoaded', function() {
     document.querySelectorAll('.card').forEach(card => {
         card.addEventListener('click', async function() {
-            const postId = this.dataset.postId;
-            console.log('Post ID:', postId);
-            await openPost(postId); // now await works here
+            const idPost = this.dataset.postId;
+            console.log('Post ID:', idPost);
+            await openPost(idPost, idUser); // now await works here
         });
     });
 });
