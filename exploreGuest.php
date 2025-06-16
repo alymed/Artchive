@@ -217,40 +217,44 @@ $owner = false;
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
 
 
-<div id="postModal" class="post-popup">
-    <div class="post-container">
-        <span class="close-icon" onclick="closePost()">&times;</span>
-        <div class="post">
-            <div class="post-header">
-                <img id="modalProfilePic" src="images/profilePicHandler.jpg" alt="User profile" class="profile-pic">
-                <div class="user-info">
-                    <span id="modalUsername" class="username"></span>
-                    <span id="modalPostTitle" class="post-title"></span>
-                </div>
-                <div class="post-menu">
-                    <i class="bi bi-three-dots-vertical menu-icon" onclick="togglePostMenu()"></i>
-                    <div class="dropdown-menu" id="postMenu">
-                        <button onclick="handleShare()">
-                            <i class="bi bi-share"></i> Share
-                        </button>
-                        <?php if ($owner) { ?>
-                            <input type="hidden" name="changePrivacy" value="1">
-                            <!-- O botão de privacidade será atualizado dinamicamente pelo JavaScript -->
-                            <button>
-                                <i class="bi bi-lock"></i> Make Private
+    <div id="postModal" class="post-popup">
+        <div class="post-container">
+            <span class="close-icon" onclick="closePost()">&times;</span>
+            <div class="post">
+                <div class="post-header">
+                    <img id="modalProfilePic" src="images/profilePicHandler.jpg" alt="User profile" class="profile-pic">
+                    <div class="user-info">
+                        <span id="modalUsername" class="username"></span>
+                        <span id="modalPostTitle" class="post-title"></span>
+                    </div>
+                    <div class="post-menu">
+                        <i class="bi bi-three-dots-vertical menu-icon" onclick="togglePostMenu()"></i>
+                        <div class="dropdown-menu" id="postMenu">
+                            <button onclick="handleShare()">
+                                <i class="bi bi-share"></i> Share
                             </button>
-                        <?php } ?>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="modalMediaContainer">
+                    <!-- Conteúdo de mídia será inserido aqui dinamicamente -->
+                </div>
+                <div class="post-footer">
+                    <div class="post-actions">
+                        
+                        <span id="commentCount" class="action-count"></span>
+                    </div>
+                    <div class="caption">
+                        <span class="username" id="captionUsername"></span>
+                        <span id="captionText" class="caption-text"></span>
                     </div>
                 </div>
             </div>
-
-            <div id="modalMediaContainer">
-                <!-- Conteúdo de mídia será inserido aqui dinamicamente -->
-            </div>
         </div>
     </div>
-</div>
 
+    <script src="js/script.js"></script>
 
 </body>
 <script>

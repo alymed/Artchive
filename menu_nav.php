@@ -80,6 +80,14 @@
         border-radius: 6px;
         margin: 10px 0;
     }
+
+    .content-section {
+        display: none;
+    }
+
+    .content-section.active {
+        display: block;
+    }
 </style>
 
 <?php
@@ -97,10 +105,6 @@ if (isset($username)) {
 } else {
     $idUserProfile = $_SESSION['id'];
     $owner = true;
-}
-
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['changePrivacy'])) {
-    changePostPrivacy($userId);
 }
 
 $followers = getUserFollowers($idUser);
@@ -131,52 +135,6 @@ $current_user = getUserData($idUser); // Get current user's data
 $user_type = $current_user['user_type']; // Get user type
 $canPost = ($user_type !== 'user'); // user cannot post
 $isAdministrator = ($user_type === 'administrator'); // user cannot post
-
-
-
-// Function to render posts
-function renderPosts($posts)
-{
-    if (count($posts) > 0) {
-        $randomKeys = array_rand($posts, count($posts));
-
-        // Handle single post case
-        if (count($posts) == 1) {
-            $randomKeys = [$randomKeys];
-        }
-
-        $sizes = ['small', 'medium', 'large'];
-
-        foreach ($randomKeys as $k) {
-            $post = $posts[$k];
-            $postID = $post['id'];
-            $postTitle = htmlspecialchars($post['title']);
-            $user = getUserData($post['idUser'])['username'];
-            $description = $post['description'];
-            $date = $post['createdAt'];
-
-            $fileID = $post['idImage'];
-            $fileDetails = getFileDetails($fileID);
-
-            if ($fileDetails['mimeFilename'] == 'image') {
-                $size = $sizes[array_rand($sizes)];
-            } else if ($fileDetails['mimeFilename'] == 'video') {
-                $size = 'large';
-            } else {
-                $size = 'small';
-            }
-
-            echo "<figure class=\"card card_$size\" 
-                data-post-id=\"$postID\" 
-                data-username=\"$user\" 
-                data-description=\"" . htmlspecialchars($description) . "\" 
-                data-date=\"$date\">";
-            echo "<img src=\"showFileThumb.php?id=$fileID&size=$size\" alt=\"" . htmlspecialchars($postTitle) . "\">";
-            echo "<figcaption>$postTitle</figcaption>";
-            echo "</figure>";
-        }
-    }
-}
 ?>
 
 <input hidden type="radio" name="tab" id="profile">
@@ -294,23 +252,52 @@ function renderPosts($posts)
                 ?>
             </div>
         </div>
-
         <?php foreach ($categories as $cat): ?>
-            <div class="tag<?= $cat['id'] ?>-content content-section">
+            <div class="tag<?= $cat['id'] ?>-content content-section" id="tag<?= $cat['id'] ?>-content">
                 <div class="img_container">
                     <?php
                     $categoryPosts = getPostsByCategory($cat['id']);
-                    renderPosts($categoryPosts);
+                    if (count($categoryPosts) > 0):
+                        foreach ($categoryPosts as $post):
+                            $postID = $post['id'];
+                            $postTitle = htmlspecialchars($post['title']);
+                            $user = getUserData($post['idUser'])['username'];
+                            $description = htmlspecialchars($post['description']);
+                            $date = $post['createdAt'];
+                            $fileID = $post['idImage'];
+                            $fileDetails = getFileDetails($fileID);
 
-                    ?>
+                            // Determine card size based on file type
+                            $sizes = ['small', 'medium', 'large'];
+                            if ($fileDetails['mimeFilename'] == 'image') {
+                                $size = $sizes[array_rand($sizes)];
+                            } else if ($fileDetails['mimeFilename'] == 'video') {
+                                $size = 'large';
+                            } else {
+                                $size = 'small';
+                            }
+                            ?>
+
+                            <figure class="card card_<?= $size ?>" data-post-id="<?= $postID ?>"
+                                data-username="<?= htmlspecialchars($user) ?>" data-description="<?= $description ?>"
+                                data-date="<?= $date ?>">
+                                <img src="showFileThumb.php?id=<?= $fileID ?>&size=<?= $size ?>" alt="<?= $postTitle ?>">
+                                <figcaption><?= $postTitle ?></figcaption>
+                            </figure>
+
+                        <?php endforeach; ?>
+                    <?php else: ?>
+                        <p>No posts found in this category.</p>
+                    <?php endif; ?>
                 </div>
             </div>
         <?php endforeach; ?>
 
-    </div>
-    <div id="createContent" class="content">
 
     </div>
+
+    <div id="createContent" class="content"></div>
+
     <div id="notification" class="content">
         <h2>Notifications</h2>
         <ul class="notification-list">
@@ -643,13 +630,13 @@ function renderPosts($posts)
                         <button onclick="handleShare()">
                             <i class="bi bi-share"></i> Share
                         </button>
-                        <?php if ($owner) { ?>
-                            <input type="hidden" name="changePrivacy" value="1">
-                            <!-- O botão de privacidade será atualizado dinamicamente pelo JavaScript -->
-                            <button>
-                                <i class="bi bi-lock"></i> Make Private
-                            </button>
-                        <?php } ?>
+                        <input type="hidden" id="privacyInput" name="changePrivacy" value="public">
+                        <div id="userData" data-username="<?= htmlspecialchars($idUser) ?>"></div>
+
+                        <button id="privacyToggle" style="display: none;" aria-pressed="false"
+                            title="Definido como público" onclick="(<?php togglePostPrivacy($idUser); ?>)">
+                            <i class="bi bi-lock-open"></i> Make Private
+                        </button>
                     </div>
                 </div>
             </div>
@@ -664,7 +651,6 @@ function renderPosts($posts)
                         <i class="bi bi-heart"></i>
                     </a>
                     <span id="likeCount" class="action-count">-1</span>
-                    <span id="commentCount" class="action-count"></span>
                 </div>
                 <div class="caption">
                     <span class="username" id="captionUsername"></span>
@@ -738,82 +724,64 @@ function renderPosts($posts)
     const idUser = <?php echo json_encode($idUser); ?>
 
     document.addEventListener('DOMContentLoaded', function () {
+        // Handle post clicks
         document.querySelectorAll('.card').forEach(card => {
             card.addEventListener('click', async function () {
                 const idPost = this.dataset.postId;
-                await openPost(idPost, idUser); // now await works here
+                await openPost(idPost, idUser);
             });
         });
 
+        // Handle top tabs (category tabs)
+        const topTabInputs = document.querySelectorAll('input[name="top_tab"]');
+        const contentSections = document.querySelectorAll('.content-section');
 
+        // Function to show content based on selected tab
+        function showTabContent(selectedTabId) {
+            // Hide all content sections
+            contentSections.forEach(section => {
+                section.classList.remove('active');
+            });
 
-        const tabs = document.querySelectorAll('.top_tab');
-        const contents = document.querySelectorAll('.content-section');
-        const tabContainer = document.querySelector('.top_tabs');
-
-        // Ensure first tab is active on load
-        function initializeTabs() {
-            tabs.forEach(t => t.classList.remove('active'));
-            contents.forEach(content => content.classList.remove('active'));
-
-            // Set first tab (All) as active
-            const firstTab = document.querySelector('.top_tab[data-target="all-content"]');
-            const firstContent = document.querySelector('.all-content');
-
-            if (firstTab && firstContent) {
-                firstTab.classList.add('active');
-                firstContent.classList.add('active');
-
-                // Reset scroll position to show first tab
-                tabContainer.scrollLeft = 0;
+            // Show the corresponding content section
+            if (selectedTabId === 'all') {
+                const allContent = document.querySelector('.all-content');
+                if (allContent) {
+                    allContent.classList.add('active');
+                }
+            } else {
+                // For category tabs (tag1, tag2, etc.)
+                const categoryId = selectedTabId.replace('tag', '');
+                const categoryContent = document.querySelector(`.tag${categoryId}-content`);
+                if (categoryContent) {
+                    categoryContent.classList.add('active');
+                }
             }
         }
 
-        // Initialize tabs on page load
-        initializeTabs();
-
-        tabs.forEach(tab => {
-            tab.addEventListener('click', function () {
-                // Remove active class from all tabs
-                tabs.forEach(t => t.classList.remove('active'));
-
-                // Add active class to clicked tab
-                this.classList.add('active');
-
-                // Hide all content sections
-                contents.forEach(content => content.classList.remove('active'));
-
-                // Show the target content section
-                const targetId = this.getAttribute('id');
-                const targetContent = document.getElementById(targetId);
-                if (targetContent) {
-                    targetContent.classList.add('active');
+        // Add event listeners to radio buttons
+        topTabInputs.forEach(input => {
+            input.addEventListener('change', function () {
+                if (this.checked) {
+                    showTabContent(this.id);
                 }
-
-                // Scroll active tab into view if needed
-                this.scrollIntoView({
-                    behavior: 'smooth',
-                    block: 'nearest',
-                    inline: 'center'
-                });
             });
         });
 
-        // Handle keyboard navigation
-        tabContainer.addEventListener('keydown', function (e) {
-            const activeTab = document.querySelector('.top_tab.active');
-            let nextTab = null;
+        // Initialize - show "All" content by default
+        showTabContent('all');
 
-            if (e.key === 'ArrowLeft') {
-                nextTab = activeTab.previousElementSibling;
-            } else if (e.key === 'ArrowRight') {
-                nextTab = activeTab.nextElementSibling;
-            }
-
-            if (nextTab && nextTab.classList.contains('top_tab')) {
-                nextTab.click();
-                nextTab.focus();
-            }
+        // Handle label clicks to ensure proper tab switching
+        const topTabLabels = document.querySelectorAll('.top_tab');
+        topTabLabels.forEach(label => {
+            label.addEventListener('click', function () {
+                const targetInputId = this.getAttribute('for');
+                const targetInput = document.getElementById(targetInputId);
+                if (targetInput) {
+                    targetInput.checked = true;
+                    showTabContent(targetInputId);
+                }
+            });
         });
     });
 </script>
