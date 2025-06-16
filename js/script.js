@@ -62,6 +62,16 @@ function closeSupporterForm() {
     document.getElementById("formOverlay").style.display = "none";
 }
 
+function openAddCategoryForm() {
+    document.getElementById("addCategoryForm").style.display = "block";
+    document.getElementById("formOverlay").style.display = "block";
+}
+
+function closeAddCategoryForm() {
+    document.getElementById("addCategoryForm").style.display = "none";
+    document.getElementById("formOverlay").style.display = "none";
+}
+
 function closeUploadForm() {
     document.getElementById("uploadForm").style.display = "none";
     document.getElementById("formOverlay").style.display = "none";
@@ -128,6 +138,21 @@ function openPost(idPost, idUser) {
     updatePostModalFromData(idPost, idUser, targetDiv);
 }
 
+function openPostGuest(idPost) {
+    const modal = document.getElementById('postModal');
+    modal.classList.add('show');
+    document.body.style.overflow = 'hidden'; // Previne scroll da página
+
+    const mediaContainer = document.getElementById("modalMediaContainer");
+    if (likeButton) {
+        mediaContainer.setAttribute('data-post-id', idPost);
+    }
+    
+    const targetDiv = document.getElementById("modalMediaContainer");
+    // Aqui você carregaria os dados do post
+    updatePostModalFromDataGuest(idPost, targetDiv);
+}
+
 // Função para carregar dados do post
 async function loadPostData(idPost, idLiker) {
     try {
@@ -177,11 +202,54 @@ async function loadPostData(idPost, idLiker) {
     }
 }
 
+// Função para carregar dados do post
+async function loadPostDataGuest(idPost) {
+    try {
+
+
+        const postRes = await fetch(`getPostDataJS.php?query=${encodeURIComponent(idPost)}`);
+
+
+        const postData = await postRes.json();
+
+        if (Object.keys(postData).length === 0) {
+            console.log("No post data found.");
+            return;
+        }
+
+        
+
+        const { idUser, idImage, title, description, numLikes, numComments } = postData;
+
+        const [userRes, imageRes] = await Promise.all([
+            fetch(`getUserDataJS.php?query=${encodeURIComponent(idUser)}`),
+            fetch(`getImageDetailsJS.php?query=${encodeURIComponent(idImage)}`)
+        ]);
+
+        const userData = await userRes.json();
+        const imageDetails = await imageRes.json();
+
+
+
+        // Store current post ID in modal for later use
+        const modal = document.getElementById("postModal");
+        if (modal) {
+            modal.dataset.currentPostId = idPost;
+        }
+
+        // Atualizar o modal com os dados carregados
+        return {postData, userData, imageDetails};
+
+    } catch (error) {
+        console.error('Erro ao carregar post:', error);
+    }
+}
+
 // Função auxiliar para atualizar o modal (baseada na updatePostModal original)
 async function updatePostModalFromData(idPost, idUser,  targetDiv) {
 
     const { postData, userData, imageDetails, isLiked} = await loadPostData(idPost, idUser);
-
+    console.log(userData);
     if (Object.keys(imageDetails).length != 0) {
 
         const mimeFilename = imageDetails.mimeFilename;
@@ -199,10 +267,71 @@ async function updatePostModalFromData(idPost, idUser,  targetDiv) {
 
             // Atualizar foto de perfil
             const profilePicElement = document.getElementById("modalProfilePic");
-            if (userData.profilePicture) {
-                profilePicElement.src = `showFile.php?id=${userData.profilePicture}`;
+            if (userData.profile_pic) {
+                profilePicElement.src = userData.profile_pic;
+            
             } else {
-                profilePicElement.src = "images/default-profile.png";
+                profilePicElement.src = "images/profilePicHandler.jpg";
+            }
+            profilePicElement.alt = `${userData.username}'s profile picture`;
+
+            // Atualizar caption com username e descrição
+            const captionUsername = document.getElementById("captionUsername");
+            const captionText = document.getElementById("captionText");
+            
+            if (captionUsername) {
+                captionUsername.textContent = userData.username || 'Unknown User';
+            }
+            
+            if (captionText) {
+                captionText.textContent = postData.description || '';
+            }
+
+            // Atualizar título do post
+            const postTitleElement = document.getElementById("modalPostTitle");
+            if (postTitleElement) {
+                postTitleElement.textContent = postData.title || '';
+            }
+
+            const likeButton = document.getElementById("likeButton");
+            if(likeButton){
+
+                if(isLiked){
+                    likeButton.classList.add('liked');
+                }else{
+                    likeButton.classList.remove('liked');
+                }
+            }
+        }
+    }
+}
+
+async function updatePostModalFromDataGuest(idPost,  targetDiv) {
+
+    const { postData, userData, imageDetails, isLiked} = await loadPostDataGuest(idPost);
+    console.log(userData);
+    if (Object.keys(imageDetails).length != 0) {
+
+        const mimeFilename = imageDetails.mimeFilename;
+  
+
+        if (targetDiv) {
+
+            targetDiv.innerHTML = getMultimediaFileHTML(mimeFilename, imageDetails);
+            
+
+            // Atualizar dados do usuário
+            document.getElementById("modalUsername").textContent = userData.username;
+            document.getElementById("likeCount").textContent = postData.numLikes;
+            document.getElementById("commentCount").textContent = postData.numComments;
+
+            // Atualizar foto de perfil
+            const profilePicElement = document.getElementById("modalProfilePic");
+            if (userData.profile_pic) {
+                profilePicElement.src = userData.profile_pic;
+            
+            } else {
+                profilePicElement.src = "images/profilePicHandler.jpg";
             }
             profilePicElement.alt = `${userData.username}'s profile picture`;
 

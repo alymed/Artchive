@@ -70,6 +70,7 @@
                 <option value="" disabled selected>Select user type</option>
                 <option value="supporter">Supporter</option>
                 <option value="user">User</option>
+                <option value="administrator">Administrator</option>
             </select>
             
             <label for="username"><b>Username</b></label>

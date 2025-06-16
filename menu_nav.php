@@ -1,52 +1,182 @@
+<style>
+    /* Hide all radio buttons */
+    input[name="top_tab"] {
+        display: none;
+    }
+
+    .top_tabs {
+        display: flex;
+        overflow-x: auto;
+        overflow-y: hidden;
+        -webkit-overflow-scrolling: touch;
+        padding: 10px 0;
+        gap: 10px;
+        margin-bottom: 20px;
+
+        scrollbar-width: thin;
+        scrollbar-color: #888 transparent;
+        white-space: nowrap;
+        border-bottom: 1px solid #ddd;
+
+        /* Ensure only horizontal scrolling */
+        height: auto;
+        max-height: none;
+    }
+
+    /* Webkit scrollbar styling */
+    .top_tabs::-webkit-scrollbar {
+        height: 6px;
+    }
+
+    .top_tabs::-webkit-scrollbar-track {
+        background: transparent;
+    }
+
+    .top_tabs::-webkit-scrollbar-thumb {
+        background: #888;
+        border-radius: 3px;
+    }
+
+    .top_tabs::-webkit-scrollbar-thumb:hover {
+        background: #555;
+    }
+
+    label.top_tab {
+        flex: 0 0 auto;
+        padding: 12px 18px;
+        cursor: pointer;
+        white-space: nowrap;
+        border-bottom: 3px solid transparent;
+        transition: all 0.3s ease;
+        background-color: transparent;
+        border-radius: 4px 4px 0 0;
+        font-weight: 500;
+        color: #666;
+        position: relative;
+    }
+
+    .top_tab:hover {
+        background-color: #f0f0f0;
+        color: #333;
+    }
+
+    /* Active tab styling */
+    .top_tab.active {
+        border-bottom: 3px solid #0a2c5a;
+        color: #0a2c5a;
+        font-weight: bold;
+        background-color: rgba(10, 44, 90, 0.05);
+    }
+
+    .tab-content {
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+
+
+    .demo-content {
+        padding: 20px;
+        background-color: #f8f9fa;
+        border-radius: 6px;
+        margin: 10px 0;
+    }
+</style>
+
 <?php
-    ini_set('display_errors', 1);
-    ini_set('display_startup_errors', 1);
-    error_reporting(E_ALL);
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
 
-    require_once( "lib/lib.php" );
+require_once("lib/lib.php");
 
-    $idUser = $_SESSION['id'];
+$idUser = $_SESSION['id'];
 
-    if(isset($username)){
-        $idUserProfile = searchUsers($username, $idUser)[0]["id"];
-        $owner = false;
-    }else{
-        $idUserProfile = $_SESSION['id'];
-        $owner = true;
-    }
+if (isset($username)) {
+    $idUserProfile = searchUsers($username, $idUser)[0]["id"];
+    $owner = false;
+} else {
+    $idUserProfile = $_SESSION['id'];
+    $owner = true;
+}
 
-    if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['changePrivacy'])) {
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['changePrivacy'])) {
     changePostPrivacy($userId);
-    }
+}
 
-    $followers = getUserFollowers( $idUser);
-    $following = getUserFollowing($idUser);
-    
-    #Profile
-    $profile_posts = getPosts($idUserProfile, $owner);
-    $profile_userData = getUserData($idUserProfile);
-    $profile_followers = getUserFollowers($idUserProfile);
-    $profile_following = getUserFollowing($idUserProfile);
+$followers = getUserFollowers($idUser);
+$following = getUserFollowing($idUser);
 
-    $notifications = getActivities($idUser);
+#Profile
+$profile_posts = getPosts($idUserProfile, $owner);
+$profile_userData = getUserData($idUserProfile);
+$profile_followers = getUserFollowers($idUserProfile);
+$profile_following = getUserFollowing($idUserProfile);
 
-    if(!$owner){
-        $isfollowing = false;
-        for($i= 0;$i<count($profile_followers);$i++){
-            
-            if($profile_followers[$i]['idFollower'] == $idUser){
-                $isfollowing = true;
-            }
+$notifications = getActivities($idUser);
+
+if (!$owner) {
+    $isfollowing = false;
+    for ($i = 0; $i < count($profile_followers); $i++) {
+
+        if ($profile_followers[$i]['idFollower'] == $idUser) {
+            $isfollowing = true;
         }
     }
+}
 
-    // Buscar categorias da base de dados
-    $categories = getAllCategories();
+// Buscar categorias da base de dados
+$categories = getAllCategories();
 
-    $current_user = getUserData($idUser); // Get current user's data
-    $user_type = $current_user['user_type']; // Get user type
-    $canPost = ($user_type !== 'user'); // user cannot post
-    $isAdministrator = ($user_type !== 'administrator'); // user cannot post
+$current_user = getUserData($idUser); // Get current user's data
+$user_type = $current_user['user_type']; // Get user type
+$canPost = ($user_type !== 'user'); // user cannot post
+$isAdministrator = ($user_type === 'administrator'); // user cannot post
+
+
+
+// Function to render posts
+function renderPosts($posts)
+{
+    if (count($posts) > 0) {
+        $randomKeys = array_rand($posts, count($posts));
+
+        // Handle single post case
+        if (count($posts) == 1) {
+            $randomKeys = [$randomKeys];
+        }
+
+        $sizes = ['small', 'medium', 'large'];
+
+        foreach ($randomKeys as $k) {
+            $post = $posts[$k];
+            $postID = $post['id'];
+            $postTitle = htmlspecialchars($post['title']);
+            $user = getUserData($post['idUser'])['username'];
+            $description = $post['description'];
+            $date = $post['createdAt'];
+
+            $fileID = $post['idImage'];
+            $fileDetails = getFileDetails($fileID);
+
+            if ($fileDetails['mimeFilename'] == 'image') {
+                $size = $sizes[array_rand($sizes)];
+            } else if ($fileDetails['mimeFilename'] == 'video') {
+                $size = 'large';
+            } else {
+                $size = 'small';
+            }
+
+            echo "<figure class=\"card card_$size\" 
+                data-post-id=\"$postID\" 
+                data-username=\"$user\" 
+                data-description=\"" . htmlspecialchars($description) . "\" 
+                data-date=\"$date\">";
+            echo "<img src=\"showFileThumb.php?id=$fileID&size=$size\" alt=\"" . htmlspecialchars($postTitle) . "\">";
+            echo "<figcaption>$postTitle</figcaption>";
+            echo "</figure>";
+        }
+    }
+}
 ?>
 
 <input hidden type="radio" name="tab" id="profile">
@@ -66,10 +196,10 @@
         <i class="bi bi-house-door-fill active-icon"></i>
     </label>
     <?php if ($canPost): ?>
-    <label for="create" class="tab" onclick="openUploadForm()">
-        <i class="bi bi-plus-square default-icon"></i>
-        <i class="bi bi-plus-square-fill active-icon"></i>
-    </label>
+        <label for="create" class="tab" onclick="openUploadForm()">
+            <i class="bi bi-plus-square default-icon"></i>
+            <i class="bi bi-plus-square-fill active-icon"></i>
+        </label>
     <?php else: ?>
     <?php endif; ?>
     <label for="notification" class="tab">
@@ -97,82 +227,85 @@
 <div class="tab-content">
 
     <div id="homeContent" class="content">
+
+        <!-- TOP TABS INPUTS -->
         <input type="radio" name="top_tab" id="all" checked>
-        <input type="radio" name="top_tab" id="tag2">
-        <input type="radio" name="top_tab" id="tag3">
-        <input type="radio" name="top_tab" id="tag4">
-        <input type="radio" name="top_tab" id="tag5">
-
-        <div class="top_tabs">
-            <label for="all" class="top_tab">All</label>
-            <label for="tag2" class="top_tab">Tag 2</label>
-            <label for="tag3" class="top_tab">Tag 3</label>
-            <label for="tag4" class="top_tab">Tag 4</label>
-            <label for="tag5" class="top_tab">Tag 5</label>
-
-        </div>
-        <!-- <input type="radio" name="top_tab" id="all" checked>
-        <?php foreach ($categories as $index => $category): ?>
-        <input type="radio" name="toptab" id="tag<?php echo $category['id']; ?>">
+        <?php foreach ($categories as $index => $cat): ?>
+            <input type="radio" name="top_tab" id="tag<?= $cat['id'] ?>">
         <?php endforeach; ?>
 
-        <!-- <div class="top_tabs">
-            <label for="all" class="toptab">All</label>
-            <?php foreach ($categories as $category): ?>
-            <label for="tag<?php echo $category['id']; ?>" class="top_tab"><?php echo htmlspecialchars($category['tagName']); ?></label>
+        <!-- TOP TABS LABELS -->
+        <div class="top_tabs">
+            <label for="all" class="top_tab">All</label>
+            <?php foreach ($categories as $cat): ?>
+                <label for="tag<?= $cat['id'] ?>" class="top_tab"><?= htmlspecialchars($cat['tagName']) ?></label>
             <?php endforeach; ?>
-        </div> -->
-
-        <div class="img_container">
-            <?php
-            $posts = array();
-            for( $i= 0;$i<count($following);$i++){
-                $followingUserPosts = getPosts($following[$i]['idFollowed'], $owner);
-                for($j= 0;$j<count($followingUserPosts);$j++){
-                    $posts[] = $followingUserPosts[$j];
-                }
-            }
-
-            if (count($posts) > 0) {
-            $randomKeys = array_rand($posts, count($posts));
-
-            $sizes = ['small', 'medium', 'large'];
-
-            foreach ($randomKeys as $k) {
-                $post = $posts[$k];
-                $postID = $post['id'];
-                $postTitle = htmlspecialchars($post['title']);
-                $user = getUserData($post['idUser'])['username'];
-                $description = $post['description'];
-                $date = $post['createdAt'];
-
-                $fileID = $post['idImage'];
-                $fileDetails = getFileDetails($fileID);
-
-                if ($fileDetails['mimeFilename']=='image') {
-                    $size = $sizes[array_rand($sizes)];
-                } else if ($fileDetails['mimeFilename']== 'video') {
-                    $size = 'large';
-                } else {
-                    $size = 'small';
-                }
-
-                
-
-                echo "<figure class=\"card card_$size\" 
-                        data-post-id=\"$postID\" 
-                        data-username=\"$user\" 
-                        data-description=\"".htmlspecialchars($description)."\" 
-                        data-date=\"$date\">";
-                echo "<img src=\"showFileThumb.php?id=$fileID&size=$size\" alt=\"".htmlspecialchars($postTitle)."\">";
-                echo "<figcaption>$postTitle</figcaption>";
-                echo "</figure>";
-
-            }
-        }
-        ?>
         </div>
 
+        <div class="all-content content-section active">
+
+            <div class="img_container">
+                <?php
+                $posts = array();
+                for ($i = 0; $i < count($following); $i++) {
+                    $followingUserPosts = getPosts($following[$i]['idFollowed'], $owner);
+                    for ($j = 0; $j < count($followingUserPosts); $j++) {
+                        $posts[] = $followingUserPosts[$j];
+                    }
+                }
+
+                if (count($posts) > 0) {
+                    $randomKeys = array_rand($posts, count($posts));
+
+                    $sizes = ['small', 'medium', 'large'];
+
+                    foreach ($randomKeys as $k) {
+                        $post = $posts[$k];
+                        $postID = $post['id'];
+                        $postTitle = htmlspecialchars($post['title']);
+                        $user = getUserData($post['idUser'])['username'];
+                        $description = $post['description'];
+                        $date = $post['createdAt'];
+
+                        $fileID = $post['idImage'];
+                        $fileDetails = getFileDetails($fileID);
+
+                        if ($fileDetails['mimeFilename'] == 'image') {
+                            $size = $sizes[array_rand($sizes)];
+                        } else if ($fileDetails['mimeFilename'] == 'video') {
+                            $size = 'large';
+                        } else {
+                            $size = 'small';
+                        }
+
+
+
+                        echo "<figure class=\"card card_$size\" 
+                        data-post-id=\"$postID\" 
+                        data-username=\"$user\" 
+                        data-description=\"" . htmlspecialchars($description) . "\" 
+                        data-date=\"$date\">";
+                        echo "<img src=\"showFileThumb.php?id=$fileID&size=$size\" alt=\"" . htmlspecialchars($postTitle) . "\">";
+                        echo "<figcaption>$postTitle</figcaption>";
+                        echo "</figure>";
+
+                    }
+                }
+                ?>
+            </div>
+        </div>
+
+        <?php foreach ($categories as $cat): ?>
+            <div class="tag<?= $cat['id'] ?>-content content-section">
+                <div class="img_container">
+                    <?php
+                    $categoryPosts = getPostsByCategory($cat['id']);
+                    renderPosts($categoryPosts);
+
+                    ?>
+                </div>
+            </div>
+        <?php endforeach; ?>
 
     </div>
     <div id="createContent" class="content">
@@ -182,50 +315,50 @@
         <h2>Notifications</h2>
         <ul class="notification-list">
             <?php
-                for($i= 0;$i<count($notifications);$i++){
+            for ($i = 0; $i < count($notifications); $i++) {
 
-                    $actor = getUserData($notifications[$i]['idActor']);
-                    $action = $notifications[$i]['action'];
-                    $isRead = $notifications[$i]['isRead'];
+                $actor = getUserData($notifications[$i]['idActor']);
+                $action = $notifications[$i]['action'];
+                $isRead = $notifications[$i]['isRead'];
 
-                    $createdAt = new DateTime($notifications[$i]['createdAt']);
-                    $now = new DateTime(); 
-                    $diffInSeconds = $now->getTimestamp() - $createdAt->getTimestamp();
-                    
-                    if ($diffInSeconds < 60) {
-                        $time =  "A few seconds ago";
-                    } elseif ($diffInSeconds < 3600) {
-                        $time = floor($diffInSeconds / 60) . "m";
-                    } elseif ($diffInSeconds < 86400) {
-                        $time  = floor($diffInSeconds / 3600) . "h";
-                    } else {
-                        $time = floor($diffInSeconds / 86400) . "d";
-                    }
+                $createdAt = new DateTime($notifications[$i]['createdAt']);
+                $now = new DateTime();
+                $diffInSeconds = $now->getTimestamp() - $createdAt->getTimestamp();
 
-
-                    switch($action){
-                        case 'follow':
-                            $text = $actor['username'] . " followed you!";
-                            break;
-                        
-                        case  'comment':
-                            $target = getPostData($notifications[$i]['idTarget']);
-                            $text = $actor['username'] . " commented on your post!";
-                            break;
-
-                        case  'like':
-                            $target = getPostData($notifications[$i]['idTarget']);
-                            $text = $actor['username'] . " liked your post!";
-                            break;
-                    }
-            ?>
-            <li class="notification-item">
-                <i class="bi bi-info-circle"></i>
-                <?php echo $text?>
-                <span class="time"><?php echo $time ?></span>
-            </li>
-            <?php
+                if ($diffInSeconds < 60) {
+                    $time = "A few seconds ago";
+                } elseif ($diffInSeconds < 3600) {
+                    $time = floor($diffInSeconds / 60) . "m";
+                } elseif ($diffInSeconds < 86400) {
+                    $time = floor($diffInSeconds / 3600) . "h";
+                } else {
+                    $time = floor($diffInSeconds / 86400) . "d";
                 }
+
+
+                switch ($action) {
+                    case 'follow':
+                        $text = $actor['username'] . " followed you!";
+                        break;
+
+                    case 'comment':
+                        $target = getPostData($notifications[$i]['idTarget']);
+                        $text = $actor['username'] . " commented on your post!";
+                        break;
+
+                    case 'like':
+                        $target = getPostData($notifications[$i]['idTarget']);
+                        $text = $actor['username'] . " liked your post!";
+                        break;
+                }
+                ?>
+                <li class="notification-item">
+                    <i class="bi bi-info-circle"></i>
+                    <?php echo $text ?>
+                    <span class="time"><?php echo $time ?></span>
+                </li>
+                <?php
+            }
             ?>
 
         </ul>
@@ -237,37 +370,29 @@
 
             $allUsers = getAllUsersData();
 
-            for( $i= 0;$i<count($allUsers);$i++){
+            for ($i = 0; $i < count($allUsers); $i++) {
                 $allUsersPosts = getPosts($allUsers[$i]['id'], $owner);
-                for($j= 0;$j<count($allUsersPosts);$j++){
+                for ($j = 0; $j < count($allUsersPosts); $j++) {
                     $idFile = $allUsersPosts[$j]['idImage'];
                     $fileData = getFileDetails($idFile);
-                    if($fileData['mimeFilename'] == 'video'){
+                    if ($fileData['mimeFilename'] == 'video') {
                         $posts[] = $allUsersPosts[$j];
                     }
                 }
             }
 
-            if(count($posts) > 0){
+            if (count($posts) > 0) {
 
 
                 $randomKeys = array_rand($posts, count($posts));
 
-                if(count($posts) == 1){
+                if (count($posts) == 1) {
                     $randomKeys = [$randomKeys];
                 }
 
-                for( $k= 0;$k<count($posts);$k++){
+                for ($k = 0; $k < count($posts); $k++) {
 
                     $post = $posts[$randomKeys[$k]];
-
-                    // $idPost = $post['id'];
-                    // $postTitle = $post['title'];
-                    // $fileID = $post['idImage'];
-
-                    // $image = "<img src=\"showFileThumb.php?id=$fileID&size=Large\" alt=\"Post\"></img>";
-                    // $caption = "<figcaption> aaaaaaaa </figcaption>";
-                    // echo "<figure class=\"card card_large\" data-post-id=\"$idPost\">$image $caption </figure>";
 
 
                     $idPost = $post['id'];
@@ -279,17 +404,17 @@
 
                     echo "<figure class=\"card card_large\" 
                             data-post-id=\"$idPost\" 
-                            data-description=\"".htmlspecialchars($description)."\" 
+                            data-description=\"" . htmlspecialchars($description) . "\" 
                             data-date=\"$date\">";
                     echo "<img src=\"showFileThumb.php?id=$fileID&size=Large\" alt=\"Post\"></img>";
                     echo "<figcaption>$postTitle</figcaption>";
                     echo "</figure>";
-                    }
+                }
 
             }
 
 
-        ?>
+            ?>
         </div>
     </div>
     <div id="musicContent" class="content">
@@ -299,27 +424,25 @@
 
             $allUsers = getAllUsersData();
 
-            for( $i= 0;$i<count($allUsers);$i++){
+            for ($i = 0; $i < count($allUsers); $i++) {
                 $allUsersPosts = getPosts($allUsers[$i]['id'], $owner);
-                for($j= 0;$j<count($allUsersPosts);$j++){
+                for ($j = 0; $j < count($allUsersPosts); $j++) {
                     $idFile = $allUsersPosts[$j]['idImage'];
                     $fileData = getFileDetails($idFile);
-                    if($fileData['mimeFilename'] == 'audio'){
+                    if ($fileData['mimeFilename'] == 'audio') {
                         $posts[] = $allUsersPosts[$j];
                     }
                 }
             }
 
-            if(count($posts) > 0){
-
-
+            if (count($posts) > 0) {
                 $randomKeys = array_rand($posts, count($posts));
 
-                if(count($posts) == 1){
+                if (count($posts) == 1) {
                     $randomKeys = [$randomKeys];
                 }
 
-                for( $k= 0;$k<count($posts);$k++){
+                for ($k = 0; $k < count($posts); $k++) {
 
                     $post = $posts[$randomKeys[$k]];
 
@@ -336,7 +459,7 @@
             }
 
 
-        ?>
+            ?>
         </div>
     </div>
 
@@ -347,27 +470,27 @@
 
             $allUsers = getAllUsersData();
 
-            for( $i= 0;$i<count($allUsers);$i++){
+            for ($i = 0; $i < count($allUsers); $i++) {
                 $allUsersPosts = getPosts($allUsers[$i]['id'], $owner);
-                for($j= 0;$j<count($allUsersPosts);$j++){
+                for ($j = 0; $j < count($allUsersPosts); $j++) {
                     $idFile = $allUsersPosts[$j]['idImage'];
                     $fileData = getFileDetails($idFile);
-                    if($fileData['mimeFilename'] == 'image'){
+                    if ($fileData['mimeFilename'] == 'image') {
                         $posts[] = $allUsersPosts[$j];
                     }
                 }
             }
 
-            if(count($posts) > 0){
+            if (count($posts) > 0) {
 
 
                 $randomKeys = array_rand($posts, count($posts));
 
-                if(count($posts) == 1){
+                if (count($posts) == 1) {
                     $randomKeys = [$randomKeys];
                 }
 
-                for( $k= 0;$k<count($posts);$k++){
+                for ($k = 0; $k < count($posts); $k++) {
 
                     $post = $posts[$randomKeys[$k]];
 
@@ -379,7 +502,7 @@
 
                     $sizes = ['small', 'medium', 'large'];
                     $randomSize = $sizes[array_rand($sizes)];
-   
+
 
                     $image = "<img src=\"showFileThumb.php?id=$fileID&size=$randomSize\" alt=\"Post\"></img>";
                     $caption = "<figcaption> $description </figcaption>";
@@ -390,7 +513,7 @@
             }
 
 
-        ?>
+            ?>
         </div>
     </div>
 
@@ -401,11 +524,11 @@
 
     <div id="resultsContent" class="content">
         <div id="resultsContainer" class="img_container">
-                
+
         </div>
     </div>
 
-    
+
 
     <div id="profileContent" class="content">
         <div class="profile-header">
@@ -419,82 +542,83 @@
                 <div class="social-stats">
                     <div><strong><?php echo count($profile_followers) ?></strong><br />Followers</div>
                     <div><strong><?php echo count($profile_following) ?> </strong><br />Following</div>
-                    
+
                     <?php if ($canPost): ?>
                         <div><strong><?php echo count($profile_posts) ?></strong><br />Posts</div>
-                    <?php else: 
-                     endif; 
+                    <?php else:
+                    endif;
 
-                    if (!$owner && !$isfollowing){
-                    ?>
-                            <a href="follow.php?idFollower=<?php echo urlencode($idUser)?>&idFollowed=<?php echo urlencode($idUserProfile)?>"
-                                class="follow-btn">Follow</a>
-                            <?php
-                    } else if (!$owner && $isfollowing){    
-                    ?>
-                            <a href="unfollow.php?idFollower=<?php echo urlencode($idUser)?>&idFollowed=<?php echo urlencode($idUserProfile)?>"
+                    if (!$owner && !$isfollowing) {
+                        ?>
+                        <a href="follow.php?idFollower=<?php echo urlencode($idUser) ?>&idFollowed=<?php echo urlencode($idUserProfile) ?>"
+                            class="follow-btn">Follow</a>
+                        <?php
+                    } else if (!$owner && $isfollowing) {
+                        ?>
+                            <a href="unfollow.php?idFollower=<?php echo urlencode($idUser) ?>&idFollowed=<?php echo urlencode($idUserProfile) ?>"
                                 class="follow-btn">Unfollow</a>
-                            <?php
-                    }  
+                        <?php
+                    }
                     ?>
 
                     <?php if ($owner) { ?>
-                    <button class="default-btn" onclick="openEditProfileForm(<?php echo json_encode($idUser); ?>)">Edit Profile</button>
+                        <button class="default-btn" onclick="openEditProfileForm(<?php echo json_encode($idUser); ?>)">Edit
+                            Profile</button>
                     <?php } ?>
 
                     <?php if ($user_type === 'user') { ?>
-                    <button class="default-btn" onclick="openSupporterForm()">Become Supporter</button>
+                        <button class="default-btn" onclick="openSupporterForm()">Become Supporter</button>
                     <?php } ?>
 
                     <?php if ($isAdministrator) { ?>
-                    <button class="default-btn" onclick="scrollToContact()">Add Category</button>
+                        <button class="default-btn" onclick="openAddCategoryForm()">Add Category</button>
                     <?php } ?>
-                    
+
                     <?php if (!$owner) { ?>
-                    <button class="default-btn" onclick="scrollToContact()">Contact Me</button>
+                        <button class="default-btn" onclick="scrollToContact()">Contact Me</button>
                     <?php } ?>
-                    
+
                 </div>
             </div>
         </div>
 
         <div class="img_container">
-            <?php 
-            
-            if ($owner && $canPost){
-                for($idx=0; $idx<count($profile_posts); $idx++){
+            <?php
+
+            if ($canPost) {
+                for ($idx = 0; $idx < count($profile_posts); $idx++) {
                     $idFile = $profile_posts[$idx]['idImage'];
                     $idPost = $profile_posts[$idx]['id'];
                     $target = "<img src=\"showFileThumb.php?id=" . $idFile . "&size=small\" alt=\"Post\"></img>";
                     echo "<div class=\"card card_small\" data-post-id=\"$idPost\">$target</div>";
-                    }
-                }else if (!$canPost){ ?>
-            <p>Become supporter to post contents</p>
-            
+                }
+            } else if (!$canPost) { ?>
+                    <p>Become supporter to post contents</p>
+
             <?php }
-        
-        ?>
+
+            ?>
         </div>
         <?php if (!$owner) { ?>
-        <div id="contact" class="contact-container">
-            <h2>Contact Me</h2>
-            <form action="sendEmail.php?id=<?php echo urlencode($idUserProfile); ?>" method="POST">
-                <label for="name">Name</label>
-                <input type="text" id="name" name="name" placeholder="Your name..." required>
+            <div id="contact" class="contact-container">
+                <h2>Contact Me</h2>
+                <form action="sendEmail.php?id=<?php echo urlencode($idUserProfile); ?>" method="POST">
+                    <label for="name">Name</label>
+                    <input type="text" id="name" name="name" placeholder="Your name..." required>
 
-                <label for="email">Email</label>
-                <input type="email" id="email" name="email" placeholder="Your email..." required>
+                    <label for="email">Email</label>
+                    <input type="email" id="email" name="email" placeholder="Your email..." required>
 
-                <label for="subject">Subject</label>
-                <input type="text" id="subject" name="subject" placeholder="Subject..." required>
+                    <label for="subject">Subject</label>
+                    <input type="text" id="subject" name="subject" placeholder="Subject..." required>
 
-                <label for="message">Message</label>
-                <textarea id="message" name="message" rows="6" placeholder="Write your message..." required></textarea>
-                <input type="hidden" name="redirect" value="<?php echo htmlspecialchars($_SERVER['REQUEST_URI']); ?>">
+                    <label for="message">Message</label>
+                    <textarea id="message" name="message" rows="6" placeholder="Write your message..." required></textarea>
+                    <input type="hidden" name="redirect" value="<?php echo htmlspecialchars($_SERVER['REQUEST_URI']); ?>">
 
-                <button class="default-btn" type="submit">Send</button>
-            </form>
-        </div>
+                    <button class="default-btn" type="submit">Send</button>
+                </form>
+            </div>
         <?php } ?>
     </div>
 </div>
@@ -525,25 +649,22 @@
                             <button>
                                 <i class="bi bi-lock"></i> Make Private
                             </button>
-                        <?php } ?>                     
+                        <?php } ?>
                     </div>
                 </div>
             </div>
-            
+
             <div id="modalMediaContainer">
                 <!-- Conteúdo de mídia será inserido aqui dinamicamente -->
             </div>
-            
+
             <div class="post-footer">
                 <div class="post-actions">
-                    <a id="likeButton" class="like-button" onclick="toggleLike(<?php echo $idUser?>)">
+                    <a id="likeButton" class="like-button" onclick="toggleLike(<?php echo $idUser ?>)">
                         <i class="bi bi-heart"></i>
                     </a>
                     <span id="likeCount" class="action-count">-1</span>
-                    <a id="commentButton" class="like-button" onclick="toggleLike(<?php echo $idUser?>)">
-                        <i class="bi bi-heart"></i>
-                    </a>
-                    <span id="commentCount" class="action-count">-1</span>
+                    <span id="commentCount" class="action-count"></span>
                 </div>
                 <div class="caption">
                     <span class="username" id="captionUsername"></span>
@@ -566,13 +687,13 @@
             <input type="text" id="upload-title" name="title" placeholder="Enter a title" required>
             <textarea type="text" id="upload-description" name="description" placeholder="Write a short description..."
                 rows="6"></textarea>
-            
+
             <label for="upload-category">Category:</label>
             <select id="upload-category" name="category" required>
                 <option value="">Select a category...</option>
                 <?php
                 if (isset($categories) && count($categories) > 0) {
-                    for($i = 0; $i < count($categories); $i++) {
+                    for ($i = 0; $i < count($categories); $i++) {
                         $categoryId = htmlspecialchars($categories[$i]['id']);
                         $categoryName = htmlspecialchars($categories[$i]['tagName']);
                         echo "<option value=\"$categoryId\">$categoryName</option>";
@@ -594,35 +715,105 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
 <script src="js/script.js"></script>
 <script>
-const privacyToggle = document.getElementById('privacyToggle');
-const privacyInput = document.getElementById('privacyInput');
+    const privacyToggle = document.getElementById('privacyToggle');
+    const privacyInput = document.getElementById('privacyInput');
 
-privacyToggle.addEventListener('click', () => {
-    const icon = privacyToggle.querySelector('i');
-    if (privacyInput.value === 'public') {
-        privacyInput.value = 'private';
-        privacyToggle.setAttribute('aria-pressed', 'true');
-        icon.classList.remove('fa-lock-open');
-        icon.classList.add('fa-lock');
-        privacyToggle.title = "Definido como privado";
-    } else {
-        privacyInput.value = 'public';
-        privacyToggle.setAttribute('aria-pressed', 'false');
-        icon.classList.remove('fa-lock');
-        icon.classList.add('fa-lock-open');
-        privacyToggle.title = "Definido como público";
-    }
-});
+    privacyToggle.addEventListener('click', () => {
+        const icon = privacyToggle.querySelector('i');
+        if (privacyInput.value === 'public') {
+            privacyInput.value = 'private';
+            privacyToggle.setAttribute('aria-pressed', 'true');
+            icon.classList.remove('fa-lock-open');
+            icon.classList.add('fa-lock');
+            privacyToggle.title = "Definido como privado";
+        } else {
+            privacyInput.value = 'public';
+            privacyToggle.setAttribute('aria-pressed', 'false');
+            icon.classList.remove('fa-lock');
+            icon.classList.add('fa-lock-open');
+            privacyToggle.title = "Definido como público";
+        }
+    });
 
-const idUser = <?php echo json_encode($idUser); ?>
+    const idUser = <?php echo json_encode($idUser); ?>
 
-document.addEventListener('DOMContentLoaded', function() {
-    document.querySelectorAll('.card').forEach(card => {
-        card.addEventListener('click', async function() {
-            const idPost = this.dataset.postId;
-            console.log('Post ID:', idPost);
-            await openPost(idPost, idUser); // now await works here
+    document.addEventListener('DOMContentLoaded', function () {
+        document.querySelectorAll('.card').forEach(card => {
+            card.addEventListener('click', async function () {
+                const idPost = this.dataset.postId;
+                await openPost(idPost, idUser); // now await works here
+            });
+        });
+
+
+
+        const tabs = document.querySelectorAll('.top_tab');
+        const contents = document.querySelectorAll('.content-section');
+        const tabContainer = document.querySelector('.top_tabs');
+
+        // Ensure first tab is active on load
+        function initializeTabs() {
+            tabs.forEach(t => t.classList.remove('active'));
+            contents.forEach(content => content.classList.remove('active'));
+
+            // Set first tab (All) as active
+            const firstTab = document.querySelector('.top_tab[data-target="all-content"]');
+            const firstContent = document.querySelector('.all-content');
+
+            if (firstTab && firstContent) {
+                firstTab.classList.add('active');
+                firstContent.classList.add('active');
+
+                // Reset scroll position to show first tab
+                tabContainer.scrollLeft = 0;
+            }
+        }
+
+        // Initialize tabs on page load
+        initializeTabs();
+
+        tabs.forEach(tab => {
+            tab.addEventListener('click', function () {
+                // Remove active class from all tabs
+                tabs.forEach(t => t.classList.remove('active'));
+
+                // Add active class to clicked tab
+                this.classList.add('active');
+
+                // Hide all content sections
+                contents.forEach(content => content.classList.remove('active'));
+
+                // Show the target content section
+                const targetId = this.getAttribute('id');
+                const targetContent = document.getElementById(targetId);
+                if (targetContent) {
+                    targetContent.classList.add('active');
+                }
+
+                // Scroll active tab into view if needed
+                this.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'nearest',
+                    inline: 'center'
+                });
+            });
+        });
+
+        // Handle keyboard navigation
+        tabContainer.addEventListener('keydown', function (e) {
+            const activeTab = document.querySelector('.top_tab.active');
+            let nextTab = null;
+
+            if (e.key === 'ArrowLeft') {
+                nextTab = activeTab.previousElementSibling;
+            } else if (e.key === 'ArrowRight') {
+                nextTab = activeTab.nextElementSibling;
+            }
+
+            if (nextTab && nextTab.classList.contains('top_tab')) {
+                nextTab.click();
+                nextTab.focus();
+            }
         });
     });
-});
 </script>

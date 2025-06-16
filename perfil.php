@@ -19,14 +19,17 @@
     $username = $_GET["username"];
   }
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['become_supporter'])) {
-    $userId = $_SESSION['id'];
-    switchSupporter($userId);
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_category'])) {
+    if (isset($_POST['tagName']) && !empty(trim($_POST['tagName']))) {
+        $tagName = trim($_POST['tagName']);
+        $success = addCategory($tagName);
+    }
 
     // Opcional: Redirecionar para evitar resubmissão do formulário ao recarregar
     header("Location: perfil.php" . urlencode($username));
     exit();
 }
+
 
 ?>
 
@@ -98,6 +101,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['become_supporter'])) 
             </p>
             <input type="hidden" name="become_supporter" value="1">
             <button type="submit" class="default-btn">Become Supporter</button>
+            </div>
+        </form>
+    </div>
+
+    <div class="form-popup" id="addCategoryForm">
+        <form method="post" class="form-container">
+            <span class="close-icon" onclick="closeAddCategoryForm()">&times;</span>
+            <h3>Add Category</h3>
+            <div class="info">
+               <label for="tagName">Category Name</label>
+                <input type="text" id="tagName" name="tagName" placeholder="Enter category name..." required>
+
+                <input type="hidden" name="add_category" value="1">
+                <button type="submit" class="default-btn" style="margin:8px;">Add Category</button>
             </div>
         </form>
     </div>
